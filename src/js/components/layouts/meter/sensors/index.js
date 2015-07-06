@@ -3,8 +3,7 @@
 let React = require('react');
 
 import { Link } from 'react-router';
-
-let Breadcrumbs = require('react-breadcrumbs');
+import Store from '../../../../stores/description-store';
 
 export default class SensorUnitsTab extends React.Component {
 
@@ -17,53 +16,24 @@ export default class SensorUnitsTab extends React.Component {
         };
     }
 
-    // lifecycle methods
-    componentWillMount() {
-
-    }
-    componentDidMount() {
-        
-    }
-    componentWillReceiveProps(nextProps) {
-        
-    }
-    componentWillUpdate(nextProps, nextState) {
-        
-    }
-    componentDidUpdate(prevProps, prevState) {
-        
-    }
-    componentWillUnmount() {
-        
-    }
-    
-
-    // UI and stores handlers
-    
-
-    // common helpers
-    
-
-    // render helpers
-    
-
     render() {
+        let sensors = Store.getSensors();
         return (
             <div>
-                <div className="container content">
-                    <Link to={"New sensor"} >
+                <div>
+                    <Link to={"Single sensor"} params={{ id: "new" }} >
                         <div className="col-md-4">
                             <button className="big">
-                                Add more
+                                +
                             </button>
                         </div>
                     </Link> 
-                    {[0, 1, 2, 3].map((item) => {
+                    {sensors && sensors.map((item, index) => {
                         return (
-                            <Link to={"Sensor unit"} key={item} params={{ id: item }} >
+                            <Link to={"Single sensor"} key={index} params={{ id: index }} >
                                 <div className="col-md-4">
                                     <button className="big">
-                                        {item}
+                                        {item.type} # {index}
                                     </button>
                                 </div>
                             </Link> 

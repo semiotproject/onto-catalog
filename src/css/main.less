@@ -7,39 +7,82 @@
 		text-align: center;
 	}
 }
+
+.form {
+	max-width: 400px;
+	margin: auto;
+}
+.btn.btn-large {
+	margin-top: 20px;
+}
+
+.generate {
+	margin-left: 5px ;
+}
+.result-overlay {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 1000;
+	display: none;
+	&.visible {
+		display: block;
+	}
+	> div {
+		width: 800px;
+		margin: auto;
+		background-color: white;
+		padding: 30px;
+		height: 80%;
+		overflow: auto;
+		box-shadow: 4px 4px 10px rgba(0,0,0,0.6);
+		border-radius: 4px;
+		position: relative;
+		top: 50%;
+		transform: translateY(-50%);
+		p {
+			font-family: monospace;
+		}
+	}
+}
+
 #main-wrapper {
-	padding-top: 50px;
-	.content {
-		margin-top: 20px;
-		@button-color: rgb(151, 234, 174);
-		@button-color-disable: #CDCDCD;
-		button.big {
-			background-color: @button-color;
-			font-size: 20px;
-			width: 100%;
+	padding: 30px 0;
+	margin-top: 20px;
+
+	@button-color: rgb(151, 234, 174);
+	@button-color-disable: #CDCDCD;
+	button.big {
+		background-color: @button-color;
+		font-size: 20px;
+		width: 100%;
+		color: white;
+		border: none;
+		height: 200px;
+		border-radius: 5px;
+		margin-bottom: 30px;
+		box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+		transition: all .2s ease-in-out;
+		&:hover {
+			background-color: darken(@button-color, 10%);
+		}
+		&:active {
+			background-color: darken(@button-color, 15%);
+			outline: none;
+		}
+		&.inactive {
+			background-color: @button-color-disable;
+			pointer-events: none;
+		}
+		a {
 			color: white;
-			border: none;
-			height: 200px;
-			border-radius: 5px;
-			margin-bottom: 30px;
-			box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-			transition: all .2s ease-in-out;
 			&:hover {
-				background-color: darken(@button-color, 10%);
-			}
-			&:active {
-				background-color: darken(@button-color, 15%);
-				outline: none;
-			}
-			&.inactive {
-				background-color: @button-color-disable;
-				pointer-events: none;
-			}
-			a {
-				color: white;
-				&:hover {
-					text-decoration: none;
-				}
+				text-decoration: none;
 			}
 		}
 	}

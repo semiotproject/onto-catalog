@@ -3,8 +3,7 @@
 let React = require('react');
 
 import { Link, RouteHandler } from 'react-router';
-
-let Breadcrumbs = require('react-breadcrumbs');
+import Store from '../../stores/description-store';
 
 export default class MainTab extends React.Component {
 
@@ -39,7 +38,17 @@ export default class MainTab extends React.Component {
     
 
     // UI and stores handlers
-    
+    handleClick(type) {
+        return () => {
+            switch (type) {
+                case 'meter':
+                    Store.initMeter();
+                    return;
+                default:
+                    break;
+            }
+        }
+    }
 
     // common helpers
     
@@ -49,17 +58,17 @@ export default class MainTab extends React.Component {
 
     render() {
         return (            
-            <div className="container content">
+            <div>
                 <div className="row">
                     <Link to="Meter" >
                         <div className="col-md-6">
-                            <button className="big">
+                            <button className="big" onClick={this.handleClick('meter')}>
                                 Meter
                             </button>
                         </div>
                     </Link> 
                     <div className="col-md-6">
-                        <button className="big inactive">
+                        <button className="big inactive" onClick={this.handleClick('actuator')}>
                             Actuators
                         </button>
                     </div>

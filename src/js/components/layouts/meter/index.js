@@ -4,8 +4,6 @@ let React = require('react');
 
 import { Link } from 'react-router';
 
-let Breadcrumbs = require('react-breadcrumbs');
-
 export default class SensorTab extends React.Component {
 
     constructor(props) {
@@ -17,39 +15,9 @@ export default class SensorTab extends React.Component {
         };
     }
 
-    // lifecycle methods
-    componentWillMount() {
-
-    }
-    componentDidMount() {
-        
-    }
-    componentWillReceiveProps(nextProps) {
-        
-    }
-    componentWillUpdate(nextProps, nextState) {
-        
-    }
-    componentDidUpdate(prevProps, prevState) {
-        
-    }
-    componentWillUnmount() {
-        
-    }
-    
-
-    // UI and stores handlers
-    
-
-    // common helpers
-    
-
-    // render helpers
-    
-
     render() {
         return (
-            <div className="container content">
+            <div>
                 <div className="row">
                     <Link to="Sensor units" >
                         <div className="col-md-6">

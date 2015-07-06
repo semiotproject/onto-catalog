@@ -4,7 +4,7 @@ let React = require('react');
 
 import { Link } from 'react-router';
 
-export default class Heat extends React.Component {
+export default class Tab extends React.Component {
 
     constructor(props) {
         super(props);
@@ -13,13 +13,14 @@ export default class Heat extends React.Component {
         this.state = {
 
         };
-    }
+    }    
 
     render() {
         return (
-            <div className="container content">
-                <div className="row">
-                    Heat
+            <div>
+                <div className="form-group">
+                    <label for="">Driver adaptor</label>
+                    <input type="text" className="form-control" />
                 </div>
             </div>
         );
