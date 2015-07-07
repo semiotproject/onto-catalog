@@ -1,10 +1,13 @@
 ### How to develop
 
+First of all, do not forget to install `nodejs`.
+
+After that:
+
 ```
+npm i -g grunt-cli
 
 npm i
-
-npm i -g grunt-cli
 
 grunt --watch
 
