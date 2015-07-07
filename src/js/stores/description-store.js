@@ -4,6 +4,7 @@ import { EventEmitter } from 'events';
 import _ from 'lodash';
 
 import PrefixesTemplate from './templates/prefixes.ttl';
+import MeterTemplate from './templates/meter.ttl';
 import IndoorTemplate from './templates/indoor-location.ttl';
 import OutdoorTemplate from './templates/outdoor-location.ttl';
 import SensorTemplate from './templates/sensor.ttl';
@@ -39,7 +40,7 @@ class DescriptionStore extends EventEmitter {
                     indoor: {}
                 },
                 drivers: {}
-            },
+            }
         };
         console.info('meter inited');
     }
@@ -73,16 +74,22 @@ class DescriptionStore extends EventEmitter {
 
     generate() {
         if (this._data.meter) {
-            return this.generateMeter()
+            return this.generateMeter();
         } else {
             console.log('not implemented for non-meters devices');
         }
     }
     generateMeter() {
         let result = "";
+
         let uri = this._data.meter.description.manufacture.uri;
 
         result += PrefixesTemplate;
+
+        this._data.meter.uri = uri;
+        this._data.meter.label = this._data.meter.description.manufacture.label;
+        this._data.meter.type = "ssn : Sensor";
+        result += _.template(MeterTemplate)(this._data.meter);
 
         if (this._data.meter.description.deployment.outdoor) {
             result += _.template(OutdoorTemplate)(this._data.meter.description.deployment.outdoor);

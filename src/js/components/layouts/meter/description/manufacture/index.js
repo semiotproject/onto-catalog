@@ -21,6 +21,7 @@ export default class Tab extends React.Component {
         let manufacture = meter.description.manufacture;
 
         manufacture.uri = this.refs.uri.getDOMNode().value;
+        manufacture.label = this.refs.label.getDOMNode().value;
         manufacture.manufacturer = this.refs.manufacturer.getDOMNode().value;
         manufacture.model = this.refs.model.getDOMNode().value;
         manufacture.version = this.refs.version.getDOMNode().value;
@@ -35,6 +36,10 @@ export default class Tab extends React.Component {
                 <div className="form-group">
                     <label for="">URI</label>
                     <input type="text" ref="uri" className="form-control" defaultValue={manufacture.uri}/>
+                </div>
+                <div className="form-group">
+                    <label for="">Label</label>
+                    <input type="text" ref="label" className="form-control" defaultValue={manufacture.label}/>
                 </div>
                 <div className="form-group">
                     <label for="">Manufacturer</label>

@@ -31,8 +31,8 @@ export default class SensorUnit extends React.Component {
         let sensor = Store.getSensorById(this.props.params.id);
         return (
             <div>
-                <h4>{header}</h4>
-                <div>
+                <div className="form">
+                    <h4>{header}</h4>
                    <div className="form-group">
                         <label for="">Type</label>
                         <select ref="type" type="text" className="form-control" defaultValue={sensor && sensor.type}>
