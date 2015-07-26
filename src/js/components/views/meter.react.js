@@ -2,8 +2,7 @@
 
 let React = require('react');
 
-import { Link } from 'react-router';
-import Store from '../../../../../stores/description-store';
+import Store from '../../stores/description-store';
 
 export default class SensorUnit extends React.Component {
 
@@ -18,21 +17,21 @@ export default class SensorUnit extends React.Component {
 
     handleClick() {
         let sensor = {};
-        sensor.id = this.props.params.id === "new" ? undefined : this.props.params.id;
+        sensor.id = this.props.data.id;
         sensor.type = this.refs.type.getDOMNode().value;
         sensor.endpoint = this.refs.endpoint.getDOMNode().value;
         sensor.protocol = this.refs.protocol.getDOMNode().value;
 
-        sensor.id ? Store.saveSensor(sensor) : Store.addSensor(sensor);
+        sensor.id !== null ? Store.saveMeter(sensor) : Store.addMeter(sensor);
     }
 
     render() {
-        let header = this.props.params.id === "new" ? "New sensor" : `Sensor #${this.props.params.id}`;
-        let sensor = Store.getSensorById(this.props.params.id);
+        let header = this.props.data.id === null ? "New sensor" : `Sensor #${this.props.data.id}`;
+        let sensor = Store.getMeterById(this.props.data.id);
         return (
             <div>
+                <header>{header}</header>
                 <div className="form">
-                    <h4>{header}</h4>
                    <div className="form-group">
                         <label for="">Type</label>
                         <select ref="type" type="text" className="form-control" defaultValue={sensor && sensor.type}>
@@ -45,7 +44,7 @@ export default class SensorUnit extends React.Component {
                     <div className="form-group">
                         <label for="">Communication Endpoint</label>
                         <input type="text" ref="endpoint" className="form-control" defaultValue={sensor && sensor.endpoint}/>
-                    </div>                    
+                    </div>
                     <div className="form-group">
                         <label for="">Protocol</label>
                         <select ref="protocol" type="text" className="form-control" defaultValue={sensor && sensor.protocol}>
@@ -54,11 +53,9 @@ export default class SensorUnit extends React.Component {
                         </select>
                     </div>
                     <div className="form-group">
-                        <Link to={"Sensor units"}>
-                            <button className="btn btn-large" onClick={this.handleClick.bind(this)}>Save</button>
-                        </Link>
+                        <button className="btn btn-lg btn-primary" onClick={this.handleClick.bind(this)}>Save</button>
                     </div>
-                </div>  
+                </div>
             </div>
         );
     }

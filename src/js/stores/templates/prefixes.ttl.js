@@ -1,6 +1,6 @@
 "use strict";
 
-export default `         
+export default `
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix ssn: <http://purl.oclc.org/NET/ssnx/ssn#> .
 @prefix hmtr: <http://purl.org/NET/ssnext/heatmeters#> .
@@ -10,4 +10,6 @@ export default `
 @prefix dul: <http://www.loa-cnr.it/ontologies/DUL.owl#> .
 @prefix limapext: <http://purl.org/NET/limapext#> .
 @prefix limap: <http://data.uni-muenster.de/php/vocab/limap> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 `;
