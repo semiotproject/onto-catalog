@@ -13,7 +13,7 @@ export default class DriverView extends React.Component {
         this.state = {
 
         };
-    }    
+    }
 
     render() {
         return (

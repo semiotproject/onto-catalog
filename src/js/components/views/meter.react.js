@@ -4,7 +4,7 @@ let React = require('react');
 
 import Store from '../../stores/description-store';
 
-export default class SensorUnit extends React.Component {
+export default class MeterView extends React.Component {
 
     constructor(props) {
         super(props);
@@ -31,7 +31,7 @@ export default class SensorUnit extends React.Component {
         return (
             <div>
                 <header>{header}</header>
-                <div className="form">
+                <div className="form" key={this.props.data.id}>
                    <div className="form-group">
                         <label for="">Type</label>
                         <select ref="type" type="text" className="form-control" defaultValue={sensor && sensor.type}>

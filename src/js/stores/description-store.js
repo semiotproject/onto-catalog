@@ -17,7 +17,9 @@ class DescriptionStore extends EventEmitter {
         super();
         this._data = {
             description: {
-                manufacture: {},
+                manufacture: {
+                    uri: "my_uri"
+                },
                 deployment: {},
                 driver: {}
             },
@@ -59,8 +61,8 @@ class DescriptionStore extends EventEmitter {
     getMeters() {
         return this._data.meters;
     }
-    getMeterById(aid) {
-        return _.find(this._data.meter, (m) => {
+    getMeterById(mid) {
+        return _.find(this._data.meters, (m) => {
             return m.id === mid;
         })
     }

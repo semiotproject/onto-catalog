@@ -25,14 +25,17 @@ class App extends React.Component {
             types: {
                 'json-ld': {
                     label: "JSON-LD",
+                    ext: "jsonld",
                     inProgress: false
                 },
                 'n3': {
                     label: "N3",
+                    ext: "turtle",
                     inProgress: false
                 },
                 'rdf-xml': {
                     label: "RDF XML",
+                    ext: "xml",
                     inProgress: false
                 }
             }
@@ -93,7 +96,7 @@ class App extends React.Component {
                         res = JSON.stringify(res, null, 4);
                     }
                     let blob = new Blob([res], {type: "text/plain;charset=utf-8"});
-                    saveAs(blob, "hola.txt");
+                    saveAs(blob, "description." + this.state.types[type].ext);
                     this.state.types[type].inProgress = false;
                     this.setState({
                         types: types

@@ -4,12 +4,30 @@ In this version, we use RDFTranslator API (http://rdf-translator.appspot.com/) t
 
 Available formats to generate: `JSON-LD`, `N3`, `RDF XML`.
 
+## Installation
+
 ```
 npm i -g grunt-cli
 
 npm i
+```
 
-grunt --watch
+## Build
+
+```
+npm run build # compile files to ./dist dir
+```
+
+## Launching
+
+```
+npm run serve # launch http server on ./dist dir
+```
+
+## Development
+
+```
+npm run dev # both of above + file watcher
 ```
 
 Port 3000.

@@ -8,8 +8,7 @@ module.exports = function (grunt) {
     // custom options
     var BUILD_CONFIG = {
         src_dir: './src/',
-        dist_dir: './dist/',
-        watch: argv.watch
+        dist_dir: './dist/'
     };
 
     // legacy tasks
@@ -34,11 +33,11 @@ module.exports = function (grunt) {
                 options: {
                     debug: true,
                     transform: ['babelify'],
-                    watch: BUILD_CONFIG.watch
+                    watch: true
                 }
             }
-        },      
-        copy: { 
+        },
+        copy: {
             index: {
                 files: [{
                     expand: true,
@@ -74,7 +73,7 @@ module.exports = function (grunt) {
                 }
             }
         },
-        'http-server': { 
+        'http-server': {
             'dev': {
                 root: BUILD_CONFIG.dist_dir,
                 port: 3000,
@@ -84,11 +83,13 @@ module.exports = function (grunt) {
         }
     });
 
-    var tasks = ["less", "browserify", "copy", "http-server"];
-    if (BUILD_CONFIG.watch) {
-        tasks.push("watch");
-    }
+    var buildTasks = ["less", "browserify", "copy"];
+    var watchTasks = ["http-server", "watch"];
 
-    grunt.registerTask("default", tasks);
+    grunt.registerTask('build', buildTasks);
+    grunt.registerTask('serve', watchTasks);
+    grunt.registerTask('dev', buildTasks.concat(watchTasks))
+
+    grunt.registerTask("default", ["dev"]);
 };
 
