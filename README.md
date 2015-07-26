@@ -17,6 +17,7 @@ Port 3000.
 ## Known issues
 
 * Generation failes, if no URI provided
+* Drivers and actuators are not supported yet
 * RDFTranslator append his own artefacts on some formats, e. g. `@id` field in `JSON-LD` description might be like `file:///base/data/home/apps/s%7Erdf-translator/1.380697414950152317/${YOUR_URI}`
 * No notification from RDFTranslator, if service is down
 * Minor style issues
