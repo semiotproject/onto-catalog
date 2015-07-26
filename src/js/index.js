@@ -25,12 +25,12 @@ class App extends React.Component {
             types: {
                 'json-ld': {
                     label: "JSON-LD",
-                    ext: "jsonld",
+                    ext: "txt",
                     inProgress: false
                 },
                 'n3': {
                     label: "N3",
-                    ext: "turtle",
+                    ext: "txt",
                     inProgress: false
                 },
                 'rdf-xml': {
@@ -95,6 +95,7 @@ class App extends React.Component {
                     if (typeof res === 'object') {
                         res = JSON.stringify(res, null, 4);
                     }
+                    console.log("description." + this.state.types[type].ext);
                     let blob = new Blob([res], {type: "text/plain;charset=utf-8"});
                     saveAs(blob, "description." + this.state.types[type].ext);
                     this.state.types[type].inProgress = false;
