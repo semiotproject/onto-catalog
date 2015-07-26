@@ -1,4 +1,4 @@
-[![Code Climate](https://codeclimate.com/github/semiotproject/onto-catalog/badges/gpa.svg)](https://codeclimate.com/github/semiotproject/onto-catalog)
+[![Code Climate](https://codeclimate.com/github/semiotproject/wot-semdesc-helper/badges/gpa.svg)](https://codeclimate.com/github/semiotproject/wot-semdesc-helper)
 
 In this version, we use RDFTranslator API (http://rdf-translator.appspot.com/) to convert between different semantic formats.
 
