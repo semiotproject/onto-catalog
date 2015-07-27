@@ -10,7 +10,7 @@ RUN apt-get install -y nodejs npm
 RUN update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
 
 ADD . /webapp
-RUN cd /webapp && npm i -g grunt-cli && npm i
+RUN cd /webapp && npm i -g grunt-cli && npm i && npm run build
 
 EXPOSE 3000
 
