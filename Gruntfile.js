@@ -75,6 +75,7 @@ module.exports = function (grunt) {
         },
         'http-server': {
             'dev': {
+                host: "0.0.0.0",
                 root: BUILD_CONFIG.dist_dir,
                 port: 3000,
                 runInBackground: true,

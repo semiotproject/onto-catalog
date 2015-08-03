@@ -6,10 +6,18 @@ Available formats to generate: `JSON-LD`, `N3`, `RDF XML`.
 
 ## Installation
 
-```
-npm i -g grunt-cli
+### Via NPM
 
-npm i
+```
+sudo npm i -g grunt-cli
+
+sudo npm i
+```
+
+### Via Docker
+
+```
+sudo docker pull semiot/wot-semdesc-helper
 ```
 
 ## Build
@@ -20,8 +28,16 @@ npm run build # compile files to ./dist dir
 
 ## Launching
 
+### Via NPM
+
 ```
 npm run serve # launch http server on ./dist dir
+```
+
+### Via Docker 
+
+```
+sudo docker run -i -p 3000:3000 semiot/wot-semdesc-helper
 ```
 
 ## Development
