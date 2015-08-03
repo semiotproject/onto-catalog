@@ -2,8 +2,9 @@
 
 let React = require('react');
 
-import DescriptionView from './description.react';
-import MetersView from './meters.react';
+import ManufactureView from './manufacture.react';
+import DeploymentView from './deployment.react';
+import SensorsView from './sensors.react';
 import ActuatorsView from './actuators.react';
 
 import ViewStore from '../../stores/view-store';
@@ -38,17 +39,22 @@ export default class RootView extends React.Component {
             <div>
                 <header>Device</header>
                 <div className="row">
-                    <div className="col-md-4">
-                        <button className="big" onClick={this.handleClick(DescriptionView)}>
-                            Description
+                    <div className="col-md-6">
+                        <button className="big" onClick={this.handleClick(ManufactureView)}>
+                            Manufacture
                         </button>
                     </div>
-                    <div className="col-md-4">
-                        <button className="big" onClick={this.handleClick(MetersView)}>
-                            Meters
+                    <div className="col-md-6">
+                        <button className="big" onClick={this.handleClick(DeploymentView)}>
+                            Deployment
                         </button>
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-6">
+                        <button className="big" onClick={this.handleClick(SensorsView)}>
+                            Sensors
+                        </button>
+                    </div>
+                    <div className="col-md-6">
                         <button className="big inactive" onClick={this.handleClick(ActuatorsView)}>
                             Actuators
                         </button>

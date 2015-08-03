@@ -5,9 +5,9 @@ let React = require('react');
 import Store from '../../stores/description-store';
 import ViewStore from '../../stores/view-store';
 
-import MeterView from './meter.react';
+import SensorView from './sensor.react';
 
-export default class MetersView extends React.Component {
+export default class SensorsView extends React.Component {
 
     constructor(props) {
         super(props);
@@ -20,15 +20,15 @@ export default class MetersView extends React.Component {
 
     handleClick(id) {
         return () => {
-            ViewStore.setView(MeterView, { id: id });
+            ViewStore.setView(SensorView, { id: id });
         }
     }
 
     render() {
-        let meters = Store.getMeters();
+        let sensors = Store.getSensors();
         return (
             <div>
-                <header>Meters</header>
+                <header>Sensors</header>
                 <div>
                     <div className="col-md-4" key={-1}>
                         <button className="big" onClick={this.handleClick(null)}>
@@ -36,7 +36,7 @@ export default class MetersView extends React.Component {
                         </button>
                     </div>
                     {
-                        meters.map((item, index) => {
+                        sensors.map((item, index) => {
                             return (
                                 <div className="col-md-4" key={item.id}>
                                     <button className="big" onClick={this.handleClick(item.id)}>

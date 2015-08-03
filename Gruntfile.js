@@ -64,9 +64,9 @@ module.exports = function (grunt) {
                 }
             },
             other: {
-                files: ['**/*', '!**/*.less', '!**/*.js'].map(function(glob) {
-                    return BUILD_CONFIG.src_dir + glob;
-                }),
+                files: [BUILD_CONFIG.src_dir + "**/*"].concat(["**/*.less", "**/*.js"].map(function(glob) {
+                    return "!" + BUILD_CONFIG.src_dir + glob;
+                })),
                 tasks: ['copy'],
                 options: {
                 livereload: true

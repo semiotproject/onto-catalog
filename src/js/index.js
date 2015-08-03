@@ -1,12 +1,14 @@
 "use strict";
 
+//
+//
 import React from 'react';
 import $ from 'jquery';
 import saveAs from 'browser-filesaver';
 
 import RootView from './components/views/root.react.js';
-import MetersView from './components/views/meters.react.js';
-import MeterView from './components/views/meter.react.js';
+import SensorsView from './components/views/sensors.react.js';
+import SensorView from './components/views/sensor.react.js';
 import ActuatorsView from './components/views/actuators.react.js';
 import ActuatorView from './components/views/actuator.react.js';
 import DescriptionView from './components/views/description.react.js';
@@ -55,7 +57,7 @@ class App extends React.Component {
         // FIXME
         this.forceUpdate();
     }
-    handleMeterAdd() {
+    handleSensorAdd() {
 
     }
     handleActuatorAdd() {
@@ -124,7 +126,7 @@ class App extends React.Component {
         return buttons;
     }
     renderMiniMap() {
-        let meters = DescriptionStore.getMeters();
+        let sensors = DescriptionStore.getSensors();
         let actuators = DescriptionStore.getActuators();
         return (
             <div className="left">
@@ -135,32 +137,24 @@ class App extends React.Component {
                     <div onClick={this.setView(RootView)}>
                         <h4>Device</h4>
                         <div className="children">
-                            <div onClick={this.setView(DescriptionView)}>
-                                <h4>Description</h4>
-                                <div className="children">
-                                    <div onClick={this.setView(ManufactureView)}>
-                                        <h4>Manufacture</h4>
-                                    </div>
-                                    <div onClick={this.setView(DeploymentView)}>
-                                        <h4>Deployment</h4>
-                                    </div>
-                                    <div onClick={this.setView(DriverView)}>
-                                        <h4>Driver</h4>
-                                    </div>
-                                </div>
+                            <div onClick={this.setView(ManufactureView)}>
+                                <h4>Manufacture</h4>
                             </div>
-                            <div onClick={this.setView(MetersView)}>
+                            <div onClick={this.setView(DeploymentView)}>
+                                <h4>Deployment</h4>
+                            </div>
+                            <div onClick={this.setView(SensorsView)}>
                                 <h4>
-                                    <span>Meters</span>
-                                    <button className="btn btn-primary btn-add" title="add" onClick={this.setView(MeterView, { id: null })}>
+                                    <span>Sensors</span>
+                                    <button className="btn btn-primary btn-add" title="add" onClick={this.setView(SensorView, { id: null })}>
                                         <i className="fa fa-plus"></i>
                                     </button>
                                 </h4>
                                 <div className="children">
                                     {
-                                        meters.map((m) => {
+                                        sensors.map((m) => {
                                             return (
-                                                <div key={m.id} onClick={this.setView(MeterView, { id: m.id })}>
+                                                <div key={m.id} onClick={this.setView(SensorView, { id: m.id })}>
                                                     <h4>
                                                         {m.type} #{m.id}
                                                     </h4>
@@ -169,8 +163,8 @@ class App extends React.Component {
                                         })
                                     }
                                     {
-                                        meters.length === 0 &&
-                                            <span>No meters added yet</span>
+                                        sensors.length === 0 &&
+                                            <span>No sensors added yet</span>
                                     }
                                 </div>
                             </div>

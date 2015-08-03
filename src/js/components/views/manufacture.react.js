@@ -34,10 +34,6 @@ export default class ManufactureView extends React.Component {
                 <header>Manufacture</header>
                 <div>
                     <div className="form-group">
-                        <label for="">URI</label>
-                        <input type="text" ref="uri" className="form-control" defaultValue={manufacture.uri}/>
-                    </div>
-                    <div className="form-group">
                         <label for="">Label</label>
                         <input type="text" ref="label" className="form-control" defaultValue={manufacture.label}/>
                     </div>

@@ -23,7 +23,7 @@ class DescriptionStore extends EventEmitter {
                 deployment: {},
                 driver: {}
             },
-            meters: [],
+            sensors: [],
             actuators: []
         };
     }
@@ -58,23 +58,23 @@ class DescriptionStore extends EventEmitter {
         })
     }
 
-    getMeters() {
-        return this._data.meters;
+    getSensors() {
+        return this._data.sensors;
     }
-    getMeterById(mid) {
-        return _.find(this._data.meters, (m) => {
+    getSensorById(mid) {
+        return _.find(this._data.sensors, (m) => {
             return m.id === mid;
         })
     }
-    addMeter(meter) {
-        meter.id = this._data.meters.length;
-        this._data.meters.push(meter);
+    addSensor(sensor) {
+        sensor.id = this._data.sensors.length;
+        this._data.sensors.push(sensor);
         this.emit('update');
     }
-    saveMeter(meter) {
-        this._data.meters.forEach((m, index) => {
-            if (m.id == meter.id) {
-                this._data.meters[index] = sensor;
+    saveSensor(sensor) {
+        this._data.sensors.forEach((m, index) => {
+            if (m.id == sensor.id) {
+                this._data.sensors[index] = sensor;
                 this.emit('update');
             }
         });
@@ -110,7 +110,7 @@ class DescriptionStore extends EventEmitter {
         result += _.template(SystemTemplate)({
             uri: uri,
             label: this._data.description.manufacture.label,
-            sensors: this._data.meters
+            sensors: this._data.sensors
         });
 
         // location description
@@ -124,7 +124,7 @@ class DescriptionStore extends EventEmitter {
         result += ".";
 
         // sensor description
-        this._data.meters.map((s) => {
+        this._data.sensors.map((s) => {
             result += _.template(SensorTemplate)({
                 uri: uri,
                 observes: "ssn:" + s.type, // FIXME
