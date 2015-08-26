@@ -34,8 +34,8 @@ export default class App extends React.Component {
                 this.setState({
                     view: item
                 });
-            }
-        }
+            };
+        };
 
     }
 
@@ -51,6 +51,7 @@ export default class App extends React.Component {
         for (let item in VIEWS) {
             menu.push(
                 <li
+                    key={item}
                     className={this.state.view === item ? "active" : ""}
                     onClick={this.handleMenuClick(item)}
                 >

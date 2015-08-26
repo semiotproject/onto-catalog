@@ -169,7 +169,7 @@ export default class ClassView extends React.Component {
                                 </h4>
                                 <div className="children">
                                     {
-                                        actuators.map((m) => {
+                                        actuators.map((a) => {
                                             return (
                                                 <div key={a.id} onClick={this.setView(ActuatorView, { id: a.id })}>
                                                     <h4>
@@ -204,7 +204,7 @@ export default class ClassView extends React.Component {
         return (
             <div className="app-wrapper">
                 <header className="app-header">
-                    <h2>Class view</h2>
+                    <h2>Class editor</h2>
                     <p>
                         <span>Describe generic device class</span>
                     </p>

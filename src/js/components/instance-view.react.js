@@ -34,7 +34,7 @@ export default class InstanceView extends React.Component {
         return (
             <div className="app-wrapper">
                 <header className="app-header">
-                    <h2>Instance view</h2>
+                    <h2>Instance editor</h2>
                     <p>
                         <span>Choose device class and add instance-specific description</span>
                     </p>

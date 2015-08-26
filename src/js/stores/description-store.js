@@ -3,12 +3,14 @@
 import { EventEmitter } from 'events';
 import _ from 'lodash';
 import $ from 'jquery';
+import uuid from 'uuid';
 
 import PrefixesTemplate from './templates/prefixes.ttl';
 import SystemTemplate from './templates/system.ttl';
 import IndoorTemplate from './templates/indoor-location.ttl';
 import OutdoorTemplate from './templates/outdoor-location.ttl';
 import SensorTemplate from './templates/sensor.ttl';
+import CONFIG from '../config';
 
 import RdfTranslator from '../rdf-translator-adapter';
 
@@ -18,7 +20,7 @@ class DescriptionStore extends EventEmitter {
         this._data = {
             description: {
                 manufacture: {
-                    uri: "my_uri"
+                    uri: uuid.v4()
                 },
                 deployment: {},
                 driver: {}
@@ -55,7 +57,7 @@ class DescriptionStore extends EventEmitter {
     getActuatorById(aid) {
         return _.find(this._data.actuators, (a) => {
             return a.id === aid;
-        })
+        });
     }
 
     getSensors() {
@@ -64,7 +66,7 @@ class DescriptionStore extends EventEmitter {
     getSensorById(mid) {
         return _.find(this._data.sensors, (m) => {
             return m.id === mid;
-        })
+        });
     }
     addSensor(sensor) {
         sensor.id = this._data.sensors.length;
@@ -104,7 +106,7 @@ class DescriptionStore extends EventEmitter {
     _generateTurtle() {
         let result = PrefixesTemplate;
 
-        let uri = this._data.description.manufacture.uri;
+        let uri = CONFIG.BASE_CLASS_URI + this._data.description.manufacture.uri;
 
         // system description
         result += _.template(SystemTemplate)({

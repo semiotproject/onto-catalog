@@ -19,8 +19,6 @@ export default class SensorView extends React.Component {
         let sensor = {};
         sensor.id = this.props.data.id;
         sensor.type = this.refs.type.getDOMNode().value;
-        sensor.endpoint = this.refs.endpoint.getDOMNode().value;
-        sensor.protocol = this.refs.protocol.getDOMNode().value;
 
         sensor.id !== null ? Store.saveSensor(sensor) : Store.addSensor(sensor);
     }
