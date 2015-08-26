@@ -32,6 +32,10 @@ export default class SensorView extends React.Component {
             <div>
                 <header>{header}</header>
                 <div className="form" key={this.props.data.id}>
+                    <div className="form-group">
+                        <label for="">Label</label>
+                        <input type="text" ref="label" className="form-control" defaultValue={sensor && sensor.label}/>
+                    </div>
                    <div className="form-group">
                         <label for="">Type</label>
                         <select ref="type" type="text" className="form-control" defaultValue={sensor && sensor.type}>

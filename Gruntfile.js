@@ -52,7 +52,7 @@ module.exports = function (grunt) {
                 files: BUILD_CONFIG.src_dir + "**/*.less",
                 tasks: ['less'],
                 options: {
-                    livereload: false
+                    livereload: true
                 }
             },
             browserify: {
