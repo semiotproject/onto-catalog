@@ -45,6 +45,14 @@ module.exports = function (grunt) {
                     src: ['**/*', '!**/*.less', '!**/*.js'],
                     dest: BUILD_CONFIG.dist_dir
                 }]
+            },
+            fonts: {
+                files: [{
+                    expand: true,
+                    cwd: './node_modules/font-awesome/fonts/',
+                    src: ['*'],
+                    dest: BUILD_CONFIG.dist_dir + "fonts/"
+                }]
             }
         },
         watch: { // watching all newer compilable files
