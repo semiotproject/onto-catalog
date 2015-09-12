@@ -1,0 +1,29 @@
+FROM ubuntu
+WORKDIR /root
+
+ENV WLDFL http://download.jboss.org/wildfly/8.2.0.Final/wildfly-8.2.0.Final.tar.gz
+ENV FUSEKI http://apache-mirror.rbc.ru/pub/apache/jena/binaries/apache-jena-fuseki-2.3.0.tar.gz
+
+# Java
+RUN apt-get update && apt-get install -y wget binutils java-common unzip && echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections && wget https://db.tt/dFU3BqFP -O /root/oracle-java8-installer_8u5-1~webupd8~3_all.deb && dpkg -i oracle-java8-installer_8u5-1~webupd8~3_all.deb && rm oracle-java8-installer_8u5-1~webupd8~3_all.deb
+
+# Utils
+RUN apt-get update && apt-get install -y maven git
+
+ENV JAVA_HOME /usr/lib/jvm/java-8-oracle/jre
+
+RUN git clone https://github.com/semiotproject/wot-semdesc-helper.git
+
+#Setup Wildfly
+RUN wget $WLDFL && tar xvzf wildfly-8.2.0.Final.tar.gz && rm wildfly-8.2.0.Final.tar.gz
+
+RUN wget $FUSEKI && tar xvzf apache-jena-fuseki-2.3.0.tar.gz && rm apache-jena-fuseki-2.3.0.tar.gz
+
+#Deploy to Wildfly
+WORKDIR /root/wot-semdesc-helper/backend/proxy-service/
+
+RUN start-stop-daemon --start --background --exec "/root/wildfly-8.2.0.Final/bin/standalone.sh" && mvn clean wildfly:deploy && sh /root/wildfly-8.2.0.Final/bin/jboss-cli.sh --connect command="deploy /root/apache-jena-fuseki-2.3.0/fuseki.war" && sh /root/wildfly-8.2.0.Final/bin/jboss-cli.sh --connect command=:shutdown
+
+EXPOSE 8080
+
+CMD rm -rf /root/wildfly-8.2.0.Final/standalone/configuration/standalone_xml_history/current/ && /root/wildfly-8.2.0.Final/bin/standalone.sh -b 0.0.0.0
