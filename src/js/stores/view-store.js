@@ -15,7 +15,7 @@ class ViewStore extends EventEmitter {
         this._data = {
             currentView: view,
             currentPayload: payload
-        }
+        };
         this.emit('update');
     }
 

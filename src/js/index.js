@@ -4,6 +4,7 @@ import React from 'react';
 
 import ClassView from './components/class-view.react';
 import InstanceView from './components/instance-view.react';
+import CurrentUserStore from './stores/current-user-store';
 
 const VIEWS = {
     class: {
@@ -80,5 +81,6 @@ App.defaultProps = {
 
 };
 
-
-React.render(<App />, document.querySelector('#main-wrapper'));
+CurrentUserStore.load().done(() => {
+    React.render(<App />, document.querySelector('#main-wrapper'));
+});
