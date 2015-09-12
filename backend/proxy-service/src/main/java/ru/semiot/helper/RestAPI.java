@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ru.semiot.helper;
 
 import java.net.URI;
@@ -123,52 +118,6 @@ public class RestAPI {
         logger.warn("RemoveAll method");
         _accessor.deleteDefault();
         return Response.ok().build();
-    }
-
-    @GET
-    @Path("hello")
-    public Response removeALL4() {
-        Model z = ModelFactory.createDefaultModel();
-        z.createResource("http://www.hello.com/world")
-                .addProperty(VCARD.ADR, "FUCK WORLD")
-                .addProperty(VCARD.ADR, "FUCK2 WORLD")
-                .addProperty(VCARD.GROUP, "FUCK WORLD")
-                .addProperty(VCARD.GROUP, "FUCK3 WORLD");
-        Resource res = z.createResource("http://www.hello.com/world2")
-                .addProperty(VCARD.ADR, "FUCK4 WORLD")
-                .addProperty(VCARD.GROUP, "FUCK WORLD")
-                .addProperty(VCARD.AGENT, z.createResource()
-                        .addProperty(VCARD.GEO, "HELLO"));
-        z.createResource().addProperty(VCARD.UID, res);
-        System.out.println("Model created:");
-        print(z);
-
-        _accessor.add(z);
-        System.out.println("Model added");
-
-        Model unknown = _accessor.getModel();
-        System.out.println("getModel() returned the next model with statements:");
-        print(unknown);
-
-        System.out.println("Try to remove this form accessor");
-        _accessor.getModel().removeAll();
-        print(_accessor.getModel());
-
-        System.out.println("Try to remove this from existing unknown");
-        unknown.removeAll();
-        print(unknown);
-
-        System.out.println("Maybe data be removed form accessor");
-        print(_accessor.getModel());
-
-        System.out.println("Try to remove this from existing model");
-        z.removeAll();
-
-        print(z);
-
-        System.out.println("It's all");
-        return Response.ok().build();
-
     }
 
     private void print(Model m) {
