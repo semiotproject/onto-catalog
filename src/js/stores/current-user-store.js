@@ -1,19 +1,26 @@
 "use strict";
 
 import { EventEmitter } from 'events';
+import $ from 'jquery';
+import CONFIG from '../config';
 
 class CurrentUserStore extends EventEmitter {
     constructor() {
         super();
     }
+    getCurrentUser() {
+        return this._data;
+    }
     load() {
-        /*
-        return request('/fds').then(() => {
-            console.log('success!');
-        }, (e) => {
-            console.error('failed to load current user, error: ', e);
+        return $.ajax({
+            url: CONFIG.URLS.currentUser,
+            success: (res) => {
+                this._data = res;
+            },
+            error: () => {
+
+            }
         });
-        */
     }
 }
 

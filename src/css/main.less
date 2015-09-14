@@ -33,6 +33,7 @@ body {
     ul {
         padding: 0;
         margin: 0;
+        display: inline-block;
         li {
             height: 40px;
             line-height: 40px;
@@ -52,6 +53,33 @@ body {
                 background-color: #337ab7 !important;
             }
         }
+    }
+}
+
+.user-block {
+    display: inline-block;
+    float: right;
+    height: 40px;
+    line-height: 40px;
+    margin-right: 10px;
+    > * {
+        margin-left: 10px;
+    }
+    a,
+    span {
+        color: white;
+        font-size: 12px;
+        &:hover {
+            color: white;
+        }
+    }
+    &__avatar {
+        border-radius: 50%;
+        height: 30px;
+        width: 30px;
+        vertical-align: middle;
+        display: inline-block;
+        box-shadow: 0 0 2px 1px rgba(255,255,255,.4);
     }
 }
 

@@ -4,6 +4,8 @@ import React from 'react';
 
 import ClassView from './components/class-view.react';
 import InstanceView from './components/instance-view.react';
+import UserBlock from './components/user-block.react';
+
 import CurrentUserStore from './stores/current-user-store';
 
 const VIEWS = {
@@ -66,6 +68,7 @@ export default class App extends React.Component {
                     <ul>
                         {menu}
                     </ul>
+                    <UserBlock></UserBlock>
                 </nav>
                 <Component></Component>
             </div>
@@ -81,6 +84,6 @@ App.defaultProps = {
 
 };
 
-CurrentUserStore.load().done(() => {
+CurrentUserStore.load().always(() => {
     React.render(<App />, document.querySelector('#main-wrapper'));
 });
