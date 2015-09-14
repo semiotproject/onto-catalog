@@ -16,6 +16,7 @@ import DriverView from './views/driver.react.js';
 
 import ViewStore from '../stores/view-store';
 import DescriptionStore from '../stores/description-store';
+import ClassStore from '../stores/class-store';
 
 export default class ClassView extends React.Component {
     constructor(props) {
@@ -123,11 +124,26 @@ export default class ClassView extends React.Component {
 
         return buttons;
     }
+    renderClassList() {
+        return (
+            <div className="col-md-2">
+                <ul className="class-list">
+                    {
+                        ClassStore.get().map((c) => {
+                            return (
+                                <li>{c.uri}</li>
+                            );
+                        })
+                    }
+                </ul>
+            </div>
+        );
+    }
     renderMiniMap() {
         let sensors = DescriptionStore.getSensors();
         let actuators = DescriptionStore.getActuators();
         return (
-            <div className="left">
+            <div className="col-md-5">
                 <header>
                     {this.renderButtons()}
                 </header>
@@ -195,7 +211,7 @@ export default class ClassView extends React.Component {
         let Component = ViewStore.getCurrentView() || ManufactureView;
         let payload = ViewStore.getCurrentPayload();
         return (
-            <div className="right">
+            <div className="col-md-5">
                 <Component data={payload}></Component>
             </div>
         );
@@ -209,7 +225,8 @@ export default class ClassView extends React.Component {
                         <span>Describe generic device class</span>
                     </p>
                 </header>
-                <div className="app-container">
+                <div className="app-container container-fluid">
+                    {this.renderClassList()}
                     {this.renderMiniMap()}
                     {this.renderView()}
                 </div>

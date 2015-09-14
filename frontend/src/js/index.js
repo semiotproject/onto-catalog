@@ -1,5 +1,6 @@
 "use strict";
 
+import $ from 'jquery';
 import React from 'react';
 
 import ClassView from './components/class-view.react';
@@ -7,6 +8,7 @@ import InstanceView from './components/instance-view.react';
 import UserBlock from './components/user-block.react';
 
 import CurrentUserStore from './stores/current-user-store';
+import ClassStore from './stores/class-store';
 
 const VIEWS = {
     class: {
@@ -76,14 +78,9 @@ export default class App extends React.Component {
     }
 }
 
-App.propTypes = {
-
-};
-
-App.defaultProps = {
-
-};
-
-CurrentUserStore.load().always(() => {
+$.when(
+    CurrentUserStore.load(),
+    ClassStore.load()
+).always(() => {
     React.render(<App />, document.querySelector('#main-wrapper'));
 });
