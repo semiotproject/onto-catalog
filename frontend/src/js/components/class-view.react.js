@@ -144,9 +144,6 @@ export default class ClassView extends React.Component {
         let actuators = DescriptionStore.getActuators();
         return (
             <div className="col-md-5">
-                <header>
-                    {this.renderButtons()}
-                </header>
                 <div className="minimap-container">
                     <div onClick={this.setView(ManufactureView)}>
                         <h4>Device</h4>
