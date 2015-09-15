@@ -27,11 +27,18 @@ module.exports = function (grunt) {
             }
         },
         browserify: {
+            options: {
+                browserifyOptions: {
+                    debug: true
+                }
+            },
             index: {
                 src: BUILD_CONFIG.src_dir + "js/index.js",
                 dest: BUILD_CONFIG.dist_dir + "js/index.js",
                 options: {
-                    debug: true,
+                    browserifyOptions: {
+                        debug: true
+                    },
                     transform: ['babelify'],
                     watch: true
                 }

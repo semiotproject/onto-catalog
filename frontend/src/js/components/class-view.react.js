@@ -1,21 +1,8 @@
 "use strict";
 
 import React from 'react';
-import $ from 'jquery';
-import saveAs from 'browser-filesaver';
 
-import RootView from './views/root.react.js';
-import SensorsView from './views/sensors.react.js';
-import SensorView from './views/sensor.react.js';
-import ActuatorsView from './views/actuators.react.js';
-import ActuatorView from './views/actuator.react.js';
-import DescriptionView from './views/description.react.js';
-import ManufactureView from './views/manufacture.react.js';
-import DeploymentView from './views/deployment.react.js';
-import DriverView from './views/driver.react.js';
-
-import ViewStore from '../stores/view-store';
-import DescriptionStore from '../stores/description-store';
+import ClassDetail from './class-detail.react';
 import ClassStore from '../stores/class-store';
 
 export default class ClassView extends React.Component {
@@ -23,197 +10,41 @@ export default class ClassView extends React.Component {
         super(props);
 
         this.state = {
-            types: {
-                'json-ld': {
-                    label: "JSON-LD",
-                    ext: "txt",
-                    inProgress: false
-                },
-                'n3': {
-                    label: "N3",
-                    ext: "txt",
-                    inProgress: false
-                },
-                'rdf-xml': {
-                    label: "RDF XML",
-                    ext: "xml",
-                    inProgress: false
-                }
-            }
+            currentClass: ClassStore.get().length > 0 ? ClassStore.get()[0].uri : null
         };
-    }
 
-    componentDidMount() {
-        ViewStore.on('update', this.handleStoreUpdate.bind(this));
-        DescriptionStore.on('update', this.handleStoreUpdate.bind(this));
-    }
-    componentWillUnmount() {
-        ViewStore.removeListener('update', this.handleStoreUpdate.bind(this));
-        DescriptionStore.removeListener('update', this.handleStoreUpdate.bind(this));
-    }
-
-    handleStoreUpdate() {
-        // FIXME
-        this.forceUpdate();
-    }
-    handleSensorAdd() {
-
-    }
-    handleActuatorAdd() {
-
-    }
-
-    setView(Component, payload = {}) {
-        return (e) => {
-            e.stopPropagation();
-            ViewStore.setView(Component, payload);
+        this.handleAddClassClick = () => {
+            console.log('class add click');
         };
-    }
-    generateDescription(type) {
-        return () => {
-            let req;
-            switch (type) {
-                case 'json-ld':
-                    req = DescriptionStore.generateJsonLd();
-                break;
-                case 'n3':
-                    req = DescriptionStore.generateN3();
-                break;
-                case 'rdf-xml':
-                    req = DescriptionStore.generateRdfXml();
-                break;
-                default:
-                    console.warn(`unknown data type: ${type}`);
-                break;
-            }
-            if (req) {
-                let types = this.state.types;
-                this.state.types[type].inProgress = true;
+        this.handleClassClick = (uri) => {
+            return () => {
+                console.log(`class with uri = ${uri} selected`);
                 this.setState({
-                    types: types
+                    currentClass: uri
                 });
-                $.when(req).done((res) => {
-                    if (typeof res === 'object') {
-                        res = JSON.stringify(res, null, 4);
-                    }
-                    console.log("description." + this.state.types[type].ext);
-                    let blob = new Blob([res], {type: "text/plain;charset=utf-8"});
-                    saveAs(blob, "description." + this.state.types[type].ext);
-                    this.state.types[type].inProgress = false;
-                    this.setState({
-                        types: types
-                    });
-                });
-            }
+            };
         };
     }
 
-    renderButtons() {
-        let buttons = [];
-
-        let className = "btn btn-lg btn-primary btn-save";
-        for (let type in this.state.types) {
-            buttons.push(
-                <button className={className + (this.state.types[type].inProgress ? " in-progress" : "")} onClick={this.generateDescription(type)}>
-                    <i className="fa fa-download"></i>
-                    <i className="fa fa-spin fa-cog"></i>
-                    <span>{this.state.types[type].label}</span>
-                </button>
+    render() {
+        let classList = (
+            ClassStore.get().map((c) => {
+                return (
+                    <li className={c.uri === this.state.currentClass ? "active" : ""}
+                        onClick={this.handleClassClick(c.uri)}
+                    >{c.uri}</li>
+                );
+            })
+        );
+        if (classList.length === 0) {
+            classList.push(
+                <li style={{
+                    pointerEvents: "none",
+                    fontSize: "12px",
+                    padding: 0
+                }}>No classed created yet</li>
             );
         }
-
-        return buttons;
-    }
-    renderClassList() {
-        return (
-            <div className="col-md-2">
-                <ul className="class-list">
-                    {
-                        ClassStore.get().map((c) => {
-                            return (
-                                <li>{c.uri}</li>
-                            );
-                        })
-                    }
-                </ul>
-            </div>
-        );
-    }
-    renderMiniMap() {
-        let sensors = DescriptionStore.getSensors();
-        let actuators = DescriptionStore.getActuators();
-        return (
-            <div className="col-md-5">
-                <div className="minimap-container">
-                    <div onClick={this.setView(ManufactureView)}>
-                        <h4>Device</h4>
-                        <div className="children">
-                            <div onClick={this.setView(SensorsView)}>
-                                <h4>
-                                    <span>Sensors</span>
-                                    <button className="btn btn-primary btn-add" title="add" onClick={this.setView(SensorView, { id: null })}>
-                                        <i className="fa fa-plus"></i>
-                                    </button>
-                                </h4>
-                                <div className="children">
-                                    {
-                                        sensors.map((m) => {
-                                            return (
-                                                <div key={m.id} onClick={this.setView(SensorView, { id: m.id })}>
-                                                    <h4>
-                                                        {m.type} #{m.id}
-                                                    </h4>
-                                                </div>
-                                            );
-                                        })
-                                    }
-                                    {
-                                        sensors.length === 0 &&
-                                            <span>No sensors added yet</span>
-                                    }
-                                </div>
-                            </div>
-                            <div onClick={this.setView(ActuatorsView)}>
-                                <h4>
-                                    <span>Actuators</span>
-                                    <button className="btn btn-primary btn-add" title="add" onClick={this.setView(ActuatorView, { id: null })}>
-                                        <i className="fa fa-plus"></i>
-                                    </button>
-                                </h4>
-                                <div className="children">
-                                    {
-                                        actuators.map((a) => {
-                                            return (
-                                                <div key={a.id} onClick={this.setView(ActuatorView, { id: a.id })}>
-                                                    <h4>
-                                                        {a.type} #{a.id}
-                                                    </h4>
-                                                </div>
-                                            );
-                                        })
-                                    }
-                                    {
-                                        actuators.length === 0 &&
-                                            <span>No actuators added yet</span>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-    renderView() {
-        let Component = ViewStore.getCurrentView() || ManufactureView;
-        let payload = ViewStore.getCurrentPayload();
-        return (
-            <div className="col-md-5">
-                <Component data={payload}></Component>
-            </div>
-        );
-    }
-    render() {
         return (
             <div className="app-wrapper">
                 <header className="app-header">
@@ -223,9 +54,19 @@ export default class ClassView extends React.Component {
                     </p>
                 </header>
                 <div className="app-container container-fluid">
-                    {this.renderClassList()}
-                    {this.renderMiniMap()}
-                    {this.renderView()}
+                    <div className="col-md-2">
+                        <h4>
+                            <span>Class list </span>
+                            <button className="btn btn-primary btn-add" title="Create new class" onClick={this.handleAddClassClick}>
+                                <i className="fa fa-plus"></i>
+                            </button></h4>
+                        <ul className="class-list">
+                            {
+                                classList
+                            }
+                        </ul>
+                    </div>
+                    <ClassDetail classURI={this.state.currentClass}></ClassDetail>
                 </div>
             </div>
         );

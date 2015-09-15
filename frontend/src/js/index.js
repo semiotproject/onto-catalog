@@ -44,12 +44,6 @@ export default class App extends React.Component {
 
     }
 
-    // common helpers
-
-
-    // render helpers
-
-
     render() {
         let Component = VIEWS[this.state.view].component;
         let menu = [];

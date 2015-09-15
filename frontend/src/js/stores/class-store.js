@@ -15,7 +15,7 @@ class ClassStore extends EventEmitter {
         // TODO: remove this mock
         const promise = $.Deferred();
 
-        this._data = _.range(4).map((i) => {
+        this._data = _.range(5).map((i) => {
             return {
                 uri: "my awesome uri " + i
             };
