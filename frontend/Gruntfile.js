@@ -44,6 +44,9 @@ module.exports = function (grunt) {
                 }
             }
         },
+        eslint: {
+            target: [BUILD_CONFIG.src_dir + '**/*.js']
+        },
         copy: {
             index: {
                 files: [{
@@ -78,6 +81,10 @@ module.exports = function (grunt) {
                     livereload: true
                 }
             },
+            eslint: {
+                files: BUILD_CONFIG.src_dir + "**/*.js",
+                tasks: ['newer:eslint']
+            },
             other: {
                 files: [BUILD_CONFIG.src_dir + "**/*"].concat(["**/*.less", "**/*.js"].map(function(glob) {
                     return "!" + BUILD_CONFIG.src_dir + glob;
@@ -99,7 +106,7 @@ module.exports = function (grunt) {
         }
     });
 
-    var buildTasks = ["less", "browserify", "copy"];
+    var buildTasks = ["eslint", "less", "browserify", "copy"];
     var watchTasks = ["http-server", "watch"];
 
     grunt.registerTask('build', buildTasks);

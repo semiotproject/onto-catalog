@@ -25,7 +25,7 @@ export default class RootView extends React.Component {
     handleClick(Component) {
         return () => {
             ViewStore.setView(Component);
-        }
+        };
     }
 
     // common helpers

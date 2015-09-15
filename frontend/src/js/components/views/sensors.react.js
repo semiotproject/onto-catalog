@@ -21,7 +21,7 @@ export default class SensorsView extends React.Component {
     handleClick(id) {
         return () => {
             ViewStore.setView(SensorView, { id: id });
-        }
+        };
     }
 
     render() {

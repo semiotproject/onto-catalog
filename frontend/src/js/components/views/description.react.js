@@ -22,7 +22,7 @@ export default class DescriptionView extends React.Component {
     handleSelect(Component) {
         return () => {
             ViewStore.setView(Component);
-        }
+        };
     }
 
     render() {
