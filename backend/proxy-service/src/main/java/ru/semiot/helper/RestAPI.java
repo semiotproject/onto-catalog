@@ -1,8 +1,10 @@
 package ru.semiot.helper;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Iterator;
+import java.nio.charset.StandardCharsets;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateful;
 import javax.ws.rs.Consumes;
@@ -17,14 +19,15 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import org.apache.jena.atlas.json.JsonObject;
+import org.apache.jena.atlas.web.auth.HttpAuthenticator;
+import org.apache.jena.atlas.web.auth.SimpleAuthenticator;
 import org.apache.jena.query.DatasetAccessor;
 import org.apache.jena.query.DatasetAccessorFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.Statement;
-import org.apache.jena.vocabulary.VCARD;
+import org.apache.jena.update.UpdateExecutionFactory;
+import org.apache.jena.update.UpdateFactory;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Token;
@@ -43,14 +46,15 @@ import org.slf4j.LoggerFactory;
 @Stateful
 public class RestAPI {
 
-    
     private static final Logger logger = LoggerFactory
             .getLogger(RestAPI.class);
-    
+
     private final String FUSEKI_DATASET = "http://localhost:8080/fuseki/wot_semdesc_helper/data";
+    private final String FUSEKI_UPDATE = "http://localhost:8080/fuseki/wot_semdesc_helper/update";
+    HttpAuthenticator authenticator;
     private final String API_SECRET = "6731f159091d4f1bae8c29ad6a91277d2f99a671";
     private final String API_KEY = "d7288819a9247346abe1";
-    private final String API_CALLBACK = "http://www.semiot.ru";
+    private final String API_CALLBACK = "http://localhost:8080/proxy-service-SNAPSHOT-1.0/login";
     private String authUrl;
     @Context
     Token access;
@@ -64,6 +68,7 @@ public class RestAPI {
         logger.info("Initialize Web-service");
         _accessor = DatasetAccessorFactory
                 .createHTTP(FUSEKI_DATASET);
+        authenticator = new SimpleAuthenticator(null, null);
         service = new ServiceBuilder()
                 .provider(GitHubApi.class)
                 .apiKey(API_KEY)
@@ -75,40 +80,47 @@ public class RestAPI {
     @DELETE
     @Path("/")
     public Response removeClass(@QueryParam("class_uri") String uri) {
-        logger.info("Remove method: remove uri "+uri);
-        _accessor.getModel().enterCriticalSection(true);
+        logger.info("Remove method: remove uri " + uri);
         Resource r = _accessor.getModel().getResource(uri);
-        if(r==null || r.listProperties().toList().isEmpty())
+        if (r == null || r.listProperties().toList().isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
-        
-        _accessor.getModel().remove(r.listProperties().toList());
-        
-        if(r.equals(_accessor.getModel().getResource(uri)))
+        }
+
+        UpdateExecutionFactory.createRemote(UpdateFactory.create("DELETE {<" + uri + "> ?x ?z} where {<" + uri + "> ?x ?z}"), FUSEKI_UPDATE).execute();
+
+        Resource r2 = _accessor.getModel().getResource(uri);
+        if (r2 == null || r2.listProperties().toList().isEmpty()) {
             return Response.status(Response.Status.EXPECTATION_FAILED).build();
+        }
         return Response.status(Response.Status.OK).build();
     }
 
     @POST
     @Path("/")
-    @Consumes("application/ld+json")
-    public Response createClass(JsonObject object) {
+    @Consumes({"application/ld+json", "application/json"})
+    public Response createClass(String object) {
         logger.info("Create method");
-        logger.debug(object.toString());
-        //TODO ADD new class to fuseki
+        logger.info(object);
+        Model m = ModelFactory.createDefaultModel();
+        InputStream stream = new ByteArrayInputStream(object.getBytes(StandardCharsets.UTF_8));
+        m.read(stream, null, "JSON-LD");
+        _accessor.add(m);
         return Response.ok().build();
     }
-    
+
     @PUT
     @Path("/")
-    @Consumes("application/ld+json")
-    public Response editClass(@QueryParam("class_uri") String uri, JsonObject object) {
+    @Consumes({"application/ld+json", "application/json"})
+    public Response editClass(@QueryParam("class_uri") String uri, String object) {
         logger.info("Edit method: edit uri " + uri);
         Response resp = removeClass(uri);
-        if(resp.getStatus()!=Response.Status.OK.getStatusCode())
+        if (resp.getStatus() != Response.Status.OK.getStatusCode()) {
             return resp;
-        resp=createClass(object);
-        if(resp.getStatus()!=Response.Status.OK.getStatusCode())
+        }
+        resp = createClass(object);
+        if (resp.getStatus() != Response.Status.OK.getStatusCode()) {
             return resp;
+        }
         return Response.status(Response.Status.OK).build();
     }
 
@@ -118,13 +130,6 @@ public class RestAPI {
         logger.warn("RemoveAll method");
         _accessor.deleteDefault();
         return Response.ok().build();
-    }
-
-    private void print(Model m) {
-        for (Iterator iter = m.listStatements(); iter.hasNext();) {
-            Statement state = (Statement) iter.next();
-            System.out.println(state.asTriple().toString());
-        }
     }
 
     @GET
@@ -146,7 +151,7 @@ public class RestAPI {
         Verifier v = new Verifier(code);
         access = service.getAccessToken(null, v);
         Response response = getUserData(access.getToken());
-        logger.debug("Access token is "+ access.getToken());
+        logger.debug("Access token is " + access.getToken());
         return Response.status(response.getStatus()).entity(response.getEntity()).build();
     }
 
@@ -163,5 +168,4 @@ public class RestAPI {
         org.scribe.model.Response response = request.send();
         return Response.status(response.getCode()).entity(response.getBody()).build();
     }
-
 }

@@ -1,2 +1,5 @@
 frontend/node_modules
 frontend/dist
+backend/proxy-service/target
+backend/proxy-service/nbactions.xml
+backend/proxy-service/nb-configuration.xml
