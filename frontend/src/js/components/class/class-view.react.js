@@ -3,7 +3,7 @@
 import React from 'react';
 
 import ClassDetail from './class-detail.react';
-import ClassStore from '../stores/class-store';
+import ClassStore from '../../stores/class-store';
 
 export default class ClassView extends React.Component {
     constructor(props) {
@@ -14,7 +14,9 @@ export default class ClassView extends React.Component {
         };
 
         this.handleAddClassClick = () => {
-            console.log('class add click');
+            this.setState({
+                currentClass: null
+            });
         };
         this.handleClassClick = (uri) => {
             return () => {

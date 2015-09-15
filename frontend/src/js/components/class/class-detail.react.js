@@ -4,19 +4,14 @@ import React from 'react';
 import $ from 'jquery';
 import saveAs from 'browser-filesaver';
 
-import RootView from './views/root.react.js';
 import SensorsView from './views/sensors.react.js';
 import SensorView from './views/sensor.react.js';
 import ActuatorsView from './views/actuators.react.js';
 import ActuatorView from './views/actuator.react.js';
 import DescriptionView from './views/description.react.js';
-import ManufactureView from './views/manufacture.react.js';
-import DeploymentView from './views/deployment.react.js';
-import DriverView from './views/driver.react.js';
 
-import ViewStore from '../stores/view-store';
-import DescriptionStore from '../stores/description-store';
-import ClassStore from '../stores/class-store';
+import ViewManager from './view-manager';
+import ClassStore from '../../stores/class-store';
 
 const logger = console;
 
@@ -39,35 +34,44 @@ export default class ClassDetail extends React.Component {
             // TODO: fixme
             this.forceUpdate();
         };
+        this.handleSaveClick = () => {
+            console.log('save was clicked');
+        };
     }
 
     // lifecycle methods
     componentDidMount() {
-        ViewStore.on('update', this.handleStoreUpdate.bind(this));
-        DescriptionStore.on('update', this.handleStoreUpdate.bind(this));
+        ViewManager.on('update', this.handleStoreUpdate.bind(this));
+        ClassStore.on('update', this.handleStoreUpdate.bind(this));
     }
     componentWillUnmount() {
-        ViewStore.removeListener('update', this.handleStoreUpdate.bind(this));
-        DescriptionStore.removeListener('update', this.handleStoreUpdate.bind(this));
+        ViewManager.removeListener('update', this.handleStoreUpdate.bind(this));
+        ClassStore.removeListener('update', this.handleStoreUpdate.bind(this));
     }
 
     // common helpers
     setView(Component, payload = {}) {
         return (e) => {
             e.stopPropagation();
-            ViewStore.setView(Component, payload);
+            ViewManager.setView(Component, payload);
         };
     }
 
     // render helpers
     renderMiniMap() {
-        let sensors = DescriptionStore.getSensors();
-        let actuators = DescriptionStore.getActuators();
+        let sensors = ClassStore.getSensors();
+        let actuators = ClassStore.getActuators();
         return (
             <div className="col-md-6">
                 <div className="minimap-container">
-                    <div onClick={this.setView(ManufactureView)}>
-                        <h4>Device</h4>
+                    <div onClick={this.setView(DescriptionView)}>
+                        <h4>
+                            <span>{this.props.classURI || "New Device Class"}</span>
+                            <button className="btn btn-primary" onClick={this.handleSaveClick}>
+                                <i className="fa fa-save"></i>
+                                <span>{this.props.classURI ? "Save" : "Create"}</span>
+                            </button>
+                        </h4>
                         <div className="children">
                             <div onClick={this.setView(SensorsView)}>
                                 <h4>
@@ -126,11 +130,11 @@ export default class ClassDetail extends React.Component {
         );
     }
     renderView() {
-        let Component = ViewStore.getCurrentView() || ManufactureView;
-        let payload = ViewStore.getCurrentPayload();
+        let Component = ViewManager.getCurrentView() || DescriptionView;
+        let payload = ViewManager.getCurrentPayload();
         return (
             <div className="col-md-6">
-                <Component data={payload}></Component>
+                <Component data={payload} classURI={this.props.classURI}></Component>
             </div>
         );
     }
