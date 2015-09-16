@@ -15,10 +15,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import org.apache.jena.atlas.web.auth.HttpAuthenticator;
 import org.apache.jena.atlas.web.auth.SimpleAuthenticator;
 import org.apache.jena.query.DatasetAccessor;
@@ -36,6 +34,7 @@ import org.scribe.model.Verifier;
 import org.scribe.oauth.OAuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static ru.semiot.helper.ServiceConfig.config;
 
 /**
  * REST Web Service
@@ -49,17 +48,8 @@ public class RestAPI {
     private static final Logger logger = LoggerFactory
             .getLogger(RestAPI.class);
 
-    private final String FUSEKI_DATASET = "http://localhost:8080/fuseki/wot_semdesc_helper/data";
-    private final String FUSEKI_UPDATE = "http://localhost:8080/fuseki/wot_semdesc_helper/update";
-    HttpAuthenticator authenticator;
-    private final String API_SECRET = "6731f159091d4f1bae8c29ad6a91277d2f99a671";
-    private final String API_KEY = "d7288819a9247346abe1";
-    private final String API_CALLBACK = "http://localhost:8080/proxy-service-SNAPSHOT-1.0/login";
+    HttpAuthenticator authenticator;    
     private String authUrl;
-    @Context
-    Token access;
-    @Context
-    UriInfo uriInfo;
     OAuthService service;
     DatasetAccessor _accessor;
 
@@ -67,13 +57,13 @@ public class RestAPI {
     private void _init() {
         logger.info("Initialize Web-service");
         _accessor = DatasetAccessorFactory
-                .createHTTP(FUSEKI_DATASET);
-        authenticator = new SimpleAuthenticator(null, null);
+                .createHTTP(config.datasetUrl());
+        authenticator = new SimpleAuthenticator(config.fusekiUsername(), config.fusekiPassword().toCharArray());
         service = new ServiceBuilder()
                 .provider(GitHubApi.class)
-                .apiKey(API_KEY)
-                .apiSecret(API_SECRET)
-                .callback(API_CALLBACK).build();
+                .apiKey(config.githubKey())
+                .apiSecret(config.githubSecret())
+                .callback(config.githubUrl()).build();
         authUrl = service.getAuthorizationUrl(null);
     }
 
@@ -86,7 +76,7 @@ public class RestAPI {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        UpdateExecutionFactory.createRemote(UpdateFactory.create("DELETE {<" + uri + "> ?x ?z} where {<" + uri + "> ?x ?z}"), FUSEKI_UPDATE).execute();
+        UpdateExecutionFactory.createRemote(UpdateFactory.create("DELETE {<" + uri + "> ?x ?z} where {<" + uri + "> ?x ?z}"), config.updatetUrl()).execute();
 
         Resource r2 = _accessor.getModel().getResource(uri);
         if (r2 == null || r2.listProperties().toList().isEmpty()) {
@@ -149,7 +139,7 @@ public class RestAPI {
         logger.info("Login method");
         logger.debug("Code is " + code);
         Verifier v = new Verifier(code);
-        access = service.getAccessToken(null, v);
+        Token access = service.getAccessToken(null, v);
         Response response = getUserData(access.getToken());
         logger.debug("Access token is " + access.getToken());
         return Response.status(response.getStatus()).entity(response.getEntity()).build();
