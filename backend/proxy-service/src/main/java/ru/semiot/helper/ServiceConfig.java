@@ -1,6 +1,7 @@
 package ru.semiot.helper;
 
 import org.aeonbits.owner.Config;
+import org.aeonbits.owner.Config.HotReload;
 import org.aeonbits.owner.Config.LoadPolicy;
 import org.aeonbits.owner.Config.LoadType;
 import org.aeonbits.owner.Config.Sources;
@@ -12,6 +13,7 @@ import org.aeonbits.owner.ConfigFactory;
  *
  * @author Daniil Garayzuev <garayzuev@gmail.com>
  */
+@HotReload
 @LoadPolicy(LoadType.FIRST)
 @Sources({"file:/wot_semdesc_helper/backend/config.properties"})
 public interface ServiceConfig extends Config{
