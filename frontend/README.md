@@ -17,7 +17,7 @@ sudo npm i
 ### Via Docker
 
 ```
-sudo docker pull semiot/wot-semdesc-helper
+sudo docker pull semiot/wot-semdesc-helper-frontend
 ```
 
 ## Build
