@@ -39,6 +39,10 @@ WORKDIR /root/wot-semdesc-helper/backend/proxy-service/
 
 RUN service mysql start && start-stop-daemon --start --background --exec "/root/wildfly-8.2.0.Final/bin/standalone.sh" && mvn clean wildfly:deploy && sh /root/wildfly-8.2.0.Final/bin/jboss-cli.sh --connect command="deploy /root/apache-jena-fuseki-2.3.0/fuseki.war" && sh /root/wildfly-8.2.0.Final/bin/jboss-cli.sh --connect command=:shutdown
 
+#Config Fuseki
+ADD shiro.ini /etc/fuseki/
+ADD config.ttl /etc/fuseki/
+
 EXPOSE 8080
 
 CMD rm -rf /root/wildfly-8.2.0.Final/standalone/configuration/standalone_xml_history/current/ && service mysql start && /root/wildfly-8.2.0.Final/bin/standalone.sh -b 0.0.0.0
