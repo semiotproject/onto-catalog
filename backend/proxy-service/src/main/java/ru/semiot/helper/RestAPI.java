@@ -53,8 +53,9 @@ public class RestAPI {
 
     private static final Logger logger = LoggerFactory
             .getLogger(RestAPI.class);
-    @Inject DataBase db;
-    HttpAuthenticator authenticator;    
+    @Inject
+    DataBase db;
+    HttpAuthenticator authenticator;
     private String authUrl;
     OAuthService service;
     DatasetAccessor _accessor;
@@ -66,7 +67,7 @@ public class RestAPI {
         _accessor = DatasetAccessorFactory
                 .createHTTP(config.datasetUrl());
         authenticator = new SimpleAuthenticator(config.fusekiUsername(), config.fusekiPassword().toCharArray());
-        
+
         service = new ServiceBuilder()
                 .provider(GitHubApi.class)
                 .apiKey(config.githubKey())
@@ -81,19 +82,21 @@ public class RestAPI {
         logger.info("Remove method");
         logger.debug("URI to remove is " + uri);
         String token = db.getToken(hash);
-        if(token== null || !isAliveToken(token))
+        if (token == null || getUser(token) == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
         Resource r = _accessor.getModel().getResource(uri);
-        
+
         if (r == null || r.listProperties().toList().isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        Literal owner =  r.getProperty(_accessor.getModel().getProperty("http://www.example.com/hasOwner")).getObject().asLiteral();
-        if(!db.getLogin(hash).equals(owner.getValue()))
+        Literal owner = r.getProperty(_accessor.getModel().getProperty("http://www.example.com/hasOwner")).getObject().asLiteral();
+        if (!db.getLogin(hash).equals(owner.getValue())) {
             return Response.status(Response.Status.FORBIDDEN).build();
-        
+        }
+
         UpdateExecutionFactory.createRemote(UpdateFactory.create("DELETE {<" + uri + "> ?x ?z} where {<" + uri + "> ?x ?z}"), config.updatetUrl()).execute();
-        
+
         return Response.status(Response.Status.OK).build();
     }
 
@@ -118,7 +121,7 @@ public class RestAPI {
     public Response editClass(@CookieParam("hash") long hash, @QueryParam("class_uri") String uri, String object) {
         logger.info("Edit method");
         logger.debug("URI to edit is " + uri);
-        Response resp = removeClass(hash,uri);
+        Response resp = removeClass(hash, uri);
         if (resp.getStatus() != Response.Status.OK.getStatusCode()) {
             return resp;
         }
@@ -127,14 +130,6 @@ public class RestAPI {
             return resp;
         }
         return Response.status(Response.Status.OK).build();
-    }
-
-    @DELETE
-    @Path("remove")
-    public Response removeALL() {
-        logger.warn("RemoveAll method");
-        _accessor.deleteDefault();
-        return Response.ok().build();
     }
 
     @GET
@@ -149,54 +144,53 @@ public class RestAPI {
 
     @GET
     @Path("/login/code/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response login(@QueryParam("code") String code) {
         logger.info("Login method");
-        logger.debug("Code is " + code);
         Verifier v = new Verifier(code);
         Token access = service.getAccessToken(null, v);
-        Response response = getUserData(access.getToken());
-        logger.debug("Access token is " + access.getToken());
-        JSONObject json = new JSONObject(response.getEntity().toString());
-        long hash = db.addNewUser(access.getToken(), json.getInt("id"), json.getString("login"));        
-        return Response.status(response.getStatus()).entity(response.getEntity()).cookie(new NewCookie("hash", Long.toString(hash))).build();
+        JSONObject json = getUser(access.getToken());
+        long hash = db.addNewUser(access.getToken(), json.getInt("id"), json.getString("login"));
+        return Response.ok().cookie(new NewCookie("hash", Long.toString(hash))).build();
     }
 
     @GET
     @Path("/login/user")
     @Produces(MediaType.APPLICATION_JSON)
-    private Response getUserData(@QueryParam("access_token") String token) {
+    public Response getUserData(@CookieParam("hash") long hash) {
         logger.info("UserData method");
-        logger.debug("Access token is " + token);
+        String token = db.getToken(hash);
+        if (token == null) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        JSONObject json = getUser(token);
+        if (json == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        return Response.ok(json.toString()).build();
+    }
+
+    private JSONObject getUser(String token) {
         String raw = TOKEN.replace("${TOKEN}", token);
         Token acc = new Token(token, "", raw);
         OAuthRequest request = new OAuthRequest(Verb.GET, "https://api.github.com/user");
         service.signRequest(acc, request);
         org.scribe.model.Response response = request.send();
-        return Response.status(response.getCode()).entity(response.getBody()).build();
+        if (response.getCode() != 200) {
+            return null;
+        }
+        return new JSONObject(response.getBody());
     }
-    
+
     @GET
     @Path("/logout")
     @Produces(MediaType.APPLICATION_JSON)
     public Response logout(@CookieParam("hash") long hash) {
         logger.info("Logout method");
         String token = db.getToken(hash);
-        if(token!=null ){
+        if (token != null) {
             db.remove(hash);
             return Response.ok().build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
-    }
-    
-    private boolean isAliveToken(String token){
-        Token acc = new Token(token, "", TOKEN.replace("${TOKEN}", token));
-        OAuthRequest request = new OAuthRequest(Verb.GET, "https://api.github.com/user");
-        service.signRequest(acc, request);
-        org.scribe.model.Response response = request.send();
-        if(response.getCode()==200)
-            return true;
-        else
-            return false;
     }
 }
