@@ -18,4 +18,4 @@
 
 :tdb_dataset_readwrite
         a             tdb:DatasetTDB ;
-        tdb:location  "C:\\etc\\fuseki/databases/wot_semdesc_helper" .
+        tdb:location  "/etc/fuseki/databases/wot_semdesc_helper" .
