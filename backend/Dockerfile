@@ -32,7 +32,7 @@ RUN wget $FUSEKI && tar xvzf apache-jena-fuseki-2.3.0.tar.gz && rm apache-jena-f
 RUN service mysql start && mysql --execute="create database semdesc; connect semdesc; create table session(id int(8), token text, session_hash bigint, login text, key(session_hash));"
 
 #Add config file
-ADD config.properties /wot_semdesc_helper/backend/
+#ADD config.properties /wot_semdesc_helper/backend/
 
 #Deploy to Wildfly
 WORKDIR /root/wot-semdesc-helper/backend/proxy-service/
