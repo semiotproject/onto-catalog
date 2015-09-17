@@ -35,15 +35,15 @@ public interface ServiceConfig extends Config{
     @Key("fuseki.password")
     String fusekiPassword();
     
-    @DefaultValue("d7288819a9247346abe1")
+    @DefaultValue("e7d4a83b6da5fd826b79")
     @Key("github.key")
     String githubKey();
     
-    @DefaultValue("6731f159091d4f1bae8c29ad6a91277d2f99a671")
+    @DefaultValue("d2fcb8ed9c388cb1d394b5cd1d1973c89b294065")
     @Key("github.secret")
     String githubSecret();
     
-    @DefaultValue("http://localhost:8080/proxy-service-SNAPSHOT-1.0/login/code")
+    @DefaultValue("http://semdesc.semiot.ru:8085/proxy-service-SNAPSHOT-1.0/login/code/")
     @Key("github.callback")
     String githubUrl();
 }
