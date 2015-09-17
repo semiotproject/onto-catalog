@@ -3,8 +3,8 @@ semdescbackend:
   ports:
     - "8085:8080"
   volumes:
-    - /home/daniil/Desktop/semiot/wot-semdesc-helper/fuseki:/etc/fuseki
-    - /home/daniil/Desktop/semiot/wot-semdesc-helper/config/:/wot_semdesc_helper/backend/
+    - /semiot/wot-semdesc-helper/fuseki:/etc/fuseki
+    - /semiot/wot-semdesc-helper/config/:/wot_semdesc_helper/backend/
   restart: always
 
 semdescfrontend:
