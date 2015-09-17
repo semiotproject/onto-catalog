@@ -43,7 +43,7 @@ public interface ServiceConfig extends Config{
     @Key("github.secret")
     String githubSecret();
     
-    @DefaultValue("http://localhost:8080/proxy-service-SNAPSHOT-1.0/login")
+    @DefaultValue("http://localhost:8080/proxy-service-SNAPSHOT-1.0/login/code")
     @Key("github.callback")
     String githubUrl();
 }
