@@ -1,0 +1,14 @@
+semdescbackend:
+  image: semiot/wot-semdesc-helper-backend
+  ports:
+    - "8085:8080"
+  volumes:
+    - /home/daniil/Desktop/semiot/wot-semdesc-helper/fuseki:/etc/fuseki
+    - /home/daniil/Desktop/semiot/wot-semdesc-helper/config/:/wot_semdesc_helper/backend/
+  restart: always
+
+semdescfrontend:
+  image: semiot/wot-semdesc-helper-frontend
+  ports:
+    - "3000:3000"
+  restart: always
