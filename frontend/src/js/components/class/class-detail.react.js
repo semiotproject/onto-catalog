@@ -29,7 +29,6 @@ export default class ClassDetail extends React.Component {
         logger.info('will mount');
 
         // UI and stores handlers declaration
-        //
         this.handleStoreUpdate = () => {
             // TODO: fixme
             this.forceUpdate();
@@ -37,12 +36,23 @@ export default class ClassDetail extends React.Component {
         this.handleSaveClick = () => {
             console.log('save was clicked');
         };
+        this.handleAddSensor = () => {
+            let newSensorId = ClassStore.addSensor(this.props.classId);
+            this.setView(SensorView, {
+                id: newSensorId
+            });
+        };
     }
 
     // lifecycle methods
     componentDidMount() {
         ViewManager.on('update', this.handleStoreUpdate.bind(this));
         ClassStore.on('update', this.handleStoreUpdate.bind(this));
+    }
+    componentDidUpdate(prevProps) {
+        if (this.props.classId !== prevProps.classId) {
+            ViewManager.setView(DescriptionView);
+        }
     }
     componentWillUnmount() {
         ViewManager.removeListener('update', this.handleStoreUpdate.bind(this));
@@ -59,24 +69,24 @@ export default class ClassDetail extends React.Component {
 
     // render helpers
     renderMiniMap() {
-        let sensors = ClassStore.getSensors();
-        let actuators = ClassStore.getActuators();
+        let model = ClassStore.getById(this.props.classId);
+        let { sensors, actuators } = model;
         return (
             <div className="col-md-6">
                 <div className="minimap-container">
                     <div onClick={this.setView(DescriptionView)}>
                         <h4>
-                            <span>{this.props.classURI || "New Device Class"}</span>
+                            <span>{model.isNew ? "New Device Class" : model.uri}</span>
                             <button className="btn btn-primary" onClick={this.handleSaveClick}>
                                 <i className="fa fa-save"></i>
-                                <span>{this.props.classURI ? "Save" : "Create"}</span>
+                                <span>{model.isNew ? "Create" : "Save"}</span>
                             </button>
                         </h4>
                         <div className="children">
                             <div onClick={this.setView(SensorsView)}>
                                 <h4>
                                     <span>Sensors</span>
-                                    <button className="btn btn-primary btn-add" title="add" onClick={this.setView(SensorView, { id: null })}>
+                                    <button className="btn btn-primary btn-add" title="add" onClick={this.handleAddSensor}>
                                         <i className="fa fa-plus"></i>
                                     </button>
                                 </h4>
@@ -134,7 +144,7 @@ export default class ClassDetail extends React.Component {
         let payload = ViewManager.getCurrentPayload();
         return (
             <div className="col-md-6">
-                <Component data={payload} classURI={this.props.classURI}></Component>
+                <Component data={payload} classId={this.props.classId}></Component>
             </div>
         );
     }

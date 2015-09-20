@@ -25,7 +25,7 @@ export default class SensorsView extends React.Component {
     }
 
     render() {
-        let sensors = Store.getSensors();
+        let sensors = Store.getById(this.props.classId).sensors;
         return (
             <div>
                 <header>Sensors</header>

@@ -16,7 +16,7 @@ export default class ActuatorsView extends React.Component {
     }
 
     render() {
-        let actuators = Store.getActuators();
+        let actuators = Store.getByURI(this.props.classURI).actuators;
         return (
             <div>
                 <header>Actuators</header>

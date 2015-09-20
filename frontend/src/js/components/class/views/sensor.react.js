@@ -3,6 +3,7 @@
 let React = require('react');
 
 import Store from '../../../stores/class-store';
+import _ from 'lodash';
 
 export default class SensorView extends React.Component {
 
@@ -13,22 +14,26 @@ export default class SensorView extends React.Component {
         this.state = {
 
         };
-    }
 
-    handleClick() {
-        let sensor = {};
-        sensor.id = this.props.data.id;
-        sensor.type = this.refs.type.getDOMNode().value;
+        this.handleChange = () => {
+            let model = Store.getById(this.props.classId);
+            let sensor = _.find(model.sensors, (s) => {
+                return s.id === this.props.data.id;
+            });
 
-        return sensor.id !== null ? Store.saveSensor(sensor) : Store.addSensor(sensor);
+            sensor = _.assign({}, sensor, {
+                type: this.refs.type.getDOMNode().value
+            });
+
+            Store.updateSensor(this.props.classId, sensor);
+        };
     }
 
     render() {
-        let header = this.props.data.id === null ? "New sensor" : `Sensor #${this.props.data.id}`;
-        let sensor = Store.getSensorById(this.props.data.id);
+        let sensor = Store.getSensorById(this.props.classId, this.props.data.id);
         return (
             <div>
-                <header>{header}</header>
+                <header>{`Sensor #${this.props.data.id}`}</header>
                 <div className="form" key={this.props.data.id}>
                     <div className="form-group">
                         <label for="">Label</label>
@@ -36,7 +41,7 @@ export default class SensorView extends React.Component {
                     </div>
                    <div className="form-group">
                         <label for="">Type</label>
-                        <select ref="type" type="text" className="form-control" defaultValue={sensor && sensor.type}>
+                        <select onChange={this.handleChange} ref="type" type="text" className="form-control" defaultValue={sensor && sensor.type}>
                             <option value="Humidity">Humidity</option>
                             <option value="Amperage">Amperage</option>
                             <option value="Heat">Heat</option>
@@ -72,7 +77,7 @@ export default class SensorView extends React.Component {
                         <input type="text" ref="range-period" className="form-control" defaultValue={sensor && sensor.period}/>
                     </div>
                     <div className="form-group">
-                        <button className="btn btn-lg btn-primary" onClick={this.handleClick.bind(this)}>Save</button>
+                        <button className="btn btn-lg btn-primary" onClick={this.handleChange.bind(this)}>Save</button>
                     </div>
                 </div>
             </div>

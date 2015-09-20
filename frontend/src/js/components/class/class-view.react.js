@@ -10,30 +10,42 @@ export default class ClassView extends React.Component {
         super(props);
 
         this.state = {
-            currentClass: ClassStore.get().length > 0 ? ClassStore.get()[0].uri : null
+            currentClass: ClassStore.get().length > 0 ? ClassStore.get()[0].id : null
         };
 
         this.handleAddClassClick = () => {
+            console.log(`showing the form for create new class`);
+            let newClassId = ClassStore.generate();
             this.setState({
-                currentClass: null
+                currentClass: newClassId
             });
         };
-        this.handleClassClick = (uri) => {
+        this.handleClassClick = (id) => {
             return () => {
-                console.log(`class with uri = ${uri} selected`);
+                console.log(`class with id = ${id} selected`);
                 this.setState({
-                    currentClass: uri
+                    currentClass: id
                 });
             };
         };
+        this.handleStoreUpdate = () => {
+            this.forceUpdate();
+        };
+    }
+
+    componentDidMount() {
+        ClassStore.on('update', this.handleStoreUpdate);
+    }
+    componentWillUnmount() {
+        ClassStore.off('update', this.handleStoreUpdate);
     }
 
     render() {
         let classList = (
             ClassStore.get().map((c) => {
                 return (
-                    <li className={c.uri === this.state.currentClass ? "active" : ""}
-                        onClick={this.handleClassClick(c.uri)}
+                    <li className={c.id === this.state.currentClass ? "active" : ""}
+                        onClick={this.handleClassClick(c.id)}
                     >{c.uri}</li>
                 );
             })
@@ -68,7 +80,7 @@ export default class ClassView extends React.Component {
                             }
                         </ul>
                     </div>
-                    <ClassDetail classURI={this.state.currentClass}></ClassDetail>
+                    <ClassDetail classId={this.state.currentClass}></ClassDetail>
                 </div>
             </div>
         );

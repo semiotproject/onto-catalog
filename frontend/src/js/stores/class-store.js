@@ -3,10 +3,12 @@
 import { EventEmitter } from 'events';
 import $ from 'jquery';
 import _ from 'lodash';
+import uuid from 'uuid';
 
 class ClassStore extends EventEmitter {
     constructor() {
         super();
+        this._counter = 0;
     }
     load() {
         // TODO: remove this mock
@@ -14,16 +16,34 @@ class ClassStore extends EventEmitter {
 
         this._data = _.range(5).map((i) => {
             return {
-                uri: "my awesome uri " + i
+                uri: "my awesome uri " + i,
+                id: this._counter++,
+                sensors: [],
+                actuators: []
             };
         });
         promise.resolve(this._data);
 
         return promise;
     }
-    getByURI(uri) {
+    generate() {
+        _.remove(this._data, (c) => {
+            return c.isNew;
+        });
+        let newClass = {
+            uri: uuid.v4(),
+            id: this._counter++,
+            sensors: [],
+            actuators: [],
+            isNew: true
+        };
+        this._data.push(newClass);
+        this.emit('update');
+        return newClass.id;
+    }
+    getById(id) {
         return _.find(this._data, (c) => {
-            return c.uri === uri;
+            return c.id === id;
         });
     }
     get() {
@@ -32,49 +52,61 @@ class ClassStore extends EventEmitter {
     create(json) {
         //
     }
+    // local
     update(json) {
-
-    }
-    delete(uri) {
-
-    }
-
-    getDescription() {
-        return this._data.description;
-    }
-    setDescription(d) {
-        this._data.description = d;
-        this.emit('update');
-    }
-
-    getActuators() {
-        return this._data.actuators;
-    }
-    getActuatorById(aid) {
-        return _.find(this._data.actuators, (a) => {
-            return a.id === aid;
-        });
-    }
-
-    getSensors() {
-        return this._data.sensors;
-    }
-    getSensorById(sid) {
-        return _.find(this._data.sensors, (s) => {
-            return s.id === sid;
-        });
-    }
-    addSensor(sensor) {
-        sensor.id = this._data.sensors.length;
-        this._data.sensors.push(sensor);
-        this.emit('update');
-    }
-    saveSensor(sensor) {
-        this._data.sensors.forEach((s, index) => {
-            if (s.id == sensor.id) {
-                this._data.sensors[index] = sensor;
+        this._data.forEach((c, index) => {
+            if (c.id === json.id) {
+                this._data[index] = json;
                 this.emit('update');
             }
+        });
+    }
+    // remote
+    save(json) {
+
+    }
+    delete(id) {
+
+    }
+
+    addSensor(classId) {
+        let model = _.find(this._data, (c) => {
+            return c.id === classId;
+        });
+        if (!model) {
+            return;
+        }
+        let newSensor = {
+            id: model.sensors.length + 1,
+            type: "Amperage"
+        };
+        model.sensors.push(newSensor);
+        this.emit('update');
+        return newSensor.id;
+    }
+    updateSensor(classId, sensor) {
+        let model = _.find(this._data, (c) => {
+            return c.id === classId;
+        });
+        if (!model) {
+            return;
+        }
+        model.sensors.forEach((s, index) => {
+            if (s.id === sensor.id) {
+                model.sensors[index] = sensor;
+                this.emit('update');
+            }
+        });
+    }
+    getSensorById(classId, sensorId) {
+        let model = _.find(this._data, (c) => {
+            return c.id === classId;
+        });
+        if (!model) {
+            return;
+        }
+        return _.find(model.sensors, (s) => {
+            return s.id === sensorId;
         });
     }
 }
