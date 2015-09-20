@@ -35,12 +35,16 @@ export default class ClassDetail extends React.Component {
         };
         this.handleSaveClick = () => {
             console.log('save was clicked');
+            ClassStore.save(this.props.classId);
         };
         this.handleAddSensor = () => {
             let newSensorId = ClassStore.addSensor(this.props.classId);
             this.setView(SensorView, {
                 id: newSensorId
             });
+        };
+        this.handleRemoveClick = () => {
+            ClassStore.remove(this.props.classId);
         };
     }
 
@@ -75,6 +79,10 @@ export default class ClassDetail extends React.Component {
             <div className="col-md-6">
                 <div className="minimap-container">
                     <div onClick={this.setView(DescriptionView)}>
+                        {
+                            !model.isNew &&
+                            <span onClick={this.handleRemoveClick} className="fa fa-remove"></span>
+                        }
                         <h4>
                             <span>{model.isNew ? "New Device Class" : model.uri}</span>
                             <button className="btn btn-primary" onClick={this.handleSaveClick}>

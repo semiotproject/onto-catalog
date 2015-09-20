@@ -1,6 +1,7 @@
 "use strict";
 
 import { EventEmitter } from 'events';
+import CONFIG from '../config';
 import $ from 'jquery';
 import _ from 'lodash';
 import uuid from 'uuid';
@@ -62,11 +63,43 @@ class ClassStore extends EventEmitter {
         });
     }
     // remote
-    save(json) {
+    save(classId) {
+        let model = this.getById(classId);
+        if (!model) {
+            return;
+        }
+        return $.ajax({
+            url: CONFIG.URLS.class + (model.isNew ? "" : encodeURIComponent(model.uri)),
+            type: model.isNew ? "POST" : "PUT",
+            data: JSON.stringify(model),
+            contentType: "applcation/ls+json",
+            success() {
+                model.isNew = false;
+                this.emit('update');
+            },
+            error() {
 
+            }
+        });
     }
-    delete(id) {
+    remove(classId) {
+        let model = this.getById(classId);
+        if (!model) {
+            return;
+        }
+        return $.ajax({
+            url: CONFIG.URLS.class + (model.isNew ? "" : encodeURIComponent(model.uri)),
+            type: "DELETE",
+            success: () => {
+                _.remove((this._data, (m) => {
+                    return m.id === classId;
+                }));
+                this.emit('update');
+            },
+            error() {
 
+            }
+        });
     }
 
     addSensor(classId) {
