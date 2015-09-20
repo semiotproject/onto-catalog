@@ -5,6 +5,21 @@ let React = require('react');
 import _ from 'lodash';
 import Store from '../../../stores/class-store';
 
+const FIELDS = {
+    'uri': {
+        title: "Class URI"
+    },
+    'label': {
+        title: "Label"
+    },
+    'manufacturer': {
+        title: "Manufacturer"
+    },
+    'version': {
+        title: "Version"
+    }
+};
+
 export default class DescriptionView extends React.Component {
 
     constructor(props) {
@@ -29,6 +44,30 @@ export default class DescriptionView extends React.Component {
         };
     }
 
+    renderField(type, value) {
+        let isEditable = Store.isEditable(this.props.classId);
+        let val;
+        if (isEditable) {
+            val = (
+                <input type="text"
+                    key={this.props.classId + "-" + type}
+                    onChange={this.handleKeyUp}
+                    ref={type}
+                    className="form-control"
+                    value={value}
+                />
+            );
+        } else {
+            val = <span htmlFor="">{value}</span>;
+        }
+        return (
+            <div className="form-group">
+                <label for="">{FIELDS[type].title}:</label>
+                {val}
+            </div>
+        );
+    }
+
 
     render() {
         let model = Store.getById(this.props.classId);
@@ -37,44 +76,10 @@ export default class DescriptionView extends React.Component {
             <div>
                 <header>Device</header>
                 <div>
-                    <div className="form-group">
-                        <label for="">Class URI</label>
-                        <input key={this.props.classId + "-uri"}
-                            onChange={this.handleKeyUp}
-                            type="text"
-                            ref="uri"
-                            className="form-control"
-                            value={model.uri}/>
-                    </div>
-                    <div className="form-group">
-                        <label for="">Label</label>
-                        <input key={this.props.classId + "-label"}
-                            onChange={this.handleKeyUp}
-                            type="text"
-                            ref="label"
-                            className="form-control"
-                            value={model.label}/>
-                    </div>
-                    <div className="form-group">
-                        <label for="">Manufacturer</label>
-                        <input key={this.props.classId + "-manufacturer"}
-                            disabled
-                            onChange={this.handleKeyUp}
-                            type="text"
-                            ref="manufacturer"
-                            className="form-control"
-                            value={model.manufacturer}/>
-                    </div>
-                    <div className="form-group">
-                        <label for="">Version</label>
-                        <input key={this.props.classId + "-version"}
-                            disabled
-                            onChange={this.handleKeyUp}
-                            type="text"
-                            ref="version"
-                            className="form-control"
-                            value={model.version}/>
-                    </div>
+                    {this.renderField('uri', model.uri)}
+                    {this.renderField('label', model.label)}
+                    {this.renderField('manufacturer', model.manufacturer)}
+                    {this.renderField('version', model.version)}
                 </div>
             </div>
         );

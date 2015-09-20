@@ -12,6 +12,7 @@ import DescriptionView from './views/description.react.js';
 
 import ViewManager from './view-manager';
 import ClassStore from '../../stores/class-store';
+import CurrentUserStore from '../../stores/current-user-store';
 
 const logger = console;
 
@@ -85,7 +86,6 @@ export default class ClassDetail extends React.Component {
             ViewManager.setView(Component, payload);
         };
     }
-
     // render helpers
     renderMiniMap() {
         let model = ClassStore.getById(this.props.classId);
@@ -96,23 +96,29 @@ export default class ClassDetail extends React.Component {
                 <div className="minimap-container">
                     <div onClick={this.setView(DescriptionView)}>
                         {
-                            !model.isNew &&
+                            !model.isNew && ClassStore.isEditable(this.props.classId) &&
                             <span onClick={this.handleRemoveClick} className="fa fa-remove"></span>
                         }
                         <h4>
                             <span>{model.isNew ? "New Device Class" : model.uri}</span>
-                            <button className="btn btn-primary" onClick={this.handleSaveClick}>
-                                <i className="fa fa-save"></i>
-                                <span>{model.isNew ? "Create" : "Save"}</span>
-                            </button>
+                            {
+                                ClassStore.isEditable(this.props.classId) &&
+                                    <button className="btn btn-primary" onClick={this.handleSaveClick}>
+                                        <i className="fa fa-save"></i>
+                                        <span>{model.isNew ? "Create" : "Save"}</span>
+                                    </button>
+                            }
                         </h4>
                         <div className="children">
                             <div onClick={this.setView(SensorsView)}>
                                 <h4>
                                     <span>Sensors</span>
-                                    <button className="btn btn-primary btn-add" title="add" onClick={this.handleAddSensor}>
-                                        <i className="fa fa-plus"></i>
-                                    </button>
+                                    {
+                                        ClassStore.isEditable(this.props.classId) &&
+                                            <button className="btn btn-primary btn-add" title="add" onClick={this.handleAddSensor}>
+                                                <i className="fa fa-plus"></i>
+                                            </button>
+                                    }
                                 </h4>
                                 <div className="children">
                                     {
@@ -135,9 +141,12 @@ export default class ClassDetail extends React.Component {
                             <div onClick={this.setView(ActuatorsView)}>
                                 <h4>
                                     <span>Actuators</span>
-                                    <button className="btn btn-primary btn-add" title="add" onClick={this.setView(ActuatorView, { id: null })}>
-                                        <i className="fa fa-plus"></i>
-                                    </button>
+                                    {
+                                        ClassStore.isEditable(this.props.classId) &&
+                                            <button className="btn btn-primary btn-add" title="add" onClick={this.setView(ActuatorView, { id: null })}>
+                                                <i className="fa fa-plus"></i>
+                                            </button>
+                                    }
                                 </h4>
                                 <div className="children">
                                     {

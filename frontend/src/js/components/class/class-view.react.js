@@ -4,6 +4,7 @@ import React from 'react';
 
 import ClassDetail from './class-detail.react';
 import ClassStore from '../../stores/class-store';
+import CurrentUserStore from '../../stores/current-user-store';
 
 export default class ClassView extends React.Component {
     constructor(props) {
@@ -71,9 +72,13 @@ export default class ClassView extends React.Component {
                     <div className="col-md-2">
                         <h4>
                             <span>Class list </span>
-                            <button className="btn btn-primary btn-add" title="Create new class" onClick={this.handleAddClassClick}>
-                                <i className="fa fa-plus"></i>
-                            </button></h4>
+                            {
+                                CurrentUserStore.getCurrentUser() &&
+                                    <button className="btn btn-primary btn-add" title="Create new class" onClick={this.handleAddClassClick}>
+                                        <i className="fa fa-plus"></i>
+                                    </button>
+                            }
+                        </h4>
                         <ul className="class-list">
                             {
                                 classList

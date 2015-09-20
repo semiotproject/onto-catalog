@@ -7,6 +7,7 @@ import CONFIG from '../config';
 class CurrentUserStore extends EventEmitter {
     constructor() {
         super();
+        this._data = null;
     }
     getCurrentUser() {
         return this._data;

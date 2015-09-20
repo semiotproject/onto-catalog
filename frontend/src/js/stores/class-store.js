@@ -6,6 +6,7 @@ import $ from 'jquery';
 import _ from 'lodash';
 import uuid from 'uuid';
 import { classToJSONLD, JSONLDtoClass } from '../json-ld-adapter';
+import CurrentUserStore from './current-user-store';
 
 class ClassStore extends EventEmitter {
     constructor() {
@@ -44,6 +45,7 @@ class ClassStore extends EventEmitter {
             "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
             "ssn": "http://purl.oclc.org/NET/ssnx/ssn#",
             "ssncom": "http://purl.org/NET/ssnext/communication#",
+            "prov": "<http://www.w3.org/ns/prov#>",
             "xsd": "http://www.w3.org/2001/XMLSchema#"
           },
           "@graph": [
@@ -51,6 +53,7 @@ class ClassStore extends EventEmitter {
               "@id": uri,
               "@type": "ssn:System",
               "rdfs:label": uri,
+              "prov:wasAssociatedWith": "soylent-grin",
               "ssn:hasSubsystem": [
                 {
                   "@id": "coap://10.1.1.1:6500:6500/meter/temperature"
@@ -149,6 +152,11 @@ class ClassStore extends EventEmitter {
 
             }
         });
+    }
+
+    isEditable(classId) {
+        let user = CurrentUserStore.getCurrentUser();
+        return (user && user.username === ClassStore.getById(classId).createdBy);
     }
 
     addSensor(classId) {

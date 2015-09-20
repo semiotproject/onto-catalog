@@ -68,6 +68,7 @@ export function JSONLDtoClass(jsonld) {
             model = {
                 uri: i['@id'],
                 label: i['rdfs:label'],
+                createdBy: i['prov:wasAssociatedWith'],
                 sensors: graph.filter((j) => {
                     return j['@type'] === 'ssn:Sensor';
                 }).map((s, k) => {

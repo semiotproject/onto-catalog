@@ -5,6 +5,46 @@ let React = require('react');
 import Store from '../../../stores/class-store';
 import _ from 'lodash';
 
+const FIELDS = {
+    label: {
+        title: 'Label'
+    },
+    type: {
+        title: 'Type',
+        isSelect: true,
+        options: [
+            {
+                value: "emtr:Amperage",
+                title: "Amperage"
+            },
+            {
+                value: "hmtr:Heat",
+                title: "Heat"
+            },
+            {
+                value: "hmtr:Temperature",
+                title: "Temperature"
+            }
+        ]
+    },
+    units: {
+        title: 'Units of Measurement',
+        isSelect: true,
+        isDisabled: true,
+        options: [
+            // here are options
+        ]
+    },
+    accuracy: {
+        title: 'Accuracy',
+        isDisabled: true
+    },
+    sensingPeriod: {
+        title: 'Sensing Period',
+        isDisabled: true
+    }
+};
+
 export default class SensorView extends React.Component {
 
     constructor(props) {
@@ -29,56 +69,59 @@ export default class SensorView extends React.Component {
         };
     }
 
+    renderField(type, value) {
+        let isEditable = Store.isEditable(this.props.classId);
+        let val;
+        if (isEditable) {
+            if (FIELDS[type].isSelect) {
+                val = (
+                    <select ref={type}
+                        className="form-control"
+                        onChange={this.handleChange}
+                        key={this.props.classId + "-" + type}
+                        disabled={FIELDS[type].isDisabled}
+                        value={value}>
+                        {
+                            FIELDS[type].options.map((o) => {
+                                return <option value={o.value}>{o.title}</option>;
+                            })
+                        }
+                    </select>
+                );
+            } else {
+                val = (
+                    <input type="text"
+                        key={this.props.classId + "-" + type}
+                        onChange={this.handleChange}
+                        ref={type}
+                        className="form-control"
+                        disabled={FIELDS[type].isDisabled}
+                        value={value}
+                    />
+                );
+            }
+        } else {
+            val = <span htmlFor="">{value}</span>;
+        }
+        return (
+            <div className="form-group">
+                <label for="">{FIELDS[type].title}:</label>
+                {val}
+            </div>
+        );
+    }
+
     render() {
         let sensor = Store.getSensorById(this.props.classId, this.props.data.id);
         return (
             <div>
                 <header>{`Sensor #${this.props.data.id}`}</header>
                 <div className="form" key={this.props.data.id}>
-                    <div className="form-group">
-                        <label for="">Label</label>
-                        <input type="text" ref="label" className="form-control" defaultValue={sensor && sensor.label}/>
-                    </div>
-                   <div className="form-group">
-                        <label for="">Type</label>
-                        <select onChange={this.handleChange} ref="type" type="text" className="form-control" defaultValue={sensor && sensor.type}>
-                            <option value="Humidity">Humidity</option>
-                            <option value="emtr:Amperage">Amperage</option>
-                            <option value="hmtr:Heat">Heat</option>
-                            <option value="hmtr:Temperature">Temperature</option>
-                        </select>
-                    </div>
-                    <div className="form-group">
-                        <label for="">Units of Measurement</label>
-                        <select disabled ref="units" type="text" className="form-control" defaultValue={sensor && sensor.units}>
-                            <option value="C">C</option>
-                            <option value="F">F</option>
-                        </select>
-                    </div>
-                    <div className="form-group">
-                        <label for="">Operating range</label>
-                        <div>
-                            <span>
-                                <label htmlFor="">From</label>
-                                <input disabled type="number" ref="range-from" className="form-control" defaultValue={sensor && sensor.range && sensor.range.from}/>
-                            </span>
-                            <span>
-                                <label htmlFor="">To</label>
-                                <input disabled type="number" ref="range-to" className="form-control" defaultValue={sensor && sensor.range && sensor.range.to}/>
-                            </span>
-                        </div>
-                    </div>
-                    <div className="form-group">
-                        <label for="">Accuracy</label>
-                        <input disabled type="text" ref="range-accuracy" className="form-control" defaultValue={sensor && sensor.accuracy}/>
-                    </div>
-                    <div className="form-group">
-                        <label for="">Sensing period</label>
-                        <input disabled type="text" ref="range-period" className="form-control" defaultValue={sensor && sensor.period}/>
-                    </div>
-                    <div className="form-group">
-                        <button className="btn btn-lg btn-primary" onClick={this.handleChange.bind(this)}>Save</button>
-                    </div>
+                    {this.renderField('label', sensor && sensor.label)}
+                    {this.renderField('type', sensor && sensor.type)}
+                    {this.renderField('units', sensor && sensor.units)}
+                    {this.renderField('accuracy', sensor && sensor.accuracy)}
+                    {this.renderField('sensingPeriod', sensor && sensor.sensingPeriod)}
                 </div>
             </div>
         );

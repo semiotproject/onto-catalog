@@ -14,37 +14,7 @@ export default class UserBlock extends React.Component {
         this.state = {
             currentUser: CurrentUserStore.getCurrentUser()
         };
-
-        // ex-componentWillMount hooks
-        logger.info('will mount');
-
-        // UI and stores handlers declaration
-
-
     }
-
-    // lifecycle methods
-    componentDidMount() {
-        logger.info('mounting..');
-    }
-    componentWillReceiveProps(nextProps) {
-        logger.info('props received');
-    }
-    componentWillUpdate(nextProps, nextState) {
-        logger.info('will update');
-    }
-    componentDidUpdate(prevProps, prevState) {
-        logger.info('did update');
-    }
-    componentWillUnmount() {
-        logger.info('unmounting..');
-    }
-
-    // common helpers
-
-
-    // render helpers
-
 
     render() {
         let className = "user-block";
@@ -56,7 +26,7 @@ export default class UserBlock extends React.Component {
             content = (
                 <div className={className}>
                         <img src={this.state.currentUser.avatar_url} className="user-block__avatar"/>
-                        <span className="user-block__username">{this.state.currentUser.login}</span>
+                        <span className="user-block__username">{this.state.currentUser.username}</span>
                         <span>|</span>
                         <a href="/logout" className="user-block__logout">logout</a>
                 </div>
@@ -71,11 +41,3 @@ export default class UserBlock extends React.Component {
         return content;
     }
 }
-
-UserBlock.propTypes = {
-
-};
-
-UserBlock.defaultProps = {
-
-};
