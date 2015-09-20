@@ -5,6 +5,7 @@ import CONFIG from '../config';
 import $ from 'jquery';
 import _ from 'lodash';
 import uuid from 'uuid';
+import { classToJSONLD } from '../json-ld-adapter';
 
 class ClassStore extends EventEmitter {
     constructor() {
@@ -71,7 +72,7 @@ class ClassStore extends EventEmitter {
         return $.ajax({
             url: CONFIG.URLS.class + (model.isNew ? "" : encodeURIComponent(model.uri)),
             type: model.isNew ? "POST" : "PUT",
-            data: JSON.stringify(model),
+            data: JSON.stringify(classToJSONLD(model)),
             contentType: "applcation/ls+json",
             success() {
                 model.isNew = false;
