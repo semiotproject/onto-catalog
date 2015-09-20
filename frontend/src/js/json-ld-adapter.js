@@ -17,8 +17,46 @@ const PREFIXES = {
 };
 
 const CONTEXT = _.assign(PREFIXES, {
-
+    //
 });
+/*
+  "@context": {
+    "dul": "http://www.loa-cnr.it/ontologies/DUL.owl#",
+    "geo": "http://www.w3.org/2003/01/geo/wgs84_pos#",
+    "geosparql": "http://www.opengis.net/ont/geosparql#",
+    "hmtr": "http://purl.org/NET/ssnext/heatmeters#",
+    "limap": "http://data.uni-muenster.de/php/vocab/limap",
+    "limapext": "http://purl.org/NET/limapext#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "ssn": "http://purl.oclc.org/NET/ssnx/ssn#",
+    "ssncom": "http://purl.org/NET/ssnext/communication#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#"
+  },
+  "@graph": [
+    {
+      "@id": uri,
+      "@type": "ssn:System",
+      "rdfs:label": uri,
+      'ssn:hasSubsystem':: json. [
+        {
+          "@id": "coap://10.1.1.1:6500:6500/meter/temperature"
+        }
+      ]
+    },
+    {
+      "@id": "coap://10.1.1.1:6500:6500/meter/temperature",
+      "@type": "ssn:Sensor",
+      "ssn:observes": {
+        "@id": "hmtr:Temperature"
+      }
+    }
+  ]
+ */
+const TEMPLATE = {
+    '@context': CONTEXT,
+    '@graph': []
+};
 
 export function JSONLDtoClass(jsonld) {
     let model = {};
@@ -50,24 +88,30 @@ export function JSONLDtoClass(jsonld) {
 export function classToJSONLD(json) {
     // create immutable copy
     json = _.assign({}, json);
+    let template = _.assign({}, TEMPLATE);
+    let graph = template['@graph'];
 
-    // strip unused fields
-    json.id = undefined;
-    json.isNew = undefined;
-
-    json['@id'] = json.uri;
-    json.uri = undefined;
-
-    json['@type'] = "System";
-
-    json.sensors.forEach((s, index) => {
-        json.sensors[index]['@id'] = json['@id'] + '/sensor/' + json.sensors[index].id;
-        json.sensors[index].id = undefined;
-
-        json.sensors[index]['@type'] = "Sensor";
+    graph.push({
+        '@id': json.uri,
+        '@type': "ssn:System",
+        'rdfs:label': json.label,
+        'ssn:hasSubsystem': json.sensors.map((s, index) => {
+            return {
+                '@id': json.uri + '/sensor/' + s.id
+            };
+        })
     });
 
-    json['@context'] = CONTEXT;
 
-    return json;
+    template['@graph'] = graph.concat(json.sensors.map((s, index) => {
+        return {
+            '@id': json.uri + '/sensor/' + s.id,
+            '@type': "ssn:Sensor",
+            'ssn:observes': {
+                '@id': s.type
+            }
+        };
+    }));
+
+    return template;
 }

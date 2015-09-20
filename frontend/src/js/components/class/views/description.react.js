@@ -58,6 +58,7 @@ export default class DescriptionView extends React.Component {
                     <div className="form-group">
                         <label for="">Manufacturer</label>
                         <input key={this.props.classId + "-manufacturer"}
+                            disabled
                             onChange={this.handleKeyUp}
                             type="text"
                             ref="manufacturer"
@@ -67,6 +68,7 @@ export default class DescriptionView extends React.Component {
                     <div className="form-group">
                         <label for="">Version</label>
                         <input key={this.props.classId + "-version"}
+                            disabled
                             onChange={this.handleKeyUp}
                             type="text"
                             ref="version"

@@ -160,7 +160,7 @@ class ClassStore extends EventEmitter {
         }
         let newSensor = {
             id: model.sensors.length + 1,
-            type: "Amperage"
+            type: "hmtr:Temperature"
         };
         model.sensors.push(newSensor);
         this.emit('update');

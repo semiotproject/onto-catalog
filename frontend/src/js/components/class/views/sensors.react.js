@@ -16,13 +16,19 @@ export default class SensorsView extends React.Component {
         this.state = {
 
         };
-    }
-
-    handleClick(id) {
-        return () => {
-            ViewManager.setView(SensorView, { id: id });
+        this.handleAddSensor = () => {
+            let newSensorId = Store.addSensor(this.props.classId);
+            this.setView(SensorView, {
+                id: newSensorId
+            });
+        };
+        this.handleClick = (id) => {
+            return () => {
+                ViewManager.setView(SensorView, { id: id });
+            };
         };
     }
+
 
     render() {
         let sensors = Store.getById(this.props.classId).sensors;
@@ -40,7 +46,7 @@ export default class SensorsView extends React.Component {
                             return (
                                 <div className="col-md-4" key={item.id}>
                                     <button className="big" onClick={this.handleClick(item.id)}>
-                                        {item.type} # {index}
+                                        {item.type} #{item.id}
                                     </button>
                                 </div>
                             );
