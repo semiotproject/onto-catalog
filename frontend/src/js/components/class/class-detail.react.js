@@ -89,7 +89,6 @@ export default class ClassDetail extends React.Component {
     // render helpers
     renderMiniMap() {
         let model = ClassStore.getById(this.props.classId);
-        console.log(model, ClassStore._data, this.props.classId);
         let { sensors, actuators } = model;
         return (
             <div className="col-md-6">

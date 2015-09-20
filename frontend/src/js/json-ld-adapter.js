@@ -81,8 +81,6 @@ export function JSONLDtoClass(jsonld) {
         }
     });
 
-    console.log(model);
-
     return model;
 }
 
