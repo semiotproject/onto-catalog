@@ -74,7 +74,7 @@ export default class App extends React.Component {
 
 $.when(
     CurrentUserStore.load(),
-    ClassStore.load()
+    ClassStore.loadList()
 ).always(() => {
     React.render(<App />, document.querySelector('#main-wrapper'));
 });

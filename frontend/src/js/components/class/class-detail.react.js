@@ -22,7 +22,7 @@ export default class ClassDetail extends React.Component {
 
         // instead of getInitialState in new React notation
         this.state = {
-
+            loading: true
         };
 
         // ex-componentWillMount hooks
@@ -50,17 +50,32 @@ export default class ClassDetail extends React.Component {
 
     // lifecycle methods
     componentDidMount() {
+        this.loadClass();
         ViewManager.on('update', this.handleStoreUpdate.bind(this));
         ClassStore.on('update', this.handleStoreUpdate.bind(this));
     }
     componentDidUpdate(prevProps) {
         if (this.props.classId !== prevProps.classId) {
+            this.loadClass();
             ViewManager.setView(DescriptionView);
         }
     }
     componentWillUnmount() {
         ViewManager.removeListener('update', this.handleStoreUpdate.bind(this));
         ClassStore.removeListener('update', this.handleStoreUpdate.bind(this));
+    }
+
+    loadClass() {
+        this.setState({
+            loading: true
+        }, () => {
+            let model = ClassStore.getById(this.props.classId);
+            $.when(ClassStore.loadDetail(model.uri)).done(() => {
+                this.setState({
+                    loading: false
+                });
+            });
+        });
     }
 
     // common helpers
@@ -74,6 +89,7 @@ export default class ClassDetail extends React.Component {
     // render helpers
     renderMiniMap() {
         let model = ClassStore.getById(this.props.classId);
+        console.log(model, ClassStore._data, this.props.classId);
         let { sensors, actuators } = model;
         return (
             <div className="col-md-6">

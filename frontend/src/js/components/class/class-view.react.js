@@ -37,7 +37,7 @@ export default class ClassView extends React.Component {
         ClassStore.on('update', this.handleStoreUpdate);
     }
     componentWillUnmount() {
-        ClassStore.off('update', this.handleStoreUpdate);
+        ClassStore.removeListener('update', this.handleStoreUpdate);
     }
 
     render() {

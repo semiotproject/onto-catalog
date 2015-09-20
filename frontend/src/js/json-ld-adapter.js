@@ -16,10 +16,36 @@ const PREFIXES = {
     "xsd": "http://www.w3.org/2001/XMLSchema#"
 };
 
-const CONTEXT = {
-    "System": PREFIXES.ssn + "System",
-    "Sensor": PREFIXES.ssn + "Sensor"
-};
+const CONTEXT = _.assign(PREFIXES, {
+
+});
+
+export function JSONLDtoClass(jsonld) {
+    let model = {};
+
+    let graph = jsonld['@graph'];
+
+    graph.forEach((i, index) => {
+        if (i['@type'] === "ssn:System") {
+            model = {
+                uri: i['@id'],
+                label: i['rdfs:label'],
+                sensors: graph.filter((j) => {
+                    return j['@type'] === 'ssn:Sensor';
+                }).map((s, k) => {
+                    return {
+                        id: k,
+                        type: s['ssn:observes']['@id']
+                    };
+                })
+            };
+        }
+    });
+
+    console.log(model);
+
+    return model;
+}
 
 export function classToJSONLD(json) {
     // create immutable copy
