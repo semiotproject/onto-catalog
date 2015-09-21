@@ -52,8 +52,8 @@ export default class ClassDetail extends React.Component {
     // lifecycle methods
     componentDidMount() {
         this.loadClass();
-        ViewManager.on('update', this.handleStoreUpdate.bind(this));
-        ClassStore.on('update', this.handleStoreUpdate.bind(this));
+        ViewManager.on('update', this.handleStoreUpdate);
+        ClassStore.on('update', this.handleStoreUpdate);
     }
     componentDidUpdate(prevProps) {
         if (this.props.classId !== prevProps.classId) {
@@ -62,8 +62,8 @@ export default class ClassDetail extends React.Component {
         }
     }
     componentWillUnmount() {
-        ViewManager.removeListener('update', this.handleStoreUpdate.bind(this));
-        ClassStore.removeListener('update', this.handleStoreUpdate.bind(this));
+        ViewManager.removeListener('update', this.handleStoreUpdate);
+        ClassStore.removeListener('update', this.handleStoreUpdate);
     }
 
     loadClass() {
