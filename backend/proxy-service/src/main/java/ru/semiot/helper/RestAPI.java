@@ -155,7 +155,7 @@ public class RestAPI {
         Token access = service.getAccessToken(null, v);
         JSONObject json = getUser(access.getToken());
         long hash = db.addNewUser(access.getToken(), json.getInt("id"), json.getString("login"));        
-        return Response.ok().cookie(new NewCookie("hash", Long.toString(hash), null, null, null, 0, false)).build();
+        return Response.ok().cookie(new NewCookie("hash", Long.toString(hash))).build();
     }
 
     @GET
