@@ -1,6 +1,7 @@
 "use strict";
 
 import CurrentUserStore from '../stores/current-user-store';
+import CONFIG from '../config';
 import React from 'react';
 
 let logger = console;
@@ -28,13 +29,13 @@ export default class UserBlock extends React.Component {
                         <img src={this.state.currentUser.avatar_url} className="user-block__avatar"/>
                         <span className="user-block__username">{this.state.currentUser.username}</span>
                         <span>|</span>
-                        <a href="/logout" className="user-block__logout">logout</a>
+                        <a href={CONFIG.URLS.logout} className="user-block__logout">logout</a>
                 </div>
             );
         } else {
             content = (
                 <div className={className}>
-                    <a href="/login" className="user-block__login">sign in with Github</a>
+                    <a href={CONFIG.URLS.login} className="user-block__login">sign in with Github</a>
                 </div>
             );
         }
