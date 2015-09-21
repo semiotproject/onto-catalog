@@ -1,6 +1,5 @@
 package ru.semiot.helper;
 
-import database.DataBase;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
@@ -40,6 +39,7 @@ import org.scribe.model.Verifier;
 import org.scribe.oauth.OAuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.semiot.database.DataBase;
 import static ru.semiot.helper.ServiceConfig.config;
 
 /**
@@ -64,10 +64,15 @@ public class RestAPI {
     @PostConstruct
     private void _init() {
         logger.info("Initialize Web-service");
-        _accessor = DatasetAccessorFactory
-                .createHTTP(config.datasetUrl());
-        authenticator = new SimpleAuthenticator(config.fusekiUsername(), config.fusekiPassword().toCharArray());
-
+        if (config.fusekiUsername() != null && !config.fusekiUsername().isEmpty()
+                && config.fusekiPassword() != null && !config.fusekiPassword().isEmpty()) {
+            authenticator = new SimpleAuthenticator(config.fusekiUsername(), config.fusekiPassword().toCharArray());
+            _accessor = DatasetAccessorFactory
+                    .createHTTP(config.datasetUrl(),authenticator);
+        } else {
+            _accessor = DatasetAccessorFactory
+                    .createHTTP(config.datasetUrl());
+        }
         service = new ServiceBuilder()
                 .provider(GitHubApi.class)
                 .apiKey(config.githubKey())
@@ -149,8 +154,8 @@ public class RestAPI {
         Verifier v = new Verifier(code);
         Token access = service.getAccessToken(null, v);
         JSONObject json = getUser(access.getToken());
-        long hash = db.addNewUser(access.getToken(), json.getInt("id"), json.getString("login"));
-        return Response.ok().cookie(new NewCookie("hash", Long.toString(hash))).build();
+        long hash = db.addNewUser(access.getToken(), json.getInt("id"), json.getString("login"));        
+        return Response.ok().cookie(new NewCookie("hash", Long.toString(hash), null, null, null, 0, false)).build();
     }
 
     @GET

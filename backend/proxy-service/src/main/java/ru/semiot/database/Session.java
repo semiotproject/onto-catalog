@@ -1,4 +1,4 @@
-package database;
+package ru.semiot.database;
 
 import java.io.Serializable;
 import javax.persistence.Basic;

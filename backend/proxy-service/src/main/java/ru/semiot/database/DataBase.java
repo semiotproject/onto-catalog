@@ -1,4 +1,4 @@
-package database;
+package ru.semiot.database;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
