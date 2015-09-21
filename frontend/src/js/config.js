@@ -2,14 +2,17 @@
 
 const BACKEND_PORT = 8085;
 const BACKEND_HOST = `${location.protocol}//${location.hostname}:${BACKEND_PORT}`;
-const urlBase = `${BACKEND_HOST}/api/`;
+const proxyBase = `${BACKEND_HOST}/api/`;
+const fusekiBase = `${BACKEND_HOST}/fuseki/wot_semdesc_helper/`;
+
 
 export default {
     BASE_CLASS_URI: "http://semdesc.semiot.ru/devices/classes/",
     URLS: {
-        login: urlBase + "login/",
-        logout: urlBase + "logout/",
-        currentUser: urlBase + "current_user/",
-        class: urlBase + "class/"
+        login: proxyBase + "login/",
+        logout: proxyBase + "logout/",
+        currentUser: proxyBase + "current_user/",
+        class: proxyBase + "class/",
+        endpoint: fusekiBase
     }
 };

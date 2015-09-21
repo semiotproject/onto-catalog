@@ -6,6 +6,7 @@ import $ from 'jquery';
 import _ from 'lodash';
 import uuid from 'uuid';
 import { classToJSONLD, JSONLDtoClass } from '../json-ld-adapter';
+import { loadClassList, loadClassDetail } from '../sparql-adapter';
 import CurrentUserStore from './current-user-store';
 
 class ClassStore extends EventEmitter {
@@ -15,19 +16,9 @@ class ClassStore extends EventEmitter {
     }
     loadList() {
         // TODO: remove this mock
-        const promise = $.Deferred();
-
-        this._data = _.range(5).map((i) => {
-            return {
-                uri: "Heat Meter #" + (6500 + i),
-                id: this._counter++,
-                sensors: [],
-                actuators: []
-            };
+        return loadClassList().done((res) => {
+            this._classList = res;
         });
-        promise.resolve(this._data);
-
-        return promise;
     }
     loadDetail(uri) {
         console.log('loading additional info about class with URI = ', uri);
@@ -35,52 +26,199 @@ class ClassStore extends EventEmitter {
 
         let response =  JSONLDtoClass({
           "@context": {
-            "dul": "http://www.loa-cnr.it/ontologies/DUL.owl#",
-            "geo": "http://www.w3.org/2003/01/geo/wgs84_pos#",
-            "geosparql": "http://www.opengis.net/ont/geosparql#",
-            "hmtr": "http://purl.org/NET/ssnext/heatmeters#",
-            "limap": "http://data.uni-muenster.de/php/vocab/limap",
-            "limapext": "http://purl.org/NET/limapext#",
+            "DUL": "http://dul.org/#",
+            "foaf": "http://foaf.org/#",
+            "prov": "http://www.w3.org/ns/prov#",
             "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
             "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+            "semdesc": "http://semdesc.semiot.ru/classes/",
+            "someprefix": "http://someprefix.org/#",
             "ssn": "http://purl.oclc.org/NET/ssnx/ssn#",
-            "ssncom": "http://purl.org/NET/ssnext/communication#",
-            "prov": "<http://www.w3.org/ns/prov#>",
-            "xsd": "http://www.w3.org/2001/XMLSchema#"
+            "xsd": "http://www.w3.org/2001/XMLSchema#",
+            "xsd1": "http://xsd.org/#"
           },
           "@graph": [
             {
-              "@id": uri,
-              "@type": "ssn:System",
-              "rdfs:label": uri,
-              "prov:wasAssociatedWith": "soylent-grin",
-              "ssn:hasSubsystem": [
+              "@id": "_:ub32bL20C40",
+              "@type": "ssn:Accuracy",
+              "ssn:hasValue": {
+                "@id": "_:ub32bL22C30"
+              }
+            },
+            {
+              "@id": "_:ub32bL55C43",
+              "xsd1:double": "0.1"
+            },
+            {
+              "@id": "_:ub32bL40C38",
+              "@type": "ssn:MeasurementCapability",
+              "ssn:forProperty": {
+                "@id": "someprefix:AirHumidity"
+              },
+              "ssn:hasMeasurementProperty": [
                 {
-                  "@id": "coap://10.1.1.1:6500:6500/meter/temperature"
+                  "@id": "_:ub32bL43C40"
+                },
+                {
+                  "@id": "_:ub32bL51C40"
                 }
               ]
             },
             {
-              "@id": "coap://10.1.1.1:6500:6500/meter/temperature",
+              "@id": "http://github.com/soylent-grin",
+              "@type": [
+                "prov:Person",
+                "prov:Agent"
+              ],
+              "foaf:givenName": {
+                "@type": "xsd1:string",
+                "@value": "Nikolay Klimov"
+              },
+              "foaf:mbox": {
+                "@id": "mailto:.."
+              }
+            },
+            {
+              "@id": "_:ub32bL28C40",
+              "@type": "ssn:Sensitivity",
+              "ssn:hasValue": {
+                "@id": "_:ub32bL30C30"
+              }
+            },
+            {
+              "@id": "_:ub32bL47C41",
+              "xsd1:double": "2"
+            },
+            {
+              "@id": "_:ub32bL37C8",
               "@type": "ssn:Sensor",
+              "ssn:hasMeasurementCapability": {
+                "@id": "_:ub32bL40C38"
+              },
               "ssn:observes": {
-                "@id": "hmtr:Temperature"
+                "@id": "someprefix:AirHumidity"
+              }
+            },
+            {
+              "@id": "_:ub32bL32C43",
+              "xsd1:double": "0.1"
+            },
+            {
+              "@id": "_:ub32bL17C38",
+              "@type": "ssn:MeasurementCapability",
+              "ssn:forProperty": {
+                "@id": "someprefix:AirTemperature"
+              },
+              "ssn:hasMeasurementProperty": [
+                {
+                  "@id": "_:ub32bL28C40"
+                },
+                {
+                  "@id": "_:ub32bL20C40"
+                }
+              ]
+            },
+            {
+              "@id": "_:ub32bL51C40",
+              "@type": "ssn:Sensitivity",
+              "ssn:hasValue": {
+                "@id": "_:ub32bL53C30"
+              }
+            },
+            {
+              "@id": "_:ub32bL24C43",
+              "xsd1:double": "0.5"
+            },
+            {
+              "@id": "_:ub32bL30C30",
+              "@type": "DUL:Amount",
+              "DUL:hasDataValue": {
+                "@id": "_:ub32bL32C43"
+              },
+              "DUL:isClassifiedBy": {
+                "@id": "someprefix:Celsius"
+              }
+            },
+            {
+              "@id": "_:ub32bL43C40",
+              "@type": "ssn:Accuracy",
+              "ssn:hasValue": {
+                "@id": "_:ub32bL45C30"
+              }
+            },
+            {
+              "@id": "_:ub32bL22C30",
+              "@type": "DUL:Amount",
+              "DUL:hasDataValue": {
+                "@id": "_:ub32bL24C43"
+              },
+              "DUL:isClassifiedBy": {
+                "@id": "someprefix:Celsius"
+              }
+            },
+            {
+              "@id": "_:ub32bL53C30",
+              "@type": "DUL:Amount",
+              "DUL:hasDataValue": {
+                "@id": "_:ub32bL55C43"
+              },
+              "DUL:isClassifiedBy": {
+                "@id": "someprefix:RH"
+              }
+            },
+            {
+              "@id": "_:ub32bL14C22",
+              "@type": "ssn:Sensor",
+              "ssn:hasMeasurementCapability": {
+                "@id": "_:ub32bL17C38"
+              },
+              "ssn:observes": {
+                "@id": "someprefix:AirTemperature"
+              }
+            },
+            {
+              "@id": "http://example.com/1",
+              "@type": "prov:Entity",
+              "prov:wasAttributedTo": {
+                "@id": "http://github.com/soylent-grin"
+              },
+              "rdfs:label": {
+                "@language": "en",
+                "@value": "Air temperature and Humidity Sensor (DHT-22)"
+              },
+              "rdfs:subClassOf": {
+                "@id": "ssn:System"
+              },
+              "ssn:hasSubSystem": [
+                {
+                  "@id": "_:ub32bL14C22"
+                },
+                {
+                  "@id": "_:ub32bL37C8"
+                }
+              ]
+            },
+            {
+              "@id": "_:ub32bL45C30",
+              "@type": "DUL:Amount",
+              "DUL:hasDataValue": {
+                "@id": "_:ub32bL47C41"
+              },
+              "DUL:isClassifiedBy": {
+                "@id": "someprefix:RH"
               }
             }
           ]
         });
 
-        this._data.forEach((c, index) => {
-            if (c.uri === uri) {
-                this._data[index] = _.assign({}, this._data[index], response);
-            }
-        });
-        promise.resolve(this._data);
+        this._currentClass = response;
+        promise.resolve(response);
+
         return promise;
         //
     }
     generate() {
-        _.remove(this._data, (c) => {
+        _.remove(this._classList, (c) => {
             return c.isNew;
         });
         let newClass = {
@@ -90,26 +228,34 @@ class ClassStore extends EventEmitter {
             actuators: [],
             isNew: true
         };
-        this._data.push(newClass);
+        this._classList.push(newClass);
         this.emit('update');
         return newClass.id;
     }
     getById(id) {
-        return _.find(this._data, (c) => {
+        return _.find(this._classList, (c) => {
             return c.id === id;
         });
     }
+    getByURI(uri) {
+        return _.find(this._classList, (c) => {
+            return c.uri;
+        });
+    }
+    getCurrentClass() {
+        return this._currentClass;
+    }
     get() {
-        return this._data;
+        return this._classList;
     }
     create(json) {
         //
     }
     // local
     update(json) {
-        this._data.forEach((c, index) => {
+        this._classList.forEach((c, index) => {
             if (c.id === json.id) {
-                this._data[index] = json;
+                this._classList[index] = json;
                 this.emit('update');
             }
         });
@@ -143,7 +289,7 @@ class ClassStore extends EventEmitter {
             url: CONFIG.URLS.class + (model.isNew ? "" : encodeURIComponent(model.uri)),
             type: "DELETE",
             success: () => {
-                _.remove((this._data, (m) => {
+                _.remove((this._classList, (m) => {
                     return m.id === classId;
                 }));
                 this.emit('update');
@@ -154,13 +300,14 @@ class ClassStore extends EventEmitter {
         });
     }
 
-    isEditable(classId) {
+    isEditable(classURI) {
         let user = CurrentUserStore.getCurrentUser();
-        return (user && user.username === ClassStore.getById(classId).createdBy);
+        return true;
+        // return (user && user.username === ClassStore.getByURI(classURI).author.username);
     }
 
     addSensor(classId) {
-        let model = _.find(this._data, (c) => {
+        let model = _.find(this._classList, (c) => {
             return c.id === classId;
         });
         if (!model) {
@@ -175,7 +322,7 @@ class ClassStore extends EventEmitter {
         return newSensor.id;
     }
     updateSensor(classId, sensor) {
-        let model = _.find(this._data, (c) => {
+        let model = _.find(this._classList, (c) => {
             return c.id === classId;
         });
         if (!model) {
@@ -189,7 +336,7 @@ class ClassStore extends EventEmitter {
         });
     }
     getSensorById(classId, sensorId) {
-        let model = _.find(this._data, (c) => {
+        let model = _.find(this._classList, (c) => {
             return c.id === classId;
         });
         if (!model) {

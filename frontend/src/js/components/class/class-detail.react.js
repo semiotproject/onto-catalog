@@ -23,7 +23,7 @@ export default class ClassDetail extends React.Component {
 
         // instead of getInitialState in new React notation
         this.state = {
-            loading: true
+
         };
 
         // ex-componentWillMount hooks
@@ -51,32 +51,12 @@ export default class ClassDetail extends React.Component {
 
     // lifecycle methods
     componentDidMount() {
-        this.loadClass();
         ViewManager.on('update', this.handleStoreUpdate);
         ClassStore.on('update', this.handleStoreUpdate);
-    }
-    componentDidUpdate(prevProps) {
-        if (this.props.classId !== prevProps.classId) {
-            this.loadClass();
-            ViewManager.setView(DescriptionView);
-        }
     }
     componentWillUnmount() {
         ViewManager.removeListener('update', this.handleStoreUpdate);
         ClassStore.removeListener('update', this.handleStoreUpdate);
-    }
-
-    loadClass() {
-        this.setState({
-            loading: true
-        }, () => {
-            let model = ClassStore.getById(this.props.classId);
-            $.when(ClassStore.loadDetail(model.uri)).done(() => {
-                this.setState({
-                    loading: false
-                });
-            });
-        });
     }
 
     // common helpers
@@ -88,23 +68,23 @@ export default class ClassDetail extends React.Component {
     }
     // render helpers
     renderMiniMap() {
-        let model = ClassStore.getById(this.props.classId);
-        let { sensors, actuators } = model;
+        let model = ClassStore.getCurrentClass();
+        let sensors = model['ssn:hasSubSystem'];
         return (
             <div className="col-md-6">
                 <div className="minimap-container">
                     <div onClick={this.setView(DescriptionView)}>
                         {
-                            !model.isNew && ClassStore.isEditable(this.props.classId) &&
+                            ClassStore.isEditable(this.props.classURI) &&
                             <span onClick={this.handleRemoveClick} className="fa fa-remove"></span>
                         }
                         <h4>
-                            <span>{model.isNew ? "New Device Class" : model.uri}</span>
+                            <span>{this.props.classURI ? ((model && model['rdfs:label'] && model['rdfs:label']['@value']) || "") : "New Device Class"}</span>
                             {
-                                ClassStore.isEditable(this.props.classId) &&
+                                ClassStore.isEditable(this.props.classURI) &&
                                     <button className="btn btn-primary" onClick={this.handleSaveClick}>
                                         <i className="fa fa-save"></i>
-                                        <span>{model.isNew ? "Create" : "Save"}</span>
+                                        <span>{this.props.classURI ? "Save" : "Create"}</span>
                                     </button>
                             }
                         </h4>
@@ -113,7 +93,7 @@ export default class ClassDetail extends React.Component {
                                 <h4>
                                     <span>Sensors</span>
                                     {
-                                        ClassStore.isEditable(this.props.classId) &&
+                                        ClassStore.isEditable(this.props.classURI) &&
                                             <button className="btn btn-primary btn-add" title="add" onClick={this.handleAddSensor}>
                                                 <i className="fa fa-plus"></i>
                                             </button>
@@ -121,11 +101,11 @@ export default class ClassDetail extends React.Component {
                                 </h4>
                                 <div className="children">
                                     {
-                                        sensors.map((m) => {
+                                        sensors.map((s) => {
                                             return (
-                                                <div key={m.id} onClick={this.setView(SensorView, { id: m.id })}>
+                                                <div key={s.uri} onClick={this.setView(SensorView, { uri: s.uri })}>
                                                     <h4>
-                                                        {m.type} #{m.id}
+                                                        {s.uri}
                                                     </h4>
                                                 </div>
                                             );
@@ -134,34 +114,6 @@ export default class ClassDetail extends React.Component {
                                     {
                                         sensors.length === 0 &&
                                             <span>No sensors added yet</span>
-                                    }
-                                </div>
-                            </div>
-                            <div onClick={this.setView(ActuatorsView)}>
-                                <h4>
-                                    <span>Actuators</span>
-                                    {
-                                        ClassStore.isEditable(this.props.classId) &&
-                                            <button className="btn btn-primary btn-add" title="add" onClick={this.setView(ActuatorView, { id: null })}>
-                                                <i className="fa fa-plus"></i>
-                                            </button>
-                                    }
-                                </h4>
-                                <div className="children">
-                                    {
-                                        actuators.map((a) => {
-                                            return (
-                                                <div key={a.id} onClick={this.setView(ActuatorView, { id: a.id })}>
-                                                    <h4>
-                                                        {a.type} #{a.id}
-                                                    </h4>
-                                                </div>
-                                            );
-                                        })
-                                    }
-                                    {
-                                        actuators.length === 0 &&
-                                            <span>No actuators added yet</span>
                                     }
                                 </div>
                             </div>
@@ -176,14 +128,14 @@ export default class ClassDetail extends React.Component {
         let payload = ViewManager.getCurrentPayload();
         return (
             <div className="col-md-6">
-                <Component data={payload} classId={this.props.classId}></Component>
+                <Component data={payload}></Component>
             </div>
         );
     }
 
     render() {
         return (
-            <div className="col-md-10 container fluid">
+            <div className="app-container container fluid class-detail">
                 {this.renderMiniMap()}
                 {this.renderView()}
             </div>

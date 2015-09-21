@@ -137,30 +137,20 @@ button.big {
     }
 }
 
-.app-wrapper {
-    height: calc(~"100% - 62px");
-}
 .app-header {
     text-align: center;
     box-shadow: 0 2px 2px rgba(0,0,0,0.15);
     padding-bottom: 10px;
 }
-.app-container {
-    height: calc(~"100% - 82px");
+.app-wrapper {
+    height: calc(~"100% - 40px");
     padding: 0;
     position: relative;
     overflow: hidden;
-    > div {
-        border-right: 6px solid rgba(77, 102, 94, 0.36);
-        box-shadow: 2px 0 2px rgba(0,0,0,.3);
-        height: 100%;
-        padding-top: 10px;
-        &:last-child {
-            border-right: none;
-        }
-    }
-    > .container {
+    > .app-container {
         overflow: auto;
+        height: calc(100% ~"-" 96px);
+        padding-top: 20px;
     }
     .btn-save {
         i.fa {
@@ -189,28 +179,6 @@ button.big {
 }
 
 // specific
-.class-list {
-    padding: 0;
-    margin: 0;
-    list-style: none;
-    li {
-        height: 30px;
-        line-height: 30px;
-        cursor: pointer;
-        display: inline-block;
-        padding: 0 10px;
-        width: 100%;
-        transition: background-color .2s ease-in-out;
-        border-radius: 2px;
-        &:hover {
-            background-color: rgba(195, 195, 195, 0.56);
-        }
-        &.active {
-            color: white;
-            background-color: rgba(0, 0, 0, 0.63);
-        }
-    }
-}
 .minimap-container {
     .fa.fa-remove {
         position: absolute;

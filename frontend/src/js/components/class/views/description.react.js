@@ -9,8 +9,8 @@ const FIELDS = {
     'uri': {
         title: "Class URI"
     },
-    'label': {
-        title: "Label"
+    'rdfs:label.@value': {
+        title: "label"
     },
     'manufacturer': {
         title: "Manufacturer"
@@ -30,17 +30,15 @@ export default class DescriptionView extends React.Component {
 
         };
 
-        this.handleKeyUp = () => {
-            let model = Store.getById(this.props.classId);
+        this.handleChange = () => {
+            let model = Store.getCurrentClass();
 
-            model = _.assign({}, model, {
-                uri: this.refs.uri.getDOMNode().value,
-                label: this.refs.label.getDOMNode().value,
-                manufacturer: this.refs.manufacturer.getDOMNode().value,
-                version: this.refs.version.getDOMNode().value
-            });
+            this.setFieldValue(model, 'uri');
+            this.setFieldValue(model, 'rdfs:label.@value');
 
-            Store.update(model);
+            console.log('now model is ', model);
+
+            // Store.update(model);
         };
     }
 
@@ -51,10 +49,10 @@ export default class DescriptionView extends React.Component {
             val = (
                 <input type="text"
                     key={this.props.classId + "-" + type}
-                    onChange={this.handleKeyUp}
+                    onChange={this.handleChange}
                     ref={type}
                     className="form-control"
-                    value={value}
+                    defaultValue={value}
                 />
             );
         } else {
@@ -68,18 +66,38 @@ export default class DescriptionView extends React.Component {
         );
     }
 
+    getManufacturer(model) {
+        return '';
+    }
+    getlabel(model) {
+        return (model && model['rdfs:label'] && model['rdfs:label']['@value']) || "";
+    }
+
+    setFieldValue(model, type) {
+        let keys = type.split('.');
+
+        let prev = model;
+        for (var i = 0; i < keys.length - 1; i++) {
+            prev = prev[keys[i]];
+        }
+        prev[keys[i]] = this.refs[type].getDOMNode().value;
+    }
 
     render() {
-        let model = Store.getById(this.props.classId);
+        let model = Store.getCurrentClass();
 
         return (
             <div>
                 <header>Device</header>
                 <div>
-                    {this.renderField('uri', model.uri)}
-                    {this.renderField('label', model.label)}
-                    {this.renderField('manufacturer', model.manufacturer)}
-                    {this.renderField('version', model.version)}
+                    {this.renderField(
+                        'uri',
+                        model.uri
+                    )}
+                    {this.renderField(
+                        'rdfs:label.@value',
+                        (model && model['rdfs:label'] && model['rdfs:label']['@value']) || ""
+                    )}
                 </div>
             </div>
         );

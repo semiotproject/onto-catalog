@@ -1,22 +1,9 @@
 "use strict";
 
 import _ from 'lodash';
+import JSONPrefixes from './prefixes';
 
-const PREFIXES = {
-    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-    "ssn": "http://purl.oclc.org/NET/ssnx/ssn#",
-    "hmtr": "http://purl.org/NET/ssnext/heatmeters#",
-    "ssncom": "http://purl.org/NET/ssnext/communication#",
-    "geo": "http://www.w3.org/2003/01/geo/wgs84_pos#>",
-    "geosparql": "http://www.opengis.net/ont/geosparql#",
-    "dul": "http://www.loa-cnr.it/ontologies/DUL.owl#",
-    "limapext": "http://purl.org/NET/limapext#",
-    "limap": "http://data.uni-muenster.de/php/vocab/limap",
-    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-    "xsd": "http://www.w3.org/2001/XMLSchema#"
-};
-
-const CONTEXT = _.assign(PREFIXES, {
+const CONTEXT = _.assign(JSONPrefixes, {
     //
 });
 /*
@@ -59,29 +46,65 @@ const TEMPLATE = {
 };
 
 export function JSONLDtoClass(jsonld) {
-    let model = {};
+    let triples = jsonld['@graph'];
 
-    let graph = jsonld['@graph'];
-
-    graph.forEach((i, index) => {
-        if (i['@type'] === "ssn:System") {
-            model = {
-                uri: i['@id'],
-                label: i['rdfs:label'],
-                createdBy: i['prov:wasAssociatedWith'],
-                sensors: graph.filter((j) => {
-                    return j['@type'] === 'ssn:Sensor';
-                }).map((s, k) => {
-                    return {
-                        id: k,
-                        type: s['ssn:observes']['@id']
-                    };
-                })
-            };
+    function findById(id) {
+        let trip =  _.find(triples, (t) => {
+            return t['@id'] === id;
+        });
+        if (!trip) {
+            return id;
         }
-    });
+        trip = _.assign({}, trip);
 
-    return model;
+        trip['uri'] = trip['@id'];
+        trip['@id'] = undefined;
+
+        return trip;
+    }
+
+    function normaliseTriple(t) {
+        console.log('normalizing ', t);
+        if (typeof t === 'object') {
+            if (Object.keys(t).length === 1) {
+                t = normaliseTriple(findById(t['@id']));
+            } else {
+                for (let key in t) {
+                    t[key] = normaliseTriple(t[key]);
+                }
+            }
+        } else if (t instanceof Array) {
+            t.forEach((tt, index) => {
+                t[index] = normaliseTriple(t[index]);
+            });
+        }
+        /*
+        if (typeof t === "object") {
+            console.log(`${JSON.stringify(t)} is object`);
+            for (let key in t) {
+                if (typeof t[key] === "object" && t[key]['@id']) {
+                    t[key] = normaliseTriple(findById(t[key]['@id']));
+                } else if (t[key] instanceof Array) {
+                    t[key].forEach((tt, index) => {
+                        debugger;
+                        t[key][index] = normaliseTriple(t[key][index]);
+                    });
+                }
+            }
+        } else if (t instanceOf Array)
+        */
+        console.log('t now is ', t);
+        return t;
+    }
+
+    let c = normaliseTriple(_.find(triples, (t) => {
+        return t['@type'] === 'prov:Entity';
+    }));
+
+    c.uri = c['@id'];
+    c['@id'] = undefined;
+
+    return c;
 }
 
 export function classToJSONLD(json) {
