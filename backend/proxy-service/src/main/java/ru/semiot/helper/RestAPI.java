@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -28,8 +29,13 @@ import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.update.UpdateExecutionFactory;
 import org.apache.jena.update.UpdateFactory;
+import org.apache.jena.update.UpdateRequest;
+import org.apache.jena.vocabulary.RDF;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.OAuthRequest;
@@ -59,7 +65,8 @@ public class RestAPI {
     private String authUrl;
     OAuthService service;
     DatasetAccessor _accessor;
-    private final String TOKEN = "access_token=${TOKEN}&scope=&token_type=bearer";
+    private final String TOKEN = "access_token=${TOKEN}&scope=&token_type=bearer";    
+    private final String DROP_GRAPH = "DROP GRAPH <${URI}>";
 
     @PostConstruct
     private void _init() {
@@ -68,7 +75,7 @@ public class RestAPI {
                 && config.fusekiPassword() != null && !config.fusekiPassword().isEmpty()) {
             authenticator = new SimpleAuthenticator(config.fusekiUsername(), config.fusekiPassword().toCharArray());
             _accessor = DatasetAccessorFactory
-                    .createHTTP(config.datasetUrl(),authenticator);
+                    .createHTTP(config.datasetUrl(), authenticator);
         } else {
             _accessor = DatasetAccessorFactory
                     .createHTTP(config.datasetUrl());
@@ -90,17 +97,23 @@ public class RestAPI {
         if (token == null || getUser(token) == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        Resource r = _accessor.getModel().getResource(uri);
-
-        if (r == null || r.listProperties().toList().isEmpty()) {
+        Model model = _accessor.getModel(uri);
+        
+        if (model==null || model.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        Literal owner = r.getProperty(_accessor.getModel().getProperty("http://www.example.com/hasOwner")).getObject().asLiteral();
-        if (!db.getLogin(hash).equals(owner.getValue())) {
+        Resource owner = model.getResource(uri).getPropertyResourceValue(_accessor.getModel().getProperty(model.getNsPrefixURI("prov")+"wasAttributedTo"));
+        Literal account = owner.getProperty(FOAF.accountName).getObject().asLiteral();
+        if (!db.getLogin(hash).equals(account.getString())) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
-
-        UpdateExecutionFactory.createRemote(UpdateFactory.create("DELETE {<" + uri + "> ?x ?z} where {<" + uri + "> ?x ?z}"), config.updatetUrl()).execute();
+        UpdateRequest query = UpdateFactory.create(DROP_GRAPH.replace("${URI}", uri));
+        if (config.fusekiUsername() != null && !config.fusekiUsername().isEmpty()
+                && config.fusekiPassword() != null && !config.fusekiPassword().isEmpty()) {
+            UpdateExecutionFactory.createRemote(query, config.updatetUrl(), authenticator).execute();
+        } else {
+            UpdateExecutionFactory.createRemote(query, config.updatetUrl()).execute();
+        }
 
         return Response.status(Response.Status.OK).build();
     }
@@ -110,14 +123,60 @@ public class RestAPI {
     @Consumes({"application/ld+json", "application/json"})
     public Response createClass(@CookieParam("hash") long hash, String object) {
         logger.info("Create method");
-        logger.debug(object);
-        Model m = ModelFactory.createDefaultModel();
-        InputStream stream = new ByteArrayInputStream(object.getBytes(StandardCharsets.UTF_8));
-        m.read(stream, null, "JSON-LD");
-        JSONObject json = new JSONObject(object);
-        m.createResource(json.getString("@id")).addProperty(m.createProperty("http://www.example.com/hasOwner"), db.getLogin(hash));
-        _accessor.add(m);
-        return Response.ok().build();
+        String token = db.getToken(hash);
+        JSONObject user = null;
+        if (token == null || (user = getUser(token)) == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        try {
+            Model m = ModelFactory.createDefaultModel();
+            InputStream stream = new ByteArrayInputStream(object.getBytes(StandardCharsets.UTF_8));
+            m.read(stream, null, "JSON-LD");
+            JSONObject json = new JSONObject(object);
+            String graph_uri = null;
+            try {
+                graph_uri = json.getString("@id");
+            } catch (JSONException ex) {
+                JSONArray array = json.getJSONArray("@graph");
+                int index = 0;
+                while (index < array.length()) {
+                    if (((JSONObject) array.getJSONObject(index)).getString("@type").contains("System")) {
+                        graph_uri = ((JSONObject) array.getJSONObject(index)).getString("@id");
+                        break;
+                    }
+                }
+            }
+            UUID id = UUID.randomUUID();
+            m.setNsPrefix("prov", "http://www.w3.org/ns/prov#");
+            m.setNsPrefix("semdesc", "http://semdesc.semiot.ru/classes/");
+            m.setNsPrefix("foaf", FOAF.getURI());
+            
+            Resource homepage = m.createResource(user.getString("html_url"))
+                    .addProperty(RDF.type, FOAF.PersonalProfileDocument);
+                    
+            Resource owner = m.createResource(m.getNsPrefixURI("semdesc")+id.toString())
+                    .addProperty(RDF.type, m.createResource(m.getNsPrefixURI("prov")+"Agent"))
+                    .addProperty(RDF.type, m.createResource(m.getNsPrefixURI("prov")+"Person"))
+                    .addProperty(RDF.type, m.createResource(m.getNsPrefixURI("foaf")+"Person"))
+                    .addProperty(FOAF.name, user.getString("name"))
+                    .addProperty(FOAF.accountName, db.getLogin(hash))
+                    .addProperty(FOAF.homepage, homepage);
+            if(user.has("email") && !user.isNull("email"))
+                owner.addProperty(FOAF.mbox, "<mailto:"+user.getString("email")+">");
+            
+            homepage
+                    .addProperty(FOAF.maker, owner)
+                    .addProperty(FOAF.primaryTopic, owner);
+            
+            m.createResource(graph_uri)
+                    .addProperty(RDF.type, m.createResource(m.getNsPrefixURI("prov")+"Entity"))
+                    .addProperty(m.createProperty(m.getNsPrefixURI("prov")+"wasAttributedTo"), owner);
+            
+            _accessor.add(graph_uri, m);            
+            return Response.ok().build();
+        } catch (Exception ex) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
     }
 
     @PUT
@@ -154,8 +213,8 @@ public class RestAPI {
         Verifier v = new Verifier(code);
         Token access = service.getAccessToken(null, v);
         JSONObject json = getUser(access.getToken());
-        long hash = db.addNewUser(access.getToken(), json.getInt("id"), json.getString("login"));        
-        return Response.ok().cookie(new NewCookie("hash", Long.toString(hash))).build();
+        long hash = db.addNewUser(access.getToken(), json.getInt("id"), json.getString("login"));
+        return Response.ok().cookie(new NewCookie("hash", Long.toString(hash), "/", null, null, -1, false)).build();
     }
 
     @GET
