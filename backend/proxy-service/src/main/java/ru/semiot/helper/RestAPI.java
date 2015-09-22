@@ -97,6 +97,8 @@ public class RestAPI {
         if (token == null || getUser(token) == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
+        if(uri==null || uri.isEmpty())            
+            return Response.status(Response.Status.BAD_REQUEST).build();
         Model model = _accessor.getModel(uri);
         
         if (model==null || model.isEmpty()) {
@@ -122,12 +124,14 @@ public class RestAPI {
     @Path("/")
     @Consumes({"application/ld+json", "application/json"})
     public Response createClass(@CookieParam("hash") long hash, String object) {
-        logger.info("Create method");
+        logger.info("Create method");        
         String token = db.getToken(hash);
         JSONObject user = null;
         if (token == null || (user = getUser(token)) == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
+        if(object==null || object.isEmpty())
+            return Response.status(Response.Status.BAD_REQUEST).build();
         try {
             Model m = ModelFactory.createDefaultModel();
             InputStream stream = new ByteArrayInputStream(object.getBytes(StandardCharsets.UTF_8));
