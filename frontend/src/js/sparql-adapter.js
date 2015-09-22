@@ -59,17 +59,38 @@ export function loadClassDetail(classURI) {
 }
 
 export function loadMeasurementProperties() {
+    /*
     return getSparqlJsonResult(`
         TODO
     `);
+    */
+   const promise = $.Deferred();
+
+    promise.resolve(['ssn:Accuracy', 'ssn:ssn:Sensitivity']);
+
+   return promise;
 }
 export function loadUnitsOfMeasurement() {
+    /*
     return getSparqlJsonResult(`
         TODO
     `);
+    */
+   const promise = $.Deferred();
+
+    promise.resolve(['Celcium', 'Kelvin', 'Joule']);
+
+   return promise;
 }
 export function loadSensorTypes() {
+    /*
     return getSparqlJsonResult(`
         TODO
     `);
+    */
+   const promise = $.Deferred();
+
+    promise.resolve(['someprefix:Temperature', 'someprefix:Heat', 'someprefix:AirHumidity']);
+
+   return promise;
 }
