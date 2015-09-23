@@ -11,7 +11,7 @@ const SENSOR_FIELDS = {
         title: 'Type',
         path: 'ssn:observes',
         isSelect: true,
-        options: FieldStore.getSensorTypes.map((t) => {
+        options: FieldStore.getSensorTypes().map((t) => {
             return {
                 value: t,
                 title: t
@@ -35,7 +35,7 @@ const PROPERTY_FIELDS = {
         title: 'Units of Measurement',
         isSelect: true,
         isDisabled: true,
-        options: FieldStore.getUnitsOfMeasurement.map((t) => {
+        options: FieldStore.getUnitsOfMeasurement().map((t) => {
             return {
                 value: t,
                 title: t

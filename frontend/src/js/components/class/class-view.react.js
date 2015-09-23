@@ -24,7 +24,8 @@ export default class ClassView extends React.Component {
                 if (uri === null) {
                     console.log('creating new class...');
                     this.setState({
-                        view: 'detail'
+                        view: 'detail',
+                        currentClass: ClassStore.create()
                     });
                 } else {
                     console.log('selected class with URI = ', uri);

@@ -6,8 +6,6 @@ import saveAs from 'browser-filesaver';
 
 import SensorsView from './views/sensors.react.js';
 import SensorView from './views/sensor.react.js';
-import ActuatorsView from './views/actuators.react.js';
-import ActuatorView from './views/actuator.react.js';
 import DescriptionView from './views/description.react.js';
 
 import ViewManager from './view-manager';
@@ -39,9 +37,9 @@ export default class ClassDetail extends React.Component {
             ClassStore.save(this.props.classId);
         };
         this.handleAddSensor = () => {
-            let newSensorId = ClassStore.addSensor(this.props.classId);
+            let newSensorURI = ClassStore.addSensor(this.props.classURI);
             this.setView(SensorView, {
-                id: newSensorId
+                seneorURI: newSensorURI
             });
         };
         this.handleRemoveClick = () => {
@@ -68,7 +66,8 @@ export default class ClassDetail extends React.Component {
     }
     // render helpers
     renderMiniMap() {
-        let model = ClassStore.getCurrentClass();
+        let model = ClassStore.getByURI(this.props.classURI);
+        debugger;
         let sensors = model['ssn:hasSubSystem'];
         return (
             <div className="col-md-6">
@@ -128,7 +127,7 @@ export default class ClassDetail extends React.Component {
         let payload = ViewManager.getCurrentPayload();
         return (
             <div className="col-md-6">
-                <Component data={payload}></Component>
+                <Component classURI={this.props.classURI} data={payload}></Component>
             </div>
         );
     }

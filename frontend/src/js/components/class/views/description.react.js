@@ -11,12 +11,6 @@ const FIELDS = {
     },
     'rdfs:label.@value': {
         title: "label"
-    },
-    'manufacturer': {
-        title: "Manufacturer"
-    },
-    'version': {
-        title: "Version"
     }
 };
 
@@ -84,7 +78,7 @@ export default class DescriptionView extends React.Component {
     }
 
     render() {
-        let model = Store.getCurrentClass();
+        let model = Store.getByURI(this.props.classURI);
 
         return (
             <div>

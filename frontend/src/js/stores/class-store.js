@@ -8,6 +8,7 @@ import uuid from 'uuid';
 import { classToJSONLD, JSONLDtoClass } from '../json-ld-adapter';
 import { loadClassList, loadClassDetail } from '../sparql-adapter';
 import CurrentUserStore from './current-user-store';
+import * as TEMPLATES from '../templates';
 
 class ClassStore extends EventEmitter {
     constructor() {
@@ -211,26 +212,20 @@ class ClassStore extends EventEmitter {
           ]
         });
 
-        this._currentClass = response;
+        this._classList.forEach((c, index) => {
+            if (c.uri === response.uri) {
+                this._classList[index] = response;
+            }
+        });
         promise.resolve(response);
 
         return promise;
         //
     }
-    generate() {
-        _.remove(this._classList, (c) => {
-            return c.isNew;
-        });
-        let newClass = {
-            uri: uuid.v4(),
-            id: this._counter++,
-            sensors: [],
-            actuators: [],
-            isNew: true
-        };
-        this._classList.push(newClass);
-        this.emit('update');
-        return newClass.id;
+    create() {
+        let model = TEMPLATES.ClassTemplate();
+        this._classList.push(model);
+        return model.uri;
     }
     getById(id) {
         return _.find(this._classList, (c) => {
@@ -239,17 +234,11 @@ class ClassStore extends EventEmitter {
     }
     getByURI(uri) {
         return _.find(this._classList, (c) => {
-            return c.uri;
+            return c.uri === uri;
         });
-    }
-    getCurrentClass() {
-        return this._currentClass;
     }
     get() {
         return this._classList;
-    }
-    create(json) {
-        //
     }
     // local
     update(json) {
@@ -306,20 +295,14 @@ class ClassStore extends EventEmitter {
         // return (user && user.username === ClassStore.getByURI(classURI).author.username);
     }
 
-    addSensor(classId) {
-        let model = _.find(this._classList, (c) => {
-            return c.id === classId;
-        });
-        if (!model) {
-            return;
-        }
-        let newSensor = {
-            id: model.sensors.length + 1,
-            type: "hmtr:Temperature"
-        };
-        model.sensors.push(newSensor);
-        this.emit('update');
-        return newSensor.id;
+    addSensor(classURI) {
+        let model = this.getByURI(classURI);
+
+        let newSensor = TEMPLATES.SensorTemplate();
+        model['ssn:hasSubSystem'].push(newSensor);
+        // this.emit('update');
+
+        return newSensor.uri;
     }
     updateSensor(classId, sensor) {
         let model = _.find(this._classList, (c) => {
