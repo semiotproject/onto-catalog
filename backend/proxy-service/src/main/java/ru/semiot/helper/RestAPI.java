@@ -152,6 +152,8 @@ public class RestAPI {
                     }
                 }
             }
+            if (_accessor.getModel(graph_uri)==null)
+                return Response.status(Response.Status.BAD_REQUEST).build();
             UUID id = UUID.randomUUID();
             m.setNsPrefix("prov", "http://www.w3.org/ns/prov#");
             m.setNsPrefix("semdesc", "http://semdesc.semiot.ru/classes/");
