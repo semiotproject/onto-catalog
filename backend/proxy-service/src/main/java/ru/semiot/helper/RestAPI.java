@@ -53,7 +53,7 @@ import static ru.semiot.helper.ServiceConfig.config;
  *
  * @author Daniil Garayzuev <garayzuev@gmail.com>
  */
-@Path("/")
+@Path("api")
 @Stateless
 public class RestAPI {
 
@@ -226,7 +226,6 @@ public class RestAPI {
         } catch (URISyntaxException ex) {
             return Response.serverError().entity(ex.getMessage()).build();
         }
-
     }
 
     @GET
