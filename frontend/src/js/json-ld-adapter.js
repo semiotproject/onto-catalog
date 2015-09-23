@@ -64,7 +64,6 @@ export function JSONLDtoClass(jsonld) {
     }
 
     function normaliseTriple(t) {
-        console.log('normalizing ', t);
         if (typeof t === 'object') {
             if (Object.keys(t).length === 1) {
                 t = normaliseTriple(findById(t['@id']));
@@ -78,22 +77,6 @@ export function JSONLDtoClass(jsonld) {
                 t[index] = normaliseTriple(t[index]);
             });
         }
-        /*
-        if (typeof t === "object") {
-            console.log(`${JSON.stringify(t)} is object`);
-            for (let key in t) {
-                if (typeof t[key] === "object" && t[key]['@id']) {
-                    t[key] = normaliseTriple(findById(t[key]['@id']));
-                } else if (t[key] instanceof Array) {
-                    t[key].forEach((tt, index) => {
-                        debugger;
-                        t[key][index] = normaliseTriple(t[key][index]);
-                    });
-                }
-            }
-        } else if (t instanceOf Array)
-        */
-        console.log('t now is ', t);
         return t;
     }
 
@@ -103,6 +86,8 @@ export function JSONLDtoClass(jsonld) {
 
     c.uri = c['@id'];
     c['@id'] = undefined;
+
+    console.log('normalized triple is:', c);
 
     return c;
 }

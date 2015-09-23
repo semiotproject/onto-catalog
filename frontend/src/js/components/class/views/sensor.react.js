@@ -3,38 +3,22 @@
 let React = require('react');
 
 import Store from '../../../stores/class-store';
+import FieldStore from '../../../stores/field-store';
 import _ from 'lodash';
 
-const FIELDS = {
-    label: {
-        title: 'Label'
-    },
+const SENSOR_FIELDS = {
     type: {
         title: 'Type',
+        path: 'ssn:observes',
         isSelect: true,
-        options: [
-            {
-                value: "emtr:Amperage",
-                title: "Amperage"
-            },
-            {
-                value: "hmtr:Heat",
-                title: "Heat"
-            },
-            {
-                value: "hmtr:Temperature",
-                title: "Temperature"
-            }
-        ]
-    },
-    units: {
-        title: 'Units of Measurement',
-        isSelect: true,
-        isDisabled: true,
-        options: [
-            // here are options
-        ]
-    },
+        options: FieldStore.getSensorTypes.map((t) => {
+            return {
+                value: t,
+                title: t
+            };
+        })
+    }
+    /* ,
     accuracy: {
         title: 'Accuracy',
         isDisabled: true
@@ -43,7 +27,30 @@ const FIELDS = {
         title: 'Sensing Period',
         isDisabled: true
     }
+    */
 };
+
+const PROPERTY_FIELDS = {
+    units: {
+        title: 'Units of Measurement',
+        isSelect: true,
+        isDisabled: true,
+        options: FieldStore.getUnitsOfMeasurement.map((t) => {
+            return {
+                value: t,
+                title: t
+            };
+        })
+    }
+};
+
+let measurementProperties = FieldStore.getMeasurementProperties();
+for (let i = 0; i < measurementProperties.length; i++) {
+    PROPERTY_FIELDS[measurementProperties[i]] = {
+        title: measurementProperties[i],
+        path: 'ssn:hasValue.DUL:hasDataValue.xsd:double'
+    };
+}
 
 export default class SensorView extends React.Component {
 
@@ -73,16 +80,16 @@ export default class SensorView extends React.Component {
         let isEditable = Store.isEditable(this.props.classId);
         let val;
         if (isEditable) {
-            if (FIELDS[type].isSelect) {
+            if (SENSOR_FIELDS[type].isSelect) {
                 val = (
                     <select ref={type}
                         className="form-control"
                         onChange={this.handleChange}
                         key={this.props.classId + "-" + type}
-                        disabled={FIELDS[type].isDisabled}
+                        disabled={SENSOR_FIELDS[type].isDisabled}
                         value={value}>
                         {
-                            FIELDS[type].options.map((o) => {
+                            SENSOR_FIELDS[type].options.map((o) => {
                                 return <option value={o.value}>{o.title}</option>;
                             })
                         }
@@ -95,7 +102,7 @@ export default class SensorView extends React.Component {
                         onChange={this.handleChange}
                         ref={type}
                         className="form-control"
-                        disabled={FIELDS[type].isDisabled}
+                        disabled={SENSOR_FIELDS[type].isDisabled}
                         value={value}
                     />
                 );
@@ -105,7 +112,7 @@ export default class SensorView extends React.Component {
         }
         return (
             <div className="form-group">
-                <label for="">{FIELDS[type].title}:</label>
+                <label for="">{SENSOR_FIELDS[type].title}:</label>
                 {val}
             </div>
         );
@@ -113,15 +120,17 @@ export default class SensorView extends React.Component {
 
     render() {
         let sensor = Store.getSensorById(this.props.classId, this.props.data.id);
+        let SENSOR_FIELDS;
+        for (let key in SENSOR_FIELDS) {
+            SENSOR_FIELDS.push(
+                 this.renderField(SENSOR_FIELDS[key], sensor)
+            );
+        }
         return (
             <div>
                 <header>{`Sensor #${this.props.data.id}`}</header>
                 <div className="form" key={this.props.data.id}>
-                    {this.renderField('label', sensor && sensor.label)}
-                    {this.renderField('type', sensor && sensor.type)}
-                    {this.renderField('units', sensor && sensor.units)}
-                    {this.renderField('accuracy', sensor && sensor.accuracy)}
-                    {this.renderField('sensingPeriod', sensor && sensor.sensingPeriod)}
+                    {SENSOR_FIELDS}
                 </div>
             </div>
         );

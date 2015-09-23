@@ -9,6 +9,7 @@ import UserBlock from './components/user-block.react';
 
 import CurrentUserStore from './stores/current-user-store';
 import ClassStore from './stores/class-store';
+import FieldStore from './stores/field-store';
 
 const VIEWS = {
     class: {
@@ -74,7 +75,8 @@ export default class App extends React.Component {
 
 $.when(
     CurrentUserStore.load(),
-    ClassStore.loadList()
+    ClassStore.loadList(),
+    FieldStore.load()
 ).always(() => {
     React.render(<App />, document.querySelector('#main-wrapper'));
 });
