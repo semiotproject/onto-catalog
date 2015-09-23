@@ -53,7 +53,7 @@ import static ru.semiot.helper.ServiceConfig.config;
  *
  * @author Daniil Garayzuev <garayzuev@gmail.com>
  */
-@Path("/")
+@Path("api")
 @Stateless
 public class RestAPI {
 
@@ -65,7 +65,7 @@ public class RestAPI {
     private String authUrl;
     OAuthService service;
     DatasetAccessor _accessor;
-    private final String TOKEN = "access_token=${TOKEN}&scope=&token_type=bearer";    
+    private final String TOKEN = "access_token=${TOKEN}&scope=&token_type=bearer";
     private final String DROP_GRAPH = "DROP GRAPH <${URI}>";
 
     @PostConstruct
@@ -97,14 +97,15 @@ public class RestAPI {
         if (token == null || getUser(token) == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        if(uri==null || uri.isEmpty())            
+        if (uri == null || uri.isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST).build();
+        }
         Model model = _accessor.getModel(uri);
-        
-        if (model==null || model.isEmpty()) {
+
+        if (model == null || model.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        Resource owner = model.getResource(uri).getPropertyResourceValue(_accessor.getModel().getProperty(model.getNsPrefixURI("prov")+"wasAttributedTo"));
+        Resource owner = model.getResource(uri).getPropertyResourceValue(_accessor.getModel().getProperty(model.getNsPrefixURI("prov") + "wasAttributedTo"));
         Literal account = owner.getProperty(FOAF.accountName).getObject().asLiteral();
         if (!db.getLogin(hash).equals(account.getString())) {
             return Response.status(Response.Status.FORBIDDEN).build();
@@ -124,14 +125,15 @@ public class RestAPI {
     @Path("/")
     @Consumes({"application/ld+json", "application/json"})
     public Response createClass(@CookieParam("hash") long hash, String object) {
-        logger.info("Create method");        
+        logger.info("Create method");
         String token = db.getToken(hash);
         JSONObject user = null;
         if (token == null || (user = getUser(token)) == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        if(object==null || object.isEmpty())
+        if (object == null || object.isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST).build();
+        }
         try {
             Model m = ModelFactory.createDefaultModel();
             InputStream stream = new ByteArrayInputStream(object.getBytes(StandardCharsets.UTF_8));
@@ -150,33 +152,36 @@ public class RestAPI {
                     }
                 }
             }
+            if (_accessor.getModel(graph_uri)==null)
+                return Response.status(Response.Status.BAD_REQUEST).build();
             UUID id = UUID.randomUUID();
             m.setNsPrefix("prov", "http://www.w3.org/ns/prov#");
             m.setNsPrefix("semdesc", "http://semdesc.semiot.ru/classes/");
             m.setNsPrefix("foaf", FOAF.getURI());
-            
+
             Resource homepage = m.createResource(user.getString("html_url"))
                     .addProperty(RDF.type, FOAF.PersonalProfileDocument);
-                    
-            Resource owner = m.createResource(m.getNsPrefixURI("semdesc")+id.toString())
-                    .addProperty(RDF.type, m.createResource(m.getNsPrefixURI("prov")+"Agent"))
-                    .addProperty(RDF.type, m.createResource(m.getNsPrefixURI("prov")+"Person"))
-                    .addProperty(RDF.type, m.createResource(m.getNsPrefixURI("foaf")+"Person"))
+
+            Resource owner = m.createResource(m.getNsPrefixURI("semdesc") + id.toString())
+                    .addProperty(RDF.type, m.createResource(m.getNsPrefixURI("prov") + "Agent"))
+                    .addProperty(RDF.type, m.createResource(m.getNsPrefixURI("prov") + "Person"))
+                    .addProperty(RDF.type, m.createResource(m.getNsPrefixURI("foaf") + "Person"))
                     .addProperty(FOAF.name, user.getString("name"))
                     .addProperty(FOAF.accountName, db.getLogin(hash))
                     .addProperty(FOAF.homepage, homepage);
-            if(user.has("email") && !user.isNull("email"))
-                owner.addProperty(FOAF.mbox, "<mailto:"+user.getString("email")+">");
-            
+            if (user.has("email") && !user.isNull("email")) {
+                owner.addProperty(FOAF.mbox, "<mailto:" + user.getString("email") + ">");
+            }
+
             homepage
                     .addProperty(FOAF.maker, owner)
                     .addProperty(FOAF.primaryTopic, owner);
-            
+
             m.createResource(graph_uri)
-                    .addProperty(RDF.type, m.createResource(m.getNsPrefixURI("prov")+"Entity"))
-                    .addProperty(m.createProperty(m.getNsPrefixURI("prov")+"wasAttributedTo"), owner);
-            
-            _accessor.add(graph_uri, m);            
+                    .addProperty(RDF.type, m.createResource(m.getNsPrefixURI("prov") + "Entity"))
+                    .addProperty(m.createProperty(m.getNsPrefixURI("prov") + "wasAttributedTo"), owner);
+
+            _accessor.add(graph_uri, m);
             return Response.ok().build();
         } catch (Exception ex) {
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -218,7 +223,11 @@ public class RestAPI {
         Token access = service.getAccessToken(null, v);
         JSONObject json = getUser(access.getToken());
         long hash = db.addNewUser(access.getToken(), json.getInt("id"), json.getString("login"));
-        return Response.ok().cookie(new NewCookie("hash", Long.toString(hash), "/", null, null, -1, false)).build();
+        try {
+            return Response.temporaryRedirect(new URI("http://semdesc.semiot.ru")).cookie(new NewCookie("hash", Long.toString(hash), "/", null, null, -1, false)).build();
+        } catch (URISyntaxException ex) {
+            return Response.serverError().entity(ex.getMessage()).build();
+        }
     }
 
     @GET

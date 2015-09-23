@@ -6,7 +6,6 @@ semdescbackend:
     - /semiot/wot-semdesc-helper/fuseki:/etc/fuseki
     - /semiot/wot-semdesc-helper/config/:/wot_semdesc_helper/backend/
   restart: always
-
 semdescfrontend:
   image: semiot/wot-semdesc-helper-frontend
   ports:
