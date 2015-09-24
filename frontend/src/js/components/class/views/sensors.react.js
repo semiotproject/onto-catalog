@@ -47,7 +47,7 @@ export default class SensorsView extends React.Component {
                     {
                         sensors.map((item, index) => {
                             return (
-                                <div className="col-md-4" key={item.id}>
+                                <div className="col-md-4" key={item.uri}>
                                     <button className="big" onClick={this.handleClick(item.uri)}>
                                         {item["ssn:observes"]}
                                     </button>

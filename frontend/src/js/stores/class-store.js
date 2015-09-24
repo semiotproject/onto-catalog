@@ -211,6 +211,7 @@ class ClassStore extends EventEmitter {
             }
           ]
         });
+        classToJSONLD(response);
 
         this._classList.forEach((c, index) => {
             if (c.uri === response.uri) {
@@ -241,10 +242,12 @@ class ClassStore extends EventEmitter {
         return this._classList;
     }
     // local
-    update(json) {
+    update(model) {
+        console.log('now model is ', model);
+
         this._classList.forEach((c, index) => {
-            if (c.id === json.id) {
-                this._classList[index] = json;
+            if (c.uri === model.uri) {
+                this._classList[index] = model;
                 this.emit('update');
             }
         });

@@ -38,7 +38,7 @@ export default class SensorView extends React.Component {
     renderSensitivity(sensor) {
         let s = this.getSensitivity(sensor);
         return (
-            <div>
+            <div key="sensitivity">
                 <label htmlFor="">Sensitivity</label>
                 <input type="number"
                     onChange={this.handleChange}
@@ -63,7 +63,7 @@ export default class SensorView extends React.Component {
 
     renderType(sensor) {
         return (
-            <div>
+            <div key="type">
                 <label htmlFor="">Type</label>
                 <select onChange={this.handleChange}
                     ref="type"

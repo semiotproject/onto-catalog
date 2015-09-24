@@ -48,6 +48,8 @@ const TEMPLATE = {
 export function JSONLDtoClass(jsonld) {
     let triples = jsonld['@graph'];
 
+    console.log('target graph is: ', JSON.stringify(jsonld));
+
     function findById(id) {
         let trip =  _.find(triples, (t) => {
             return t['@id'] === id;
@@ -93,8 +95,7 @@ export function JSONLDtoClass(jsonld) {
 }
 
 export function classToJSONLD(json) {
-    // create immutable copy
-    json = _.assign({}, json);
+    /*
     let template = _.assign({}, TEMPLATE);
     let graph = template['@graph'];
 
@@ -121,4 +122,45 @@ export function classToJSONLD(json) {
     }));
 
     return template;
+    */
+
+    // create immutable copy
+    json = _.assign({}, json);
+
+    let triples = [];
+
+    // return { '@id': 'uri' } instead of nested structure
+    function normalizeTriple(g) {
+        let ret = g;
+
+        console.log('normalizing ', g);
+        if (g.uri) {
+            for (let key in g) {
+                if (_.isPlainObject(g[key])) {
+                    console.log('g[key] is object: ', g[key]);
+                    g[key] = normalizeTriple(g[key]);
+                } else if (_.isArray(g[key])) {
+                    console.log('g[key] is array: ', g[key]);
+                    g[key] = g[key].map(normalizeTriple);
+                } else if (key === "uri") {
+                    g['@id'] = g[key];
+                    delete g[key];
+                    ret = {
+                        '@id': g['@id']
+                    };
+                }
+            }
+            triples.push(g);
+        }
+
+        console.log('returning ', ret);
+
+        return ret;
+    }
+
+    normalizeTriple(json);
+
+    console.log('target triples are: ', JSON.stringify(triples));
+
+    return triples;
 }

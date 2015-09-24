@@ -8,7 +8,7 @@ export function ClassTemplate() {
         "@type": "prov:Entity",
         "rdfs:label": {
             "@language": "en",
-            "@value": ""
+            "@value": "New system"
         },
         "rdfs:subClassOf": "ssn:System",
         "ssn:hasSubSystem": [

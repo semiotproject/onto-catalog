@@ -26,14 +26,12 @@ export default class DescriptionView extends React.Component {
         };
 
         this.handleChange = () => {
-            let model = Store.getCurrentClass();
+            let model = Store.getByURI(this.props.classURI);
 
             this.setFieldValue(model, 'uri');
             this.setFieldValue(model, 'rdfs:label.@value');
 
-            console.log('now model is ', model);
-
-            // Store.update(model);
+            Store.update(model);
         };
     }
 
