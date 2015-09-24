@@ -29,9 +29,9 @@ export default class SensorsView extends React.Component {
         };
     }
 
-
     render() {
-        let sensors = Store.getById(this.props.classId).sensors;
+        let model = Store.getByURI(this.props.classURI);
+        let sensors = model['ssn:hasSubSystem'];
         return (
             <div>
                 <header>Sensors</header>
@@ -48,8 +48,8 @@ export default class SensorsView extends React.Component {
                         sensors.map((item, index) => {
                             return (
                                 <div className="col-md-4" key={item.id}>
-                                    <button className="big" onClick={this.handleClick(item.id)}>
-                                        {item.type} #{item.id}
+                                    <button className="big" onClick={this.handleClick(item.uri)}>
+                                        {item["ssn:observes"]}
                                     </button>
                                 </div>
                             );

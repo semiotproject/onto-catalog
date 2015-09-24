@@ -6,52 +6,6 @@ import Store from '../../../stores/class-store';
 import FieldStore from '../../../stores/field-store';
 import _ from 'lodash';
 
-const SENSOR_FIELDS = {
-    type: {
-        title: 'Type',
-        path: 'ssn:observes',
-        isSelect: true,
-        options: FieldStore.getSensorTypes().map((t) => {
-            return {
-                value: t,
-                title: t
-            };
-        })
-    }
-    /* ,
-    accuracy: {
-        title: 'Accuracy',
-        isDisabled: true
-    },
-    sensingPeriod: {
-        title: 'Sensing Period',
-        isDisabled: true
-    }
-    */
-};
-
-const PROPERTY_FIELDS = {
-    units: {
-        title: 'Units of Measurement',
-        isSelect: true,
-        isDisabled: true,
-        options: FieldStore.getUnitsOfMeasurement().map((t) => {
-            return {
-                value: t,
-                title: t
-            };
-        })
-    }
-};
-
-let measurementProperties = FieldStore.getMeasurementProperties();
-for (let i = 0; i < measurementProperties.length; i++) {
-    PROPERTY_FIELDS[measurementProperties[i]] = {
-        title: measurementProperties[i],
-        path: 'ssn:hasValue.DUL:hasDataValue.xsd:double'
-    };
-}
-
 export default class SensorView extends React.Component {
 
     constructor(props) {
@@ -63,74 +17,77 @@ export default class SensorView extends React.Component {
         };
 
         this.handleChange = () => {
-            let model = Store.getById(this.props.classId);
-            let sensor = _.find(model.sensors, (s) => {
-                return s.id === this.props.data.id;
-            });
+            let sensor = Store.getSensorByURI(this.props.classURI, this.props.data.uri);
 
-            sensor = _.assign({}, sensor, {
-                type: this.refs.type.getDOMNode().value
-            });
+            sensor["ssn:observes"] = this.refs['type'].getDOMNode().value;
 
-            Store.updateSensor(this.props.classId, sensor);
+            // sensitivity
+            let sensitivity = this.getSensitivity(sensor);
+            sensitivity["ssn:hasValue"]["DUL:hasDataValue"]["xsd1:double"] = this.refs['sensitivityValue'].getDOMNode().value;
+            sensitivity["ssn:hasValue"]["DUL:isClassifiedBy"] = this.refs['sensitivityUnit'].getDOMNode().value;
+
+            Store.updateSensor(this.props.classURI, sensor);
         };
     }
 
-    renderField(type, value) {
-        let isEditable = Store.isEditable(this.props.classId);
-        let val;
-        if (isEditable) {
-            if (SENSOR_FIELDS[type].isSelect) {
-                val = (
-                    <select ref={type}
-                        className="form-control"
-                        onChange={this.handleChange}
-                        key={this.props.classId + "-" + type}
-                        disabled={SENSOR_FIELDS[type].isDisabled}
-                        value={value}>
-                        {
-                            SENSOR_FIELDS[type].options.map((o) => {
-                                return <option value={o.value}>{o.title}</option>;
-                            })
-                        }
-                    </select>
-                );
-            } else {
-                val = (
-                    <input type="text"
-                        key={this.props.classId + "-" + type}
-                        onChange={this.handleChange}
-                        ref={type}
-                        className="form-control"
-                        disabled={SENSOR_FIELDS[type].isDisabled}
-                        value={value}
-                    />
-                );
-            }
-        } else {
-            val = <span htmlFor="">{value}</span>;
-        }
+    getSensitivity(sensor) {
+        return _.find(sensor['ssn:hasMeasurementCapability']['ssn:hasMeasurementProperty'], (i) => {
+            return i['@type'] === "ssn:Sensitivity";
+        });
+    }
+    renderSensitivity(sensor) {
+        let s = this.getSensitivity(sensor);
         return (
-            <div className="form-group">
-                <label for="">{SENSOR_FIELDS[type].title}:</label>
-                {val}
+            <div>
+                <label htmlFor="">Sensitivity</label>
+                <input type="number"
+                    onChange={this.handleChange}
+                    ref={"sensitivityValue"}
+                    className="form-control"
+                    defaultValue={s["ssn:hasValue"]["DUL:hasDataValue"]["xsd1:double"]}
+                />
+                <select onChange={this.handleChange}
+                    ref="sensitivityUnit"
+                    className="form-control"
+                    defaultValue={s["ssn:hasValue"]["DUL:isClassifiedBy"]}
+                >
+                    {
+                        FieldStore.getUnitsOfMeasurement().map((t) => {
+                            return <option value={t}>{t}</option>;
+                        })
+                    }
+                </select>
+            </div>
+        );
+    }
+
+    renderType(sensor) {
+        return (
+            <div>
+                <label htmlFor="">Type</label>
+                <select onChange={this.handleChange}
+                    ref="type"
+                    className="form-control"
+                    defaultValue={sensor["ssn:observes"]}
+                >
+                    {
+                        FieldStore.getSensorTypes().map((t) => {
+                            return <option value={t}>{t}</option>;
+                        })
+                    }
+                </select>
             </div>
         );
     }
 
     render() {
-        let sensor = Store.getSensorById(this.props.classId, this.props.data.id);
-        let SENSOR_FIELDS;
-        for (let key in SENSOR_FIELDS) {
-            SENSOR_FIELDS.push(
-                 this.renderField(SENSOR_FIELDS[key], sensor)
-            );
-        }
+        let sensor = Store.getSensorByURI(this.props.classURI, this.props.data.uri);
         return (
             <div>
-                <header>{`Sensor #${this.props.data.id}`}</header>
+                <header>{`Sensor #${this.props.data.uri}`}</header>
                 <div className="form" key={this.props.data.id}>
-                    {SENSOR_FIELDS}
+                    {this.renderType(sensor)}
+                    {this.renderSensitivity(sensor)}
                 </div>
             </div>
         );

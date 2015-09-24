@@ -304,29 +304,25 @@ class ClassStore extends EventEmitter {
 
         return newSensor.uri;
     }
-    updateSensor(classId, sensor) {
-        let model = _.find(this._classList, (c) => {
-            return c.id === classId;
-        });
-        if (!model) {
-            return;
-        }
-        model.sensors.forEach((s, index) => {
-            if (s.id === sensor.id) {
-                model.sensors[index] = sensor;
-                this.emit('update');
-            }
-        });
+    updateSensor(classURI, sensor) {
+      let model = this.getByURI(classURI);
+      _.forEach(model['ssn:hasSubSystem'], (s, index) => {
+          if (s.uri === sensor.uri) {
+            console.log('updating sensor: now is: ', sensor);
+            model['ssn:hasSubSystem'][index] = sensor;
+            this.emit('update');
+          }
+      });
     }
-    getSensorById(classId, sensorId) {
+    getSensorByURI(classURI, sensorURI) {
         let model = _.find(this._classList, (c) => {
-            return c.id === classId;
+            return c.uri === classURI;
         });
         if (!model) {
             return;
         }
-        return _.find(model.sensors, (s) => {
-            return s.id === sensorId;
+        return _.find(model['ssn:hasSubSystem'], (s) => {
+            return s.uri === sensorURI;
         });
     }
 }

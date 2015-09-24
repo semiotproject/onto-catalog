@@ -67,7 +67,6 @@ export default class ClassDetail extends React.Component {
     // render helpers
     renderMiniMap() {
         let model = ClassStore.getByURI(this.props.classURI);
-        debugger;
         let sensors = model['ssn:hasSubSystem'];
         return (
             <div className="col-md-6">
@@ -104,7 +103,7 @@ export default class ClassDetail extends React.Component {
                                             return (
                                                 <div key={s.uri} onClick={this.setView(SensorView, { uri: s.uri })}>
                                                     <h4>
-                                                        {s.uri}
+                                                        {s["ssn:observes"]}
                                                     </h4>
                                                 </div>
                                             );

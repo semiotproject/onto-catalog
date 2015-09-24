@@ -7,7 +7,8 @@ import Store from '../../../stores/class-store';
 
 const FIELDS = {
     'uri': {
-        title: "Class URI"
+        title: "Class URI",
+        prefix: "http://semdesc.semiot.ru/model/"
     },
     'rdfs:label.@value': {
         title: "label"
@@ -36,24 +37,26 @@ export default class DescriptionView extends React.Component {
         };
     }
 
-    renderField(type, value) {
+    renderField(type, value, prefix = "") {
         let isEditable = Store.isEditable(this.props.classId);
         let val;
         if (isEditable) {
             val = (
-                <input type="text"
-                    key={this.props.classId + "-" + type}
-                    onChange={this.handleChange}
-                    ref={type}
-                    className="form-control"
-                    defaultValue={value}
-                />
+                <div>
+                    {FIELDS[type].prefix}
+                    <input type="text"
+                        onChange={this.handleChange}
+                        ref={type}
+                        className="form-control"
+                        defaultValue={value}
+                    />
+                </div>
             );
         } else {
-            val = <span htmlFor="">{value}</span>;
+            val = <span htmlFor="">{(FIELDS[type].prefix ? FIELDS[type].prefix : "") + value}</span>;
         }
         return (
-            <div className="form-group">
+            <div className="form-group" key={this.props.classId + "-" + type}>
                 <label for="">{FIELDS[type].title}:</label>
                 {val}
             </div>

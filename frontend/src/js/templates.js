@@ -18,22 +18,6 @@ export function ClassTemplate() {
     };
 }
 
-export function SensorTemplate() {
-    return {
-        "@type": "ssn:Sensor",
-        "ssn:hasMeasurementCapability": {
-            "@type": "ssn:MeasurementCapability",
-            "ssn:forProperty": "someprefix:AirTemperature", // TODO: make this dynamically
-            "ssn:hasMeasurementProperty": [
-
-            ],
-            "uri": "_:" + uuid.v4()
-        },
-        "ssn:observes": "someprefix:AirTemperature",
-        "uri": "_:" + uuid.v4()
-    };
-}
-
 export const PropertyTemplate = {
     'Sensitivity': function() {
         return {
@@ -56,7 +40,7 @@ export const PropertyTemplate = {
             "ssn:hasValue": {
                 "@type": "DUL:Amount",
                 "DUL:hasDataValue": {
-                    "xsd1:double": "{0}",
+                    "xsd1:double": "",
                     uri: "_:" + uuid.v4()
                 },
                 "DUL:isClassifiedBy": "{1}",
@@ -66,3 +50,21 @@ export const PropertyTemplate = {
         };
     }
 };
+
+export function SensorTemplate() {
+    let props = [];
+    for (let key in PropertyTemplate) {
+        props.push(PropertyTemplate[key]());
+    }
+    return {
+        "@type": "ssn:Sensor",
+        "ssn:hasMeasurementCapability": {
+            "@type": "ssn:MeasurementCapability",
+            "ssn:forProperty": "someprefix:AirTemperature", // TODO: make this dynamically
+            "ssn:hasMeasurementProperty": props,
+            "uri": "_:" + uuid.v4()
+        },
+        "ssn:observes": "someprefix:AirTemperature",
+        "uri": "_:" + uuid.v4()
+    };
+}
