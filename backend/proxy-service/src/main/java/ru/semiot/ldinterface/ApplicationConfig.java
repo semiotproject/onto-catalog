@@ -1,4 +1,4 @@
-package ru.semiot.helper;
+package ru.semiot.ldinterface;
 
 import java.util.Set;
 import javax.ws.rs.core.Application;
@@ -7,7 +7,7 @@ import javax.ws.rs.core.Application;
  *
  * @author Daniil Garayzuev <garayzuev@gmail.com>
  */
-@javax.ws.rs.ApplicationPath("/api/")
+@javax.ws.rs.ApplicationPath("/resource/")
 public class ApplicationConfig extends Application {
 
     @Override
@@ -24,7 +24,7 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(ru.semiot.helper.RestAPI.class);
+        resources.add(ru.semiot.ldinterface.ClassResource.class);        
     }
     
 }

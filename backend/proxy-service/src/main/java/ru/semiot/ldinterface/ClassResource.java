@@ -1,4 +1,4 @@
-package ru.semiot.helper;
+package ru.semiot.ldinterface;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response;
  *
  * @author Daniil Garayzuev <garayzuev@gmail.com>
  */
-@Path("")
+@Path("/")
 public class ClassResource {
 
     @GET

@@ -16,9 +16,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
@@ -54,7 +54,7 @@ import static ru.semiot.helper.ServiceConfig.config;
  *
  * @author Daniil Garayzuev <garayzuev@gmail.com>
  */
-@Path("api")
+@Path("/")
 @Stateless
 public class RestAPI {
 
@@ -153,11 +153,11 @@ public class RestAPI {
                     }
                 }
             }
-            if (_accessor.getModel(graph_uri)!=null)
+            if (!_accessor.containsModel(graph_uri))
                 return Response.status(Response.Status.BAD_REQUEST).build();
             UUID id = UUID.randomUUID();
             m.setNsPrefix("prov", "http://www.w3.org/ns/prov#");
-            m.setNsPrefix("semdesc", "http://semdesc.semiot.ru/classes/");
+            m.setNsPrefix("semdesc", "http://semdesc.semiot.ru/users/");
             m.setNsPrefix("foaf", FOAF.getURI());
 
             Resource homepage = m.createResource(user.getString("html_url"))
