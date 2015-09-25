@@ -40,7 +40,7 @@ export default class SensorsView extends React.Component {
                         {
                             Store.isEditable() &&
                                 <button className="big" onClick={this.handleAddSensor}>
-                                    +
+                                    <i className="fa fa-plus"></i>
                                 </button>
                         }
                     </div>

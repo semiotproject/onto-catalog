@@ -29,9 +29,7 @@ export default class ClassView extends React.Component {
         return (
             <div className="app-container container-fluid class-list">
                 <div className="col-md-2" key={-1}>
-                    <button className="big" onClick={this.handleItemClick(null)} style={{
-                        backgroundColor: "rgb(111, 219, 244)"
-                    }}>
+                    <button className="big indigo" onClick={this.handleItemClick(null)}>
                         <i className="fa fa-plus"></i>
                     </button>
                 </div>
