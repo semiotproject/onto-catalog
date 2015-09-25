@@ -207,10 +207,6 @@ class CurrentClassStore extends EventEmitter {
           ]
         });
 
-        response = classToJSONLD(response);
-        response = JSONLDtoClass(response);
-        console.log(response);
-
         this._data = response;
 
         promise.resolve(response);

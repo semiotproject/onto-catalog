@@ -12,22 +12,41 @@ export default class ClassView extends React.Component {
         this.state = {
 
         };
+        this.handleCreateInstanceClick = (uri) => {
+            return (e) => {
+                e.stopPropagation();
+                this.props.onCreateInstanceClick(uri);
+            };
+        };
+        this.handleItemClick = (uri) => {
+            return (e) => {
+                this.props.onItemClick(uri);
+            };
+        };
     }
 
     render() {
         return (
             <div className="app-container container-fluid class-list">
                 <div className="col-md-2" key={-1}>
-                    <button className="big" onClick={this.props.onItemClick(null)}>
-                        +
+                    <button className="big" onClick={this.handleItemClick(null)} style={{
+                        backgroundColor: "rgb(111, 219, 244)"
+                    }}>
+                        <i className="fa fa-plus"></i>
                     </button>
                 </div>
                 {
                     ClassListStore.get().map((c) => {
                         return (
                             <div className="col-md-2" key={c.uri}>
-                                <button className="big" onClick={this.props.onItemClick(c.uri)}>
-                                    {c.label} by {c.author.username}
+                                <button className="big" onClick={this.handleItemClick(c.uri)}>
+                                    <div>
+                                        {c.label}
+                                    </div>
+                                    <div>
+                                        author: {c.author.username}
+                                    </div>
+                                    <div><a onClick={this.handleCreateInstanceClick(c.uri)}>Create instance</a></div>
                                 </button>
                             </div>
                         );

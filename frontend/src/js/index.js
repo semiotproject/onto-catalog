@@ -62,7 +62,7 @@ export default class App extends React.Component {
             <div>
                 <nav className="navbar navbar-inverse">
                     <ul>
-                        {menu}
+
                     </ul>
                     <UserBlock></UserBlock>
                 </nav>

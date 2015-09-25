@@ -49,7 +49,7 @@ export default class SensorsView extends React.Component {
                             return (
                                 <div className="col-md-4" key={item.uri}>
                                     <button className="big" onClick={this.handleClick(item.uri)}>
-                                        {item["ssn:observes"]}
+                                        <p>{item["ssn:observes"]}</p>
                                     </button>
                                 </div>
                             );
