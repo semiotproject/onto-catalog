@@ -5,17 +5,54 @@
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix fuseki: <http://jena.apache.org/fuseki#> .
 
-:service_tdb_all  a                   fuseki:Service ;
-        rdfs:label                    "TDB wot_semdesc_helper" ;
-        fuseki:dataset                :tdb_dataset_readwrite ;
-        fuseki:name                   "wot_semdesc_helper" ;
-        fuseki:serviceQuery           "query" , "sparql" ;
-        fuseki:serviceReadGraphStore  "get" ;
-        fuseki:serviceReadWriteGraphStore
-                "data" ;
-        fuseki:serviceUpdate          "update" ;
-        fuseki:serviceUpload          "upload" .
+#:service_tdb_all  a                   fuseki:Service ;
+#        rdfs:label                    "TDB wot_semdesc_helper" ;
+#        fuseki:dataset                :tdb_dataset_readwrite ;
+#        fuseki:name                   "wot_semdesc_helper" ;
+#        fuseki:serviceQuery           "query" , "sparql" ;
+#        fuseki:serviceReadGraphStore  "get" ;
+#        fuseki:serviceReadWriteGraphStore
+#                "data" ;
+#        fuseki:serviceUpdate          "update" ;
+#        fuseki:serviceUpload          "upload" .
+#
+#:tdb_dataset_readwrite
+#        a             tdb:DatasetTDB ;
+#        tdb:location  "/etc/fuseki/databases/wot_semdesc_helper" .
 
-:tdb_dataset_readwrite
-        a             tdb:DatasetTDB ;
-        tdb:location  "/etc/fuseki/databases/wot_semdesc_helper" .
+tdb:GraphTDB rdfs:subClassOf ja:Model .
+
+[] a fuseki:Server ;
+   fuseki:services ( <#service1> ) ;
+   .
+
+<#service1> a fuseki:Service ;
+	    fuseki:name 	 "ds" ;
+	    fuseki:serviceQuery  "sparql" ;
+	    fuseki:serviceUpdate "update" ;
+	    fuseki:dataset	 <#dataset> ;
+	    .
+
+<#dataset> a ja:RDFDataset ;
+	   ja:defaultGraph <#model_inf> ;
+           .
+
+<#tdbDataset> a tdb:DatasetTDB ;
+	   tdb:location "fuseki-db" ;
+	   tdb:unionDefaultGraph true;
+	   ja:defaultGraph <#model_inf>
+	   .
+
+<#model_inf> a ja:InfModel ;
+	     ja:baseModel [
+		a tdb:GraphTDB ;
+		tdb:dataset <#tdbDataset> ;
+	     ] ;
+	     ja:content [
+		ja:externalContent <http://purl.oclc.org/NET/ssnx/ssn#> ;
+		ja:externalContent <http://qudt.org/1.1/schema/qudt#> ;
+	     ] ;
+	     ja:reasoner [
+		ja:reasonerURL <http://jena.hpl.hp.com/2003/RDFSExptRuleReasoner> ;
+	     ] ;
+	     .
