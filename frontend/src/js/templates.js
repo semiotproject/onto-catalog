@@ -2,6 +2,7 @@
 
 import _ from 'lodash';
 import uuid from 'uuid';
+import FieldStore from './stores/field-store';
 
 export function ClassTemplate() {
     return {
@@ -28,7 +29,7 @@ export const PropertyTemplate = {
                     "xsd1:double": "",
                     uri: "_:" + uuid.v4()
                 },
-                "DUL:isClassifiedBy": "",
+                "DUL:isClassifiedBy": FieldStore.getUnitsOfMeasurement()[0],
                 uri: "_:" + uuid.v4()
             },
             uri: "_:" + uuid.v4()
@@ -43,7 +44,7 @@ export const PropertyTemplate = {
                     "xsd1:double": "",
                     uri: "_:" + uuid.v4()
                 },
-                "DUL:isClassifiedBy": "{1}",
+                "DUL:isClassifiedBy": FieldStore.getUnitsOfMeasurement()[0],
                 uri: "_:" + uuid.v4()
             },
             uri: "_:" + uuid.v4()

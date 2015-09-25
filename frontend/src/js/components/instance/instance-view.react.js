@@ -32,17 +32,9 @@ export default class InstanceView extends React.Component {
 
     render() {
         return (
-            <div className="app-wrapper">
-                <header className="app-header">
-                    <h2>Instance editor</h2>
-                    <p>
-                        <span>Choose device class and add instance-specific description</span>
-                    </p>
-                </header>
-                <div className="app-container">
-                    {this.renderMiniMap()}
-                    {this.renderView()}
-                </div>
+            <div className="app-container">
+                {this.renderMiniMap()}
+                {this.renderView()}
             </div>
         );
     }

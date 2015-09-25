@@ -26,6 +26,11 @@ export default class SensorView extends React.Component {
             sensitivity["ssn:hasValue"]["DUL:hasDataValue"]["xsd1:double"] = this.refs['sensitivityValue'].getDOMNode().value;
             sensitivity["ssn:hasValue"]["DUL:isClassifiedBy"] = this.refs['sensitivityUnit'].getDOMNode().value;
 
+            // accuracy
+            let accuracy = this.getAccuracy(sensor);
+            accuracy["ssn:hasValue"]["DUL:hasDataValue"]["xsd1:double"] = this.refs['accuracyValue'].getDOMNode().value;
+            accuracy["ssn:hasValue"]["DUL:isClassifiedBy"] = this.refs['accuracyUnit'].getDOMNode().value;
+
             Store.updateSensor(sensor);
         };
     }
@@ -40,23 +45,58 @@ export default class SensorView extends React.Component {
         return (
             <div key="sensitivity">
                 <label htmlFor="">Sensitivity</label>
-                <input type="number"
-                    onChange={this.handleChange}
-                    ref={"sensitivityValue"}
-                    className="form-control"
-                    defaultValue={s["ssn:hasValue"]["DUL:hasDataValue"]["xsd1:double"]}
-                />
-                <select onChange={this.handleChange}
-                    ref="sensitivityUnit"
-                    className="form-control"
-                    defaultValue={s["ssn:hasValue"]["DUL:isClassifiedBy"]}
-                >
-                    {
-                        FieldStore.getUnitsOfMeasurement().map((t) => {
-                            return <option value={t}>{t}</option>;
-                        })
-                    }
-                </select>
+                <div>
+                    <input type="number"
+                        onChange={this.handleChange}
+                        className="form-control"
+                        ref={"sensitivityValue"}
+                        defaultValue={s["ssn:hasValue"]["DUL:hasDataValue"]["xsd1:double"]}
+                    />
+                    <select onChange={this.handleChange}
+                        ref="sensitivityUnit"
+                        className="form-control units"
+                        defaultValue={s["ssn:hasValue"]["DUL:isClassifiedBy"]}
+                    >
+                        {
+                            FieldStore.getUnitsOfMeasurement().map((t) => {
+                                return <option value={t}>{t}</option>;
+                            })
+                        }
+                    </select>
+                </div>
+            </div>
+        );
+    }
+
+    getAccuracy(sensor) {
+        return _.find(sensor['ssn:hasMeasurementCapability']['ssn:hasMeasurementProperty'], (i) => {
+            return i['@type'] === "ssn:Accuracy";
+        });
+    }
+    renderAccuracy(sensor) {
+        let s = this.getAccuracy(sensor);
+        return (
+            <div key="accuracy">
+                <label htmlFor="">Accuracy</label>
+                <div>
+                    <input type="number"
+                        onChange={this.handleChange}
+                        className="form-control"
+                        ref={"accuracyValue"}
+                        defaultValue={s["ssn:hasValue"]["DUL:hasDataValue"]["xsd1:double"]}
+                    />
+                    <select onChange={this.handleChange}
+                        ref="accuracyUnit"
+                        className="form-control units"
+                        defaultValue={s["ssn:hasValue"]["DUL:isClassifiedBy"]}
+                    >
+                        {
+                            FieldStore.getUnitsOfMeasurement().map((t) => {
+                                return <option value={t}>{t}</option>;
+                            })
+                        }
+                    </select>
+                </div>
             </div>
         );
     }
@@ -81,13 +121,15 @@ export default class SensorView extends React.Component {
     }
 
     render() {
+        debugger;
         let sensor = Store.getSensorByURI(this.props.data.uri);
         return (
             <div>
-                <header>{`Sensor #${this.props.data.uri}`}</header>
+                <h3>Sensor</h3>
                 <div className="form" key={this.props.data.uri}>
                     {this.renderType(sensor)}
                     {this.renderSensitivity(sensor)}
+                    {this.renderAccuracy(sensor)}
                 </div>
             </div>
         );

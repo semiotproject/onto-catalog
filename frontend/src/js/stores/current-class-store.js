@@ -206,7 +206,6 @@ class CurrentClassStore extends EventEmitter {
             }
           ]
         });
-        classToJSONLD(response);
 
         this._data = response;
 
@@ -218,6 +217,9 @@ class CurrentClassStore extends EventEmitter {
 
     get() {
         return this._data;
+    }
+    isNew() {
+        return this._isNew;
     }
 
     create() {
@@ -235,6 +237,7 @@ class CurrentClassStore extends EventEmitter {
     // remote
     save() {
         let model = this._data;
+        model['uri'] = CONFIG.BASE_CLASS_URI + model['uri'];
         let data = JSON.stringify(classToJSONLD(model));
         console.log('saving to triplestore model: ', data);
         return $.ajax({

@@ -78,7 +78,7 @@ export function loadUnitsOfMeasurement() {
     */
    const promise = $.Deferred();
 
-    promise.resolve(['Celcium', 'Kelvin', 'Joule']);
+    promise.resolve(['qudt:Celcium', 'qudt:Kelvin', 'qudt:Joule']);
 
    return promise;
 }

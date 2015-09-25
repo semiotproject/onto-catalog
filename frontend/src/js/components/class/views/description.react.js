@@ -83,7 +83,7 @@ export default class DescriptionView extends React.Component {
 
         return (
             <div>
-                <header>Device</header>
+                <h3>Device</h3>
                 <div>
                     {this.renderField(
                         'uri',
