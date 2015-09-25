@@ -22,9 +22,7 @@ export default class ClassView extends React.Component {
             this.forceUpdate();
         };
         this.handleBackClick = () => {
-            this.setState({
-                view: "list"
-            });
+            this.loadClassList();
         };
         this.handleCreateInstanceClick = (uri) => {
             console.log('Showing instance form for class with uri = ', uri);
@@ -57,12 +55,21 @@ export default class ClassView extends React.Component {
         };
     }
 
-    componentDidMount() {
-        ClassListStore.load().done(() => {
-            this.setState({
-                isLoading: false
+    loadClassList() {
+        this.setState({
+            isLoading: true
+        }, () => {
+            ClassListStore.load().done(() => {
+                this.setState({
+                    isLoading: false,
+                    view: "list"
+                });
             });
         });
+    }
+
+    componentDidMount() {
+        this.loadClassList();
         // ClassListStore.on('update', this.handleStoreUpdate);
     }
     componentWillUnmount() {
@@ -109,7 +116,7 @@ export default class ClassView extends React.Component {
                         <button className="btn btn-primary" style={{
                             position: "absolute",
                             left: "20px",
-                            top: "35px"
+                            top: "30px"
                         }} onClick={this.handleBackClick}><i className="fa fa-arrow-circle-left"></i> Back</button>
                     }
                     {title}

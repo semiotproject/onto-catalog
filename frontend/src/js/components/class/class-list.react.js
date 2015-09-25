@@ -40,7 +40,9 @@ export default class ClassView extends React.Component {
                         return (
                             <div className="col-md-2" key={c.uri}>
                                 <button className="big" onClick={this.handleItemClick(c.uri)}>
-                                    <div>
+                                    <div style={{
+                                        fontSize: "16px"
+                                    }}>
                                         {c.label}
                                     </div>
                                     <div>
