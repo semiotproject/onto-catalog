@@ -9,7 +9,7 @@ import SensorView from './views/sensor.react.js';
 import DescriptionView from './views/description.react.js';
 
 import ViewManager from './view-manager';
-import ClassStore from '../../stores/class-store';
+import CurrentClassStore from '../../stores/current-class-store';
 import CurrentUserStore from '../../stores/current-user-store';
 
 const logger = console;
@@ -34,27 +34,27 @@ export default class ClassDetail extends React.Component {
         };
         this.handleSaveClick = () => {
             console.log('save was clicked');
-            ClassStore.save(this.props.classId);
+            CurrentClassStore.save(this.props.classId);
         };
         this.handleAddSensor = () => {
-            let newSensorURI = ClassStore.addSensor(this.props.classURI);
+            let newSensorURI = CurrentClassStore.addSensor(this.props.classURI);
             this.setView(SensorView, {
                 seneorURI: newSensorURI
             });
         };
         this.handleRemoveClick = () => {
-            ClassStore.remove(this.props.classId);
+            CurrentClassStore.remove(this.props.classId);
         };
     }
 
     // lifecycle methods
     componentDidMount() {
         ViewManager.on('update', this.handleStoreUpdate);
-        ClassStore.on('update', this.handleStoreUpdate);
+        CurrentClassStore.on('update', this.handleStoreUpdate);
     }
     componentWillUnmount() {
         ViewManager.removeListener('update', this.handleStoreUpdate);
-        ClassStore.removeListener('update', this.handleStoreUpdate);
+        CurrentClassStore.removeListener('update', this.handleStoreUpdate);
     }
 
     // common helpers
@@ -66,20 +66,20 @@ export default class ClassDetail extends React.Component {
     }
     // render helpers
     renderMiniMap() {
-        let model = ClassStore.getByURI(this.props.classURI);
+        let model = CurrentClassStore.get();
         let sensors = model['ssn:hasSubSystem'];
         return (
             <div className="col-md-6">
                 <div className="minimap-container">
                     <div onClick={this.setView(DescriptionView)}>
                         {
-                            ClassStore.isEditable(this.props.classURI) &&
+                            CurrentClassStore.isEditable() &&
                             <span onClick={this.handleRemoveClick} className="fa fa-remove"></span>
                         }
                         <h4>
                             <span>{this.props.classURI ? ((model && model['rdfs:label'] && model['rdfs:label']['@value']) || "") : "New Device Class"}</span>
                             {
-                                ClassStore.isEditable(this.props.classURI) &&
+                                CurrentClassStore.isEditable() &&
                                     <button className="btn btn-primary" onClick={this.handleSaveClick}>
                                         <i className="fa fa-save"></i>
                                         <span>{this.props.classURI ? "Save" : "Create"}</span>
@@ -91,7 +91,7 @@ export default class ClassDetail extends React.Component {
                                 <h4>
                                     <span>Sensors</span>
                                     {
-                                        ClassStore.isEditable(this.props.classURI) &&
+                                        CurrentClassStore.isEditable(this.props.classURI) &&
                                             <button className="btn btn-primary btn-add" title="add" onClick={this.handleAddSensor}>
                                                 <i className="fa fa-plus"></i>
                                             </button>

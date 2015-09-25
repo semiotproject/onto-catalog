@@ -1,28 +1,22 @@
 "use strict";
 
-import { EventEmitter } from 'events';
+import EventEmitter from 'events';
 import CONFIG from '../config';
+import CurrentUserStore from '../stores/current-user-store';
+import { classToJSONLD, JSONLDtoClass } from '../json-ld-adapter';
+import { loadClassDetail } from '../sparql-adapter';
+import * as TEMPLATES from '../templates';
 import $ from 'jquery';
 import _ from 'lodash';
 import uuid from 'uuid';
-import { classToJSONLD, JSONLDtoClass } from '../json-ld-adapter';
-import { loadClassList, loadClassDetail } from '../sparql-adapter';
-import CurrentUserStore from './current-user-store';
-import * as TEMPLATES from '../templates';
 
-class ClassStore extends EventEmitter {
+class CurrentClassStore extends EventEmitter {
     constructor() {
         super();
-        this._counter = 0;
+        this._data = null;
     }
-    loadList() {
-        // TODO: remove this mock
-        return loadClassList().done((res) => {
-            this._classList = res;
-        });
-    }
-    loadDetail(uri) {
-        console.log('loading additional info about class with URI = ', uri);
+    load(classURI) {
+        console.log('loading additional info about class with URI = ', classURI);
         const promise = $.Deferred();
 
         let response =  JSONLDtoClass({
@@ -213,78 +207,54 @@ class ClassStore extends EventEmitter {
         });
         classToJSONLD(response);
 
-        this._classList.forEach((c, index) => {
-            if (c.uri === response.uri) {
-                this._classList[index] = response;
-            }
-        });
+        this._data = response;
+
         promise.resolve(response);
 
         return promise;
         //
     }
-    create() {
-        let model = TEMPLATES.ClassTemplate();
-        this._classList.push(model);
-        return model.uri;
-    }
-    getById(id) {
-        return _.find(this._classList, (c) => {
-            return c.id === id;
-        });
-    }
-    getByURI(uri) {
-        return _.find(this._classList, (c) => {
-            return c.uri === uri;
-        });
-    }
+
     get() {
-        return this._classList;
+        return this._data;
     }
+
+    create() {
+        this._data = TEMPLATES.ClassTemplate();
+        return this._data.uri;
+    }
+
     // local
     update(model) {
         console.log('now model is ', model);
-
-        this._classList.forEach((c, index) => {
-            if (c.uri === model.uri) {
-                this._classList[index] = model;
-                this.emit('update');
-            }
-        });
+        this._data = model;
+        this.emit('update');
     }
     // remote
-    save(classId) {
-        let model = this.getById(classId);
-        if (!model) {
-            return;
-        }
+    save() {
+        let model = this._data;
+        let data = JSON.stringify(classToJSONLD(model));
+        console.log('saving to triplestore model: ', data);
         return $.ajax({
             url: CONFIG.URLS.class + (model.isNew ? "" : encodeURIComponent(model.uri)),
             type: model.isNew ? "POST" : "PUT",
-            data: JSON.stringify(classToJSONLD(model)),
+            data: data,
             contentType: "applcation/ls+json",
             success() {
-                model.isNew = false;
-                this.emit('update');
+                //
             },
             error() {
 
             }
         });
     }
-    remove(classId) {
-        let model = this.getById(classId);
-        if (!model) {
-            return;
-        }
+    remove() {
+        let model = this._data;
         return $.ajax({
             url: CONFIG.URLS.class + (model.isNew ? "" : encodeURIComponent(model.uri)),
             type: "DELETE",
             success: () => {
-                _.remove((this._classList, (m) => {
-                    return m.id === classId;
-                }));
-                this.emit('update');
+                //
             },
             error() {
 
@@ -292,42 +262,34 @@ class ClassStore extends EventEmitter {
         });
     }
 
-    isEditable(classURI) {
+    isEditable() {
         let user = CurrentUserStore.getCurrentUser();
         return true;
         // return (user && user.username === ClassStore.getByURI(classURI).author.username);
     }
 
-    addSensor(classURI) {
-        let model = this.getByURI(classURI);
-
+    addSensor() {
         let newSensor = TEMPLATES.SensorTemplate();
-        model['ssn:hasSubSystem'].push(newSensor);
-        // this.emit('update');
+        this._data['ssn:hasSubSystem'].push(newSensor);
+
+        this.emit('update');
 
         return newSensor.uri;
     }
-    updateSensor(classURI, sensor) {
-      let model = this.getByURI(classURI);
-      _.forEach(model['ssn:hasSubSystem'], (s, index) => {
+    updateSensor(sensor) {
+      _.forEach(this._data['ssn:hasSubSystem'], (s, index) => {
           if (s.uri === sensor.uri) {
             console.log('updating sensor: now is: ', sensor);
-            model['ssn:hasSubSystem'][index] = sensor;
+            this._data['ssn:hasSubSystem'][index] = sensor;
             this.emit('update');
           }
       });
     }
-    getSensorByURI(classURI, sensorURI) {
-        let model = _.find(this._classList, (c) => {
-            return c.uri === classURI;
-        });
-        if (!model) {
-            return;
-        }
-        return _.find(model['ssn:hasSubSystem'], (s) => {
+    getSensorByURI(sensorURI) {
+        return _.find(this._data['ssn:hasSubSystem'], (s) => {
             return s.uri === sensorURI;
         });
     }
 }
 
-export default new ClassStore();
+export default new CurrentClassStore();

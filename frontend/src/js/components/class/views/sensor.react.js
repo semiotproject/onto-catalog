@@ -2,7 +2,7 @@
 
 let React = require('react');
 
-import Store from '../../../stores/class-store';
+import Store from '../../../stores/current-class-store';
 import FieldStore from '../../../stores/field-store';
 import _ from 'lodash';
 
@@ -17,7 +17,7 @@ export default class SensorView extends React.Component {
         };
 
         this.handleChange = () => {
-            let sensor = Store.getSensorByURI(this.props.classURI, this.props.data.uri);
+            let sensor = Store.getSensorByURI(this.props.data.uri);
 
             sensor["ssn:observes"] = this.refs['type'].getDOMNode().value;
 
@@ -26,7 +26,7 @@ export default class SensorView extends React.Component {
             sensitivity["ssn:hasValue"]["DUL:hasDataValue"]["xsd1:double"] = this.refs['sensitivityValue'].getDOMNode().value;
             sensitivity["ssn:hasValue"]["DUL:isClassifiedBy"] = this.refs['sensitivityUnit'].getDOMNode().value;
 
-            Store.updateSensor(this.props.classURI, sensor);
+            Store.updateSensor(sensor);
         };
     }
 
@@ -81,11 +81,11 @@ export default class SensorView extends React.Component {
     }
 
     render() {
-        let sensor = Store.getSensorByURI(this.props.classURI, this.props.data.uri);
+        let sensor = Store.getSensorByURI(this.props.data.uri);
         return (
             <div>
                 <header>{`Sensor #${this.props.data.uri}`}</header>
-                <div className="form" key={this.props.data.id}>
+                <div className="form" key={this.props.data.uri}>
                     {this.renderType(sensor)}
                     {this.renderSensitivity(sensor)}
                 </div>

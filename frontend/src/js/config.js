@@ -1,7 +1,7 @@
 "use strict";
 
 const BACKEND_PORT = 8085;
-const BACKEND_HOST = `${location.protocol}//semdesc.semiot.ru:${BACKEND_PORT}`;
+const BACKEND_HOST = `${location.protocol}//${location.hostname}:${BACKEND_PORT}`;
 const proxyBase = `${BACKEND_HOST}/api/`;
 const fusekiBase = `${BACKEND_HOST}/fuseki/wot_semdesc_helper/`;
 

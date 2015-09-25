@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import ClassStore from '../../stores/class-store';
+import ClassListStore from '../../stores/class-list-store';
 import CurrentUserStore from '../../stores/current-user-store';
 
 export default class ClassView extends React.Component {
@@ -23,7 +23,7 @@ export default class ClassView extends React.Component {
                     </button>
                 </div>
                 {
-                    ClassStore.get().map((c) => {
+                    ClassListStore.get().map((c) => {
                         return (
                             <div className="col-md-2" key={c.uri}>
                                 <button className="big" onClick={this.props.onItemClick(c.uri)}>

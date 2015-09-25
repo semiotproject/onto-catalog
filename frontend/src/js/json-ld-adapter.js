@@ -1,9 +1,9 @@
 "use strict";
 
 import _ from 'lodash';
-import JSONPrefixes from './prefixes';
+import { JSONPrefixes } from './prefixes';
 
-const CONTEXT = _.assign(JSONPrefixes, {
+const CONTEXT = _.assign({}, JSONPrefixes, {
     //
 });
 /*
@@ -47,8 +47,6 @@ const TEMPLATE = {
 
 export function JSONLDtoClass(jsonld) {
     let triples = jsonld['@graph'];
-
-    console.log('target graph is: ', JSON.stringify(jsonld));
 
     function findById(id) {
         let trip =  _.find(triples, (t) => {
@@ -95,34 +93,6 @@ export function JSONLDtoClass(jsonld) {
 }
 
 export function classToJSONLD(json) {
-    /*
-    let template = _.assign({}, TEMPLATE);
-    let graph = template['@graph'];
-
-    graph.push({
-        '@id': json.uri,
-        '@type': "ssn:System",
-        'rdfs:label': json.label,
-        'ssn:hasSubsystem': json.sensors.map((s, index) => {
-            return {
-                '@id': json.uri + '/sensor/' + s.id
-            };
-        })
-    });
-
-
-    template['@graph'] = graph.concat(json.sensors.map((s, index) => {
-        return {
-            '@id': json.uri + '/sensor/' + s.id,
-            '@type': "ssn:Sensor",
-            'ssn:observes': {
-                '@id': s.type
-            }
-        };
-    }));
-
-    return template;
-    */
 
     // create immutable copy
     json = _.assign({}, json);
@@ -132,8 +102,6 @@ export function classToJSONLD(json) {
     // return { '@id': 'uri' } instead of nested structure
     function normalizeTriple(g) {
         let ret = g;
-
-        console.log('normalizing ', g);
         if (g.uri) {
             for (let key in g) {
                 if (_.isPlainObject(g[key])) {
@@ -153,8 +121,6 @@ export function classToJSONLD(json) {
             triples.push(g);
         }
 
-        console.log('returning ', ret);
-
         return ret;
     }
 
@@ -162,5 +128,7 @@ export function classToJSONLD(json) {
 
     console.log('target triples are: ', JSON.stringify(triples));
 
-    return triples;
+    return _.assign({}, TEMPLATE, {
+        '@graph': triples
+    });
 }

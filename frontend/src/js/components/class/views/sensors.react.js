@@ -2,7 +2,7 @@
 
 let React = require('react');
 
-import Store from '../../../stores/class-store';
+import Store from '../../../stores/current-class-store';
 import ViewManager from '../view-manager';
 
 import SensorView from './sensor.react';
@@ -17,20 +17,20 @@ export default class SensorsView extends React.Component {
 
         };
         this.handleAddSensor = () => {
-            let newSensorId = Store.addSensor(this.props.classId);
+            let newSensorId = Store.addSensor();
             this.setView(SensorView, {
                 id: newSensorId
             });
         };
-        this.handleClick = (id) => {
+        this.handleClick = (uri) => {
             return () => {
-                ViewManager.setView(SensorView, { id: id });
+                ViewManager.setView(SensorView, { uri: uri });
             };
         };
     }
 
     render() {
-        let model = Store.getByURI(this.props.classURI);
+        let model = Store.get();
         let sensors = model['ssn:hasSubSystem'];
         return (
             <div>
@@ -38,7 +38,7 @@ export default class SensorsView extends React.Component {
                 <div>
                     <div className="col-md-4" key={-1}>
                         {
-                            Store.isEditable(this.props.classId) &&
+                            Store.isEditable() &&
                                 <button className="big" onClick={this.handleClick(null)}>
                                     +
                                 </button>

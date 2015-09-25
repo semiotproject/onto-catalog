@@ -4,7 +4,8 @@ import React from 'react';
 
 import ClassDetail from './class-detail.react';
 import ClassList from './class-list.react';
-import ClassStore from '../../stores/class-store';
+import ClassListStore from '../../stores/class-list-store';
+import CurrentClassStore from '../../stores/current-class-store';
 import CurrentUserStore from '../../stores/current-user-store';
 
 export default class ClassView extends React.Component {
@@ -13,7 +14,7 @@ export default class ClassView extends React.Component {
 
         this.state = {
             view: 'list',
-            isLoading: false,
+            isLoading: true,
             currentClass: null
         };
         this.handleStoreUpdate = () => {
@@ -25,14 +26,14 @@ export default class ClassView extends React.Component {
                     console.log('creating new class...');
                     this.setState({
                         view: 'detail',
-                        currentClass: ClassStore.create()
+                        currentClass: CurrentClassStore.create()
                     });
                 } else {
                     console.log('selected class with URI = ', uri);
                     this.setState({
                         isLoading: true
                     }, () => {
-                        ClassStore.loadDetail(uri).done(() => {
+                        CurrentClassStore.load(uri).done(() => {
                             this.setState({
                                 isLoading: false,
                                 view: 'detail',
@@ -46,10 +47,15 @@ export default class ClassView extends React.Component {
     }
 
     componentDidMount() {
-        ClassStore.on('update', this.handleStoreUpdate);
+        ClassListStore.load().done(() => {
+            this.setState({
+                isLoading: false
+            });
+        });
+        // ClassListStore.on('update', this.handleStoreUpdate);
     }
     componentWillUnmount() {
-        ClassStore.removeListener('update', this.handleStoreUpdate);
+        // ClassListStore.removeListener('update', this.handleStoreUpdate);
     }
 
     render() {

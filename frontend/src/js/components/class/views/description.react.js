@@ -3,7 +3,7 @@
 let React = require('react');
 
 import _ from 'lodash';
-import Store from '../../../stores/class-store';
+import Store from '../../../stores/current-class-store';
 
 const FIELDS = {
     'uri': {
@@ -26,7 +26,7 @@ export default class DescriptionView extends React.Component {
         };
 
         this.handleChange = () => {
-            let model = Store.getByURI(this.props.classURI);
+            let model = Store.get();
 
             this.setFieldValue(model, 'uri');
             this.setFieldValue(model, 'rdfs:label.@value');
@@ -79,7 +79,7 @@ export default class DescriptionView extends React.Component {
     }
 
     render() {
-        let model = Store.getByURI(this.props.classURI);
+        let model = Store.get();
 
         return (
             <div>
