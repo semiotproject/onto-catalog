@@ -39,18 +39,23 @@ export default class ClassDetail extends React.Component {
         this.handleAddSensor = () => {
             let newSensorURI = CurrentClassStore.addSensor(this.props.classURI);
             this.setView(SensorView, {
-                seneorURI: newSensorURI
+                uri: newSensorURI
             });
         };
         this.handleRemoveClick = () => {
             CurrentClassStore.remove(this.props.classId);
         };
+
+        ViewManager.setView(DescriptionView);
     }
 
     // lifecycle methods
     componentDidMount() {
         ViewManager.on('update', this.handleStoreUpdate);
         CurrentClassStore.on('update', this.handleStoreUpdate);
+    }
+    componentWillReceiveProps(nextProps) {
+        //
     }
     componentWillUnmount() {
         ViewManager.removeListener('update', this.handleStoreUpdate);
@@ -73,7 +78,7 @@ export default class ClassDetail extends React.Component {
                 <div className="minimap-container">
                     <div onClick={this.setView(DescriptionView)}>
                         {
-                            CurrentClassStore.isEditable() &&
+                            CurrentClassStore.isEditable() && !CurrentClassStore.isNew() &&
                             <span onClick={this.handleRemoveClick} className="fa fa-remove"></span>
                         }
                         <h4>
@@ -82,7 +87,7 @@ export default class ClassDetail extends React.Component {
                                 CurrentClassStore.isEditable() &&
                                     <button className="btn btn-primary" onClick={this.handleSaveClick}>
                                         <i className="fa fa-save"></i>
-                                        <span>{this.props.classURI ? "Save" : "Create"}</span>
+                                        <span>{!CurrentClassStore.isNew() ? "Save" : "Create"}</span>
                                     </button>
                             }
                         </h4>

@@ -17,9 +17,9 @@ export default class SensorsView extends React.Component {
 
         };
         this.handleAddSensor = () => {
-            let newSensorId = Store.addSensor();
+            let newSensorURI = Store.addSensor();
             this.setView(SensorView, {
-                id: newSensorId
+                uri: newSensorURI
             });
         };
         this.handleClick = (uri) => {
@@ -34,12 +34,12 @@ export default class SensorsView extends React.Component {
         let sensors = model['ssn:hasSubSystem'];
         return (
             <div>
-                <header>Sensors</header>
+                <h3>Sensors</h3>
                 <div>
                     <div className="col-md-4" key={-1}>
                         {
                             Store.isEditable() &&
-                                <button className="big" onClick={this.handleClick(null)}>
+                                <button className="big" onClick={this.handleAddSensor}>
                                     +
                                 </button>
                         }
@@ -49,7 +49,7 @@ export default class SensorsView extends React.Component {
                             return (
                                 <div className="col-md-4" key={item.uri}>
                                     <button className="big" onClick={this.handleClick(item.uri)}>
-                                        {item["ssn:observes"]}
+                                        <div>{item["ssn:observes"]}</div>
                                     </button>
                                 </div>
                             );

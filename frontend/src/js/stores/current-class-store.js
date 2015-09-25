@@ -16,6 +16,7 @@ class CurrentClassStore extends EventEmitter {
         this._data = null;
     }
     load(classURI) {
+        this._isNew = false;
         console.log('loading additional info about class with URI = ', classURI);
         const promise = $.Deferred();
 
@@ -205,7 +206,6 @@ class CurrentClassStore extends EventEmitter {
             }
           ]
         });
-        classToJSONLD(response);
 
         this._data = response;
 
@@ -218,8 +218,12 @@ class CurrentClassStore extends EventEmitter {
     get() {
         return this._data;
     }
+    isNew() {
+        return this._isNew;
+    }
 
     create() {
+        this._isNew = true;
         this._data = TEMPLATES.ClassTemplate();
         return this._data.uri;
     }
@@ -233,11 +237,12 @@ class CurrentClassStore extends EventEmitter {
     // remote
     save() {
         let model = this._data;
+        model['uri'] = CONFIG.BASE_CLASS_URI + model['uri'];
         let data = JSON.stringify(classToJSONLD(model));
         console.log('saving to triplestore model: ', data);
         return $.ajax({
-            url: CONFIG.URLS.class + (model.isNew ? "" : encodeURIComponent(model.uri)),
-            type: model.isNew ? "POST" : "PUT",
+            url: CONFIG.URLS.class + (this._isNew ? "" : encodeURIComponent(model.uri)),
+            type: this._isNew ? "POST" : "PUT",
             data: data,
             contentType: "applcation/ls+json",
             success() {
@@ -251,7 +256,7 @@ class CurrentClassStore extends EventEmitter {
     remove() {
         let model = this._data;
         return $.ajax({
-            url: CONFIG.URLS.class + (model.isNew ? "" : encodeURIComponent(model.uri)),
+            url: CONFIG.URLS.class + (this._isNew ? "" : encodeURIComponent(model.uri)),
             type: "DELETE",
             success: () => {
                 //
