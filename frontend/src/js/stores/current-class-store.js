@@ -206,7 +206,10 @@ class CurrentClassStore extends EventEmitter {
             }
           ]
         });
-        classToJSONLD(response);
+
+        response = classToJSONLD(response);
+        response = JSONLDtoClass(response);
+        console.log(response);
 
         this._data = response;
 
@@ -218,6 +221,9 @@ class CurrentClassStore extends EventEmitter {
 
     get() {
         return this._data;
+    }
+    isNew() {
+        return this._isNew;
     }
 
     create() {
