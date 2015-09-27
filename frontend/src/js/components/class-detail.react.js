@@ -3,14 +3,15 @@
 import React from 'react';
 import $ from 'jquery';
 import saveAs from 'browser-filesaver';
+import { Link } from 'react-router';
 
-import SensorsView from './views/sensors.react.js';
-import SensorView from './views/sensor.react.js';
-import DescriptionView from './views/description.react.js';
+import SensorsView from './class/views/sensors.react.js';
+import SensorView from './class/views/sensor.react.js';
+import DescriptionView from './class/views/description.react.js';
 
-import ViewManager from './view-manager';
-import CurrentClassStore from '../../stores/current-class-store';
-import CurrentUserStore from '../../stores/current-user-store';
+import ViewManager from './class/view-manager';
+import CurrentClassStore from '../stores/current-class-store';
+import CurrentUserStore from '../stores/current-user-store';
 
 const logger = console;
 
@@ -21,7 +22,7 @@ export default class ClassDetail extends React.Component {
 
         // instead of getInitialState in new React notation
         this.state = {
-
+            isLoading: true
         };
 
         // ex-componentWillMount hooks
@@ -51,6 +52,25 @@ export default class ClassDetail extends React.Component {
 
     // lifecycle methods
     componentDidMount() {
+        if (this.props.params.uri === "new") {
+            console.log('creating new class...');
+            this.setState({
+                isLoading: false,
+                currentClass: CurrentClassStore.create()
+            });
+        } else {
+            console.log('selected class with URI = ', this.props.params.uri);
+            this.setState({
+                isLoading: true
+            }, () => {
+                CurrentClassStore.load(this.props.params.uri).done(() => {
+                    this.setState({
+                        isLoading: false,
+                        currentClass: this.props.params.uri
+                    });
+                });
+            });
+        }
         ViewManager.on('update', this.handleStoreUpdate);
         CurrentClassStore.on('update', this.handleStoreUpdate);
     }
@@ -137,10 +157,28 @@ export default class ClassDetail extends React.Component {
     }
 
     render() {
+        if (this.state.isLoading) {
+            return <span>loading..</span>;
+        }
         return (
-            <div className="app-container container fluid class-detail">
-                {this.renderMiniMap()}
-                {this.renderView()}
+            <div className="app-wrapper">
+                <div className="app-header">
+                    <div>
+                        <Link to="/model/">
+                            <button className="btn btn-primary" style={{
+                                position: "absolute",
+                                left: "20px",
+                                top: "30px"
+                            }}><i className="fa fa-arrow-circle-left"></i> Back</button>
+                        </Link>
+                        <h3>Model View</h3>
+                        <p>Describe generic device model</p>
+                    </div>
+                </div>
+                <div className="app-container container fluid class-detail">
+                    {this.renderMiniMap()}
+                    {this.renderView()}
+                </div>
             </div>
         );
     }
