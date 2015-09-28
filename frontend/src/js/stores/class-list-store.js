@@ -12,7 +12,13 @@ class ClassStore extends EventEmitter {
     load() {
         // TODO: remove this mock
         return loadClassList().done((res) => {
-            this._data = res;
+            this._data = res.result.bindings.map((b) => {
+                return {
+                    uri: b.uri.value,
+                    label: b.label.value,
+                    author: b.label.author
+                };
+            });
         });
     }
     getByURI(uri) {

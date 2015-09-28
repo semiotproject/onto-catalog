@@ -74,7 +74,7 @@ export default class ClassView extends React.Component {
                                                 {c.label}
                                             </div>
                                             <div>
-                                                author: {c.author.username}
+                                                author: {c.author}
                                             </div>
                                             <div>
                                                 <Link to={'/instance/' + encodeURIComponent(c.uri)}>Create instance</Link>

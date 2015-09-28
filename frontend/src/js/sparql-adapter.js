@@ -29,13 +29,15 @@ function getJsonLdResult(query) {
 }
 
 export function loadClassList() {
-    /*
     return getSparqlJsonResult(`
-        SELECT ?class WHERE {
-           ?class ?a ?b .
+        SELECT ?uri ?author WHERE {
+          GRAPH ?uri {
+            ?a prov:wasAttributedTo ?c .
+            ?c foaf:accountName ?author .
+          } .
         }
     `);
-    */
+    /*
     const promise = $.Deferred();
 
     promise.resolve(_.range(6).map((i) => {
@@ -49,6 +51,7 @@ export function loadClassList() {
     }));
 
     return promise;
+    */
 }
 export function loadClassDetail(classURI) {
     return getSparqlJsonResult(`
