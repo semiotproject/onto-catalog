@@ -29,6 +29,7 @@ tdb:GraphTDB rdfs:subClassOf ja:Model .
 <#service1> a fuseki:Service ;
 	    fuseki:name 	 "ds" ;
 	    fuseki:serviceQuery  "sparql" ;
+		fuseki:serviceReadWriteGraphStore "data" ;
 	    fuseki:serviceUpdate "update" ;
 	    fuseki:dataset	 <#dataset> ;
 	    .

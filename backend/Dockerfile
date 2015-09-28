@@ -31,12 +31,6 @@ RUN wget $FUSEKI && tar xvzf apache-jena-fuseki-2.3.0.tar.gz && rm apache-jena-f
 #Config MySQL
 RUN service mysql start && mysql --execute="create database semdesc; connect semdesc; create table session(id int(8), token text, session_hash bigint, login text, key(session_hash));"
 
-#Add config file
-#ADD config.properties /wot_semdesc_helper/backend/
-
-#Deploy to Wildfly
-WORKDIR /root/wot-semdesc-helper/backend/proxy-service/
-
 #Config Fuseki
 RUN mkdir /etc/fuseki/
 ADD shiro.ini /etc/fuseki/
@@ -45,8 +39,10 @@ ADD config.ttl /etc/fuseki/
 #Build frontend
 RUN cd /root/wot-semdesc-helper/frontend/ && npm i -g grunt-cli && npm i && npm run build && cd /root/wot-semdesc-helper/frontend/dist/ && cp -r . /root/wot-semdesc-helper/backend/proxy-service/src/main/webapp/ && cd /root/
 
-RUN service mysql start && start-stop-daemon --start --background --exec "/root/wildfly-8.2.0.Final/bin/standalone.sh" && mvn clean wildfly:deploy && sh /root/wildfly-8.2.0.Final/bin/jboss-cli.sh --connect command="deploy /root/apache-jena-fuseki-2.3.0/fuseki.war" && sh /root/wildfly-8.2.0.Final/bin/jboss-cli.sh --connect command=:shutdown
+#Deploy to Wildfly
+WORKDIR /root/wot-semdesc-helper/backend/proxy-service/
+RUN mvn clean install && cp /root/apache-jena-fuseki-2.3.0/fuseki.war /root/wildfly-8.2.0.Final/standalone/deployments/ && cp /root/wot-semdesc-helper/backend/proxy-service/target/ROOT.war /root/wildfly-8.2.0.Final/standalone/deployments/
 
 EXPOSE 8080
 
-CMD rm -rf /root/wildfly-8.2.0.Final/standalone/configuration/standalone_xml_history/current/ && service mysql start && /root/wildfly-8.2.0.Final/bin/standalone.sh -b 0.0.0.0
+CMD service mysql start && /root/wildfly-8.2.0.Final/bin/standalone.sh -b 0.0.0.0

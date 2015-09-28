@@ -21,11 +21,11 @@ public interface ServiceConfig extends Config{
     public static final ServiceConfig config = ConfigFactory
             .create(ServiceConfig.class);
     
-    @DefaultValue("http://localhost:8080/fuseki/wot_semdesc_helper/data")
+    @DefaultValue("http://localhost:8080/fuseki/ds/data")
     @Key("fuseki.dataset.url")
     String datasetUrl();
     
-    @DefaultValue("http://localhost:8080/fuseki/wot_semdesc_helper/update")
+    @DefaultValue("http://localhost:8080/fuseki/ds/update")
     @Key("fuseki.update.url")
     String updatetUrl();
 
