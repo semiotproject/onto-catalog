@@ -81,7 +81,7 @@ export function JSONLDtoClass(jsonld) {
     }
 
     let c = normaliseTriple(_.find(triples, (t) => {
-        return t['@type'] === 'prov:Entity';
+        return t['@type'].indexOf('prov:Entity') > -1;
     }));
 
     c.uri = c['@id'];

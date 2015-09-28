@@ -273,7 +273,7 @@ class CurrentClassStore extends EventEmitter {
 
     isEditable() {
         let user = CurrentUserStore.getCurrentUser();
-        return (user.login === this._data["wasAttributedTo"]["foaf:accountName"]);
+        return (user && user.login === this._data["wasAttributedTo"]["foaf:accountName"]);
     }
 
     addSensor() {

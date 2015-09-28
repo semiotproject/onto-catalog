@@ -3,7 +3,7 @@
 const BACKEND_PORT = 80;
 const BACKEND_HOST = `${location.protocol}//${location.hostname}:${BACKEND_PORT}`;
 const proxyBase = `${BACKEND_HOST}/api/`;
-const fusekiBase = `${BACKEND_HOST}/fuseki/ds/sparq/`;
+const fusekiBase = `${BACKEND_HOST}/fuseki/ds/sparql`;
 
 export default {
     BASE_CLASS_URI: "http://semdesc.semiot.ru/model/",

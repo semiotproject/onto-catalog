@@ -55,7 +55,7 @@ export function loadClassList() {
     */
 }
 export function loadClassDetail(classURI) {
-    return getSparqlJsonResult(`
+    return getJsonLdResult(`
         CONSTRUCT { ?a ?b ?c . } WHERE {
            GRAPH <${classURI}> { ?a ?b ?c } .
         }
