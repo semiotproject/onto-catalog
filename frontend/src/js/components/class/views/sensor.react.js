@@ -41,29 +41,37 @@ export default class SensorView extends React.Component {
         });
     }
     renderSensitivity(sensor) {
+        let isEditable = Store.isEditable(this.props.classURI);
         let s = this.getSensitivity(sensor);
         return (
-            <div key="sensitivity">
-                <label htmlFor="">Sensitivity</label>
-                <div>
-                    <input type="number"
-                        onChange={this.handleChange}
-                        className="form-control"
-                        ref={"sensitivityValue"}
-                        defaultValue={s["ssn:hasValue"]["DUL:hasDataValue"]["xsd1:double"]}
-                    />
-                    <select onChange={this.handleChange}
-                        ref="sensitivityUnit"
-                        className="form-control units"
-                        defaultValue={s["ssn:hasValue"]["DUL:isClassifiedBy"]}
-                    >
-                        {
-                            FieldStore.getUnitsOfMeasurement().map((t) => {
-                                return <option value={t}>{t}</option>;
-                            })
-                        }
-                    </select>
-                </div>
+            <div key="sensitivity" className="form-group">
+                <label htmlFor="">Sensitivity: </label>
+                {
+                    isEditable ?
+                        <div>
+                            <input type="number"
+                                onChange={this.handleChange}
+                                className="form-control"
+                                ref={"sensitivityValue"}
+                                defaultValue={s["ssn:hasValue"]["DUL:hasDataValue"]["xsd1:double"]}
+                            />
+                            <select onChange={this.handleChange}
+                                ref="sensitivityUnit"
+                                className="form-control units"
+                                defaultValue={s["ssn:hasValue"]["DUL:isClassifiedBy"]}
+                            >
+                                {
+                                    FieldStore.getUnitsOfMeasurement().map((t) => {
+                                        return <option value={t}>{t}</option>;
+                                    })
+                                }
+                            </select>
+                        </div> :
+                        <span>
+                            {s["ssn:hasValue"]["DUL:hasDataValue"]["xsd1:double"]} {s["ssn:hasValue"]["DUL:isClassifiedBy"]}
+                        </span>
+
+                }
             </div>
         );
     }
@@ -74,48 +82,60 @@ export default class SensorView extends React.Component {
         });
     }
     renderAccuracy(sensor) {
+        let isEditable = Store.isEditable(this.props.classURI);
         let s = this.getAccuracy(sensor);
         return (
-            <div key="accuracy">
-                <label htmlFor="">Accuracy</label>
-                <div>
-                    <input type="number"
-                        onChange={this.handleChange}
-                        className="form-control"
-                        ref={"accuracyValue"}
-                        defaultValue={s["ssn:hasValue"]["DUL:hasDataValue"]["xsd1:double"]}
-                    />
-                    <select onChange={this.handleChange}
-                        ref="accuracyUnit"
-                        className="form-control units"
-                        defaultValue={s["ssn:hasValue"]["DUL:isClassifiedBy"]}
-                    >
-                        {
-                            FieldStore.getUnitsOfMeasurement().map((t) => {
-                                return <option value={t}>{t}</option>;
-                            })
-                        }
-                    </select>
-                </div>
+            <div key="accuracy" className="form-group">
+                <label htmlFor="">Accuracy: </label>
+                {
+                    isEditable ?
+                    <div>
+                        <input type="number"
+                            onChange={this.handleChange}
+                            className="form-control"
+                            ref={"accuracyValue"}
+                            defaultValue={s["ssn:hasValue"]["DUL:hasDataValue"]["xsd1:double"]}
+                        />
+                        <select onChange={this.handleChange}
+                            ref="accuracyUnit"
+                            className="form-control units"
+                            defaultValue={s["ssn:hasValue"]["DUL:isClassifiedBy"]}
+                        >
+                            {
+                                FieldStore.getUnitsOfMeasurement().map((t) => {
+                                    return <option value={t}>{t}</option>;
+                                })
+                            }
+                        </select>
+                    </div> :
+                    <span>
+                        {s["ssn:hasValue"]["DUL:hasDataValue"]["xsd1:double"]} {s["ssn:hasValue"]["DUL:isClassifiedBy"]}
+                    </span>
+                }
             </div>
         );
     }
 
     renderType(sensor) {
+        let isEditable = Store.isEditable(this.props.classURI);
         return (
-            <div key="type">
-                <label htmlFor="">Type</label>
-                <select onChange={this.handleChange}
-                    ref="type"
-                    className="form-control"
-                    defaultValue={sensor["ssn:observes"]}
-                >
-                    {
-                        FieldStore.getSensorTypes().map((t) => {
-                            return <option value={t}>{t}</option>;
-                        })
-                    }
-                </select>
+            <div key="type" className="form-group">
+                <label htmlFor="">Type: </label>
+                {
+                    isEditable ?
+                        <select onChange={this.handleChange}
+                            ref="type"
+                            className="form-control"
+                            defaultValue={sensor["ssn:observes"]}
+                        >
+                            {
+                                FieldStore.getSensorTypes().map((t) => {
+                                    return <option value={t}>{t}</option>;
+                                })
+                            }
+                        </select> :
+                        <span>{sensor["ssn:observes"]}</span>
+                }
             </div>
         );
     }

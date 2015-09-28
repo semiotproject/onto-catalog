@@ -43,7 +43,7 @@ export default class InstanceView extends React.Component {
                                 top: "30px"
                             }}><i className="fa fa-arrow-circle-left"></i> Back</button>
                         </Link>
-                        <h3>InstanceView View</h3>
+                        <h3>Instance View</h3>
                         <p>Generate description based on one of device models</p>
                     </div>
                 </div>

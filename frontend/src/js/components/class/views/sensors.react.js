@@ -36,14 +36,14 @@ export default class SensorsView extends React.Component {
             <div>
                 <h3>Sensors</h3>
                 <div>
-                    <div className="col-md-4" key={-1}>
-                        {
-                            Store.isEditable() &&
+                    {
+                        Store.isEditable() &&
+                            <div className="col-md-4" key={-1}>
                                 <button className="big" onClick={this.handleAddSensor}>
                                     <i className="fa fa-plus"></i>
                                 </button>
-                        }
-                    </div>
+                            </div>
+                    }
                     {
                         sensors.map((item, index) => {
                             return (

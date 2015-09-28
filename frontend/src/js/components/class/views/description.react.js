@@ -36,7 +36,7 @@ export default class DescriptionView extends React.Component {
     }
 
     renderField(type, value, prefix = "") {
-        let isEditable = Store.isEditable(this.props.classId);
+        let isEditable = Store.isEditable(this.props.classURI);
         let val;
         if (isEditable) {
             val = (

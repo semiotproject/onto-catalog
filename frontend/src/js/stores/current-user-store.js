@@ -12,6 +12,9 @@ class CurrentUserStore extends EventEmitter {
     getCurrentUser() {
         return this._data;
     }
+    isLoggedIn() {
+        return this._data !== null;
+    }
     load() {
         return $.ajax({
             url: CONFIG.URLS.currentUser,

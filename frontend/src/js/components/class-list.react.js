@@ -50,15 +50,18 @@ export default class ClassView extends React.Component {
                     </div>
                 </div>
                 <div className="app-container container-fluid class-list">
-                    <div className="col-md-2" key={-1}>
-                        <Link to={'/model/new'}>
-                            <button className="big" style={{
-                                backgroundColor: "rgb(111, 219, 244)"
-                            }}>
-                                <i className="fa fa-plus"></i>
-                            </button>
-                        </Link>
-                    </div>
+                    {
+                        CurrentUserStore.isLoggedIn() &&
+                            <div className="col-md-2" key={-1}>
+                                <Link to={'/model/new'}>
+                                    <button className="big" style={{
+                                        backgroundColor: "rgb(111, 219, 244)"
+                                    }}>
+                                        <i className="fa fa-plus"></i>
+                                    </button>
+                                </Link>
+                            </div>
+                    }
                     {
                         ClassListStore.get().map((c) => {
                             return (
