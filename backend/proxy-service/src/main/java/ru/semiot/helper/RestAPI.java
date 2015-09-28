@@ -153,7 +153,7 @@ public class RestAPI {
                     }
                 }
             }
-            if (!_accessor.containsModel(graph_uri))
+            if (_accessor.containsModel(graph_uri))
                 return Response.status(Response.Status.BAD_REQUEST).build();
             UUID id = UUID.randomUUID();
             m.setNsPrefix("prov", "http://www.w3.org/ns/prov#");

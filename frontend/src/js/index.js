@@ -2,79 +2,31 @@
 
 import $ from 'jquery';
 import React from 'react';
+import { Router, IndexRoute, Route, Link, History } from 'react-router';
 
-import ClassView from './components/class/class-view.react';
-import InstanceView from './components/instance/instance-view.react';
-import UserBlock from './components/user-block.react';
+import App from './components/app.react';
+import ClassList from './components/class-list.react';
+import ClassDetail from './components/class-detail.react';
+import InstanceView from './components/instance.react';
+import Navigation from './components/nav.react';
+import About from './components/about.react';
 
 import CurrentUserStore from './stores/current-user-store';
 import FieldStore from './stores/field-store';
-
-const VIEWS = {
-    class: {
-        title: 'Class',
-        component: ClassView
-    },
-    instance: {
-        title: 'Instance',
-        component: InstanceView
-    }
-};
-
-export default class App extends React.Component {
-
-    constructor(props) {
-        super(props);
-
-        // instead of getInitialState in new React notation
-        this.state = {
-            view: "class"
-        };
-
-        // ex-componentWillMount hooks
-
-        // UI and stores handlers declaration
-        this.handleMenuClick = (item) => {
-            return () => {
-                this.setState({
-                    view: item
-                });
-            };
-        };
-
-    }
-
-    render() {
-        let Component = VIEWS[this.state.view].component;
-        let menu = [];
-        for (let item in VIEWS) {
-            menu.push(
-                <li
-                    key={item}
-                    className={this.state.view === item ? "active" : ""}
-                    onClick={this.handleMenuClick(item)}
-                >
-                    {VIEWS[item].title}
-                </li>
-            );
-        }
-        return (
-            <div>
-                <nav className="navbar navbar-inverse">
-                    <ul>
-
-                    </ul>
-                    <UserBlock></UserBlock>
-                </nav>
-                <Component></Component>
-            </div>
-        );
-    }
-}
 
 $.when(
     CurrentUserStore.load(),
     FieldStore.load()
 ).always(() => {
-    React.render(<App />, document.querySelector('#main-wrapper'));
+    React.render(
+        <Router>
+            <Route path="/" component={App}>
+                <IndexRoute component={ClassList}/>
+                <Route path="/model" component={ClassList} />
+                <Route path="/model/:uri" component={ClassDetail} />
+                <Route path="/instance/:uri" component={InstanceView} />
+                <Route path="/about/" component={About} />
+            </Route>
+        </Router>
+    , document.querySelector('body'));
 });

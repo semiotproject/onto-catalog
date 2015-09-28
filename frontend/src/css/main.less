@@ -94,7 +94,7 @@ button.big {
     width: 100%;
     overflow: hidden;
     position: relative;
-    > div {
+    #app-wrapper {
         height: 100%;
         overflow: auto;
     }
@@ -111,6 +111,9 @@ button.big {
         margin: 0;
         display: inline-block;
         li {
+            display: inline-block;
+        }
+        li a {
             height: 40px;
             line-height: 40px;
             display: inline-block;
@@ -120,15 +123,17 @@ button.big {
             transition: all .2s ease-in-out;
             border-top-left-radius: 4px;
             border-top-right-radius: 4px;
-            &:hover {
+            &:hover,
+            &:focus {
                 color: white;
                 background-color: #337ab7;
+                text-decoration: none;
             }
-            &.active {
-                background-color: white !important;
-                color: black !important;
-                cursor: default;
-            }
+        }
+        li.active a {
+            background-color: white !important;
+            color: black !important;
+            cursor: default;
         }
     }
 }

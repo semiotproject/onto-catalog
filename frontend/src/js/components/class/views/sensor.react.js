@@ -121,7 +121,6 @@ export default class SensorView extends React.Component {
     }
 
     render() {
-        debugger;
         let sensor = Store.getSensorByURI(this.props.data.uri);
         return (
             <div>
