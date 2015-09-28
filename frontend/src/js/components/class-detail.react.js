@@ -102,7 +102,7 @@ export default class ClassDetail extends React.Component {
                             <span onClick={this.handleRemoveClick} className="fa fa-remove"></span>
                         }
                         <h4>
-                            <span>{this.props.classURI ? ((model && model['rdfs:label'] && model['rdfs:label']['@value']) || "") : "New Device Class"}</span>
+                            <span>{this.props.params.uri !== "new" ? ((model && model['rdfs:label'] && model['rdfs:label']['@value']) || "") : "New Device Class"}</span>
                             {
                                 CurrentClassStore.isEditable() &&
                                     <button className="btn btn-primary" onClick={this.handleSaveClick}>
@@ -116,7 +116,7 @@ export default class ClassDetail extends React.Component {
                                 <h4>
                                     <span>Sensors</span>
                                     {
-                                        CurrentClassStore.isEditable(this.props.classURI) &&
+                                        CurrentClassStore.isEditable() &&
                                             <button className="btn btn-primary btn-add" title="add" onClick={this.handleAddSensor}>
                                                 <i className="fa fa-plus"></i>
                                             </button>
@@ -151,7 +151,7 @@ export default class ClassDetail extends React.Component {
         let payload = ViewManager.getCurrentPayload();
         return (
             <div className="col-md-6">
-                <Component classURI={this.props.classURI} data={payload}></Component>
+                <Component classURI={this.props.params.uri} data={payload}></Component>
             </div>
         );
     }

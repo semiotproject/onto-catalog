@@ -17,7 +17,7 @@ import FieldStore from './stores/field-store';
 $.when(
     CurrentUserStore.load(),
     FieldStore.load()
-).always(() => {
+).done(() => {
     React.render(
         <Router>
             <Route path="/" component={App}>

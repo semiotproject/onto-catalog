@@ -269,7 +269,7 @@ class CurrentClassStore extends EventEmitter {
 
     isEditable() {
         let user = CurrentUserStore.getCurrentUser();
-        return (user);
+        return (true);
     }
 
     addSensor() {

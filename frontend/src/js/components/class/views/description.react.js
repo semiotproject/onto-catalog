@@ -3,13 +3,10 @@
 let React = require('react');
 
 import _ from 'lodash';
+import CONFIG from '../../../config';
 import Store from '../../../stores/current-class-store';
 
 const FIELDS = {
-    'uri': {
-        title: "Class URI",
-        prefix: "http://semdesc.semiot.ru/model/"
-    },
     'rdfs:label.@value': {
         title: "label"
     }
@@ -36,12 +33,11 @@ export default class DescriptionView extends React.Component {
     }
 
     renderField(type, value, prefix = "") {
-        let isEditable = Store.isEditable(this.props.classURI);
+        let isEditable = Store.isEditable();
         let val;
         if (isEditable) {
             val = (
                 <div>
-                    {FIELDS[type].prefix}
                     <input type="text"
                         onChange={this.handleChange}
                         ref={type}
@@ -85,10 +81,22 @@ export default class DescriptionView extends React.Component {
             <div>
                 <h3>Device</h3>
                 <div>
-                    {this.renderField(
-                        'uri',
-                        model.uri
-                    )}
+                    <div className="form-group">
+                        <label htmlFor="">Model URI</label>
+                        {
+                            this.props.classURI === "new" ?
+                                <div>
+                                    {CONFIG.BASE_CLASS_URI}
+                                    <input type="text"
+                                        onChange={this.handleChange}
+                                        ref="uri"
+                                        className="form-control"
+                                        defaultValue={model.uri}
+                                    />
+                                </div> :
+                                <span>{CONFIG.BASE_CLASS_URI + encodeURIComponent(model.uri)}</span>
+                        }
+                    </div>
                     {this.renderField(
                         'rdfs:label.@value',
                         (model && model['rdfs:label'] && model['rdfs:label']['@value']) || ""

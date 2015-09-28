@@ -40,6 +40,7 @@ class FieldStore extends EventEmitter {
                 sensorTypes: sensorTypes,
                 unitsOfMeasurement: unitsOfMeasurement
             };
+            promise.resolve(this._data);
         });
 
         return promise;
