@@ -27,7 +27,7 @@ export default class UserBlock extends React.Component {
             content = (
                 <div className={className}>
                         <img src={this.state.currentUser.avatar_url} className="user-block__avatar"/>
-                        <span className="user-block__username">{this.state.currentUser.username}</span>
+                        <span className="user-block__username">{this.state.currentUser.login}</span>
                         <span>|</span>
                         <a href={CONFIG.URLS.logout} className="user-block__logout">logout</a>
                 </div>

@@ -3,7 +3,7 @@
 import $ from 'jquery';
 import _ from 'lodash';
 import CONFIG from './config';
-import SPARQLPrefixes from './prefixes';
+import { SPARQLPrefixes } from './prefixes';
 
 function getQueryResult(query, accept) {
     return $.ajax({
@@ -53,7 +53,7 @@ export function loadClassList() {
 export function loadClassDetail(classURI) {
     return getSparqlJsonResult(`
         CONSTRUCT { ?a ?b ?c . } WHERE {
-           GRAPH ${classURI} { ?a ?b ?c } .
+           GRAPH <${classURI}> { ?a ?b ?c } .
         }
     `);
 }

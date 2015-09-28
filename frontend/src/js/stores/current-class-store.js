@@ -20,6 +20,7 @@ class CurrentClassStore extends EventEmitter {
         console.log('loading additional info about class with URI = ', classURI);
         const promise = $.Deferred();
 
+        /*
         let response =  JSONLDtoClass({
           "@context": {
             "DUL": "http://dul.org/#",
@@ -206,10 +207,13 @@ class CurrentClassStore extends EventEmitter {
             }
           ]
         });
+        */
 
-        this._data = response;
-
-        promise.resolve(response);
+         loadClassDetail(classURI).done((res) => {
+              res = JSONLDtoClass(res);
+              this._data = res;
+              promise.resolve(res);
+         });
 
         return promise;
         //
@@ -269,7 +273,7 @@ class CurrentClassStore extends EventEmitter {
 
     isEditable() {
         let user = CurrentUserStore.getCurrentUser();
-        return (true);
+        return (user.login === this._data["wasAttributedTo"]["foaf:accountName"]);
     }
 
     addSensor() {
