@@ -30,8 +30,9 @@ function getJsonLdResult(query) {
 
 export function loadClassList() {
     return getSparqlJsonResult(`
-        SELECT ?uri ?author WHERE {
+        SELECT ?uri ?author ?label WHERE {
           GRAPH ?uri {
+            ?a rdfs:label ?label .
             ?a prov:wasAttributedTo ?c .
             ?c foaf:accountName ?author .
           } .
