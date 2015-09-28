@@ -51,6 +51,7 @@ tdb:GraphTDB rdfs:subClassOf ja:Model .
 	     ja:content [
 		ja:externalContent <http://purl.oclc.org/NET/ssnx/ssn#> ;
 		ja:externalContent <http://qudt.org/1.1/schema/qudt#> ;
+		ja:externalContent <https://purl.org/NET/ssnext/climate-feature#> ;
 	     ] ;
 	     ja:reasoner [
 		ja:reasonerURL <http://jena.hpl.hp.com/2003/RDFSExptRuleReasoner> ;

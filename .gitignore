@@ -1,7 +1,8 @@
 frontend/node_modules
 frontend/dist
-backend/proxy-service/target
-backend/proxy-service/nbactions.xml
-backend/proxy-service/nb-configuration.xml
+**/target
+**/nbactions.xml
+**/nb-configuration.xml
 backend/proxy-service/src/main/webapp
 !backend/proxy-service/src/main/webapp/WEB-INF
+**/fuseki-db
