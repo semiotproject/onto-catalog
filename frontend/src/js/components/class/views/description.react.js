@@ -9,6 +9,9 @@ import Store from '../../../stores/current-class-store';
 const FIELDS = {
     'rdfs:label.@value': {
         title: "label"
+    },
+    'mmi:hasManufacture.rdfs:label.@value': {
+        title: "manifacture"
     }
 };
 
@@ -27,6 +30,7 @@ export default class DescriptionView extends React.Component {
 
             this.setFieldValue(model, 'uri');
             this.setFieldValue(model, 'rdfs:label.@value');
+            this.setFieldValue(model, 'mmi:hasManufacture.rdfs:label.@value');
 
             Store.update(model);
         };
@@ -55,13 +59,6 @@ export default class DescriptionView extends React.Component {
                 {val}
             </div>
         );
-    }
-
-    getManufacturer(model) {
-        return '';
-    }
-    getlabel(model) {
-        return (model && model['rdfs:label'] && model['rdfs:label']['@value']) || "";
     }
 
     setFieldValue(model, type) {
@@ -100,6 +97,10 @@ export default class DescriptionView extends React.Component {
                     {this.renderField(
                         'rdfs:label.@value',
                         (model && model['rdfs:label'] && model['rdfs:label']['@value']) || ""
+                    )}
+                    {this.renderField(
+                        'mmi:hasManufacture.rdfs:label.@value',
+                        (model && model['mmi:hasManufacture'] && model['mmi:hasManufacture']['rdfs:label'] && model['mmi:hasManufacture']['rdfs:label']['@value']) || ""
                     )}
                 </div>
             </div>

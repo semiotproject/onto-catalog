@@ -11,6 +11,13 @@ export function ClassTemplate() {
             "@language": "en",
             "@value": "New system"
         },
+        "mmi:hasManufacture": {
+            "@type": "mmi:Manufacturer",
+            "rdfs:label": {
+                "@language": "en",
+                "@value": ""
+            }
+        },
         "rdfs:subClassOf": "ssn:System",
         "ssn:hasSubSystem": [
 
