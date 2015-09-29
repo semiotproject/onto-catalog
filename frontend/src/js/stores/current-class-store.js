@@ -272,6 +272,9 @@ class CurrentClassStore extends EventEmitter {
     }
 
     isEditable() {
+        if (this.isNew()) {
+          return true;
+        }
         let user = CurrentUserStore.getCurrentUser();
         return (user && user.login === this._data["wasAttributedTo"]["foaf:accountName"]);
     }
