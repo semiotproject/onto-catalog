@@ -156,6 +156,7 @@ public class RestAPI {
                         graph_uri = ((JSONObject) array.getJSONObject(index)).getString("@id");
                         break;
                     }
+                    index++;
                 }
             }
             if (_accessor.containsModel(graph_uri))
