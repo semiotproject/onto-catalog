@@ -147,7 +147,12 @@ public class RestAPI {
                 JSONArray array = json.getJSONArray("@graph");
                 int index = 0;
                 while (index < array.length()) {
-                    if (((JSONObject) array.getJSONObject(index)).getString("@type").contains("System")) {
+                    if (((JSONObject) array.getJSONObject(index)).has("@type") 
+                            && ((JSONObject) array.getJSONObject(index)).getString("@type").contains("System") 
+                            || ((JSONObject) array.getJSONObject(index)).has("rdfs:subClassOf")
+                            && ((JSONObject) array.getJSONObject(index)).getString("rdfs:subClassOf").contains("System")
+                            || ((JSONObject) array.getJSONObject(index)).has("<http://www.w3.org/2000/01/rdf-schema#subClassOf>")
+                            && ((JSONObject) array.getJSONObject(index)).getString("<http://www.w3.org/2000/01/rdf-schema#subClassOf>").contains("System")) {
                         graph_uri = ((JSONObject) array.getJSONObject(index)).getString("@id");
                         break;
                     }
@@ -185,6 +190,7 @@ public class RestAPI {
             _accessor.add(graph_uri, m);
             return Response.ok().build();
         } catch (Exception ex) {
+            logger.error("Unexpected exception with message " + ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
