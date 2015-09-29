@@ -262,13 +262,13 @@ public class RestAPI {
     @GET
     @Path("/logout")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response logout(@CookieParam("hash") long hash) {
+    public Response logout(@CookieParam("hash") long hash) throws URISyntaxException {
         logger.info("Logout method");
         String token = db.getToken(hash);
         if (token != null) {
             db.remove(hash);
-            return Response.ok().build();
+            return Response.temporaryRedirect(new URI("http://semdesc.semiot.ru")).status(Response.Status.OK).build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return Response.temporaryRedirect(new URI("http://semdesc.semiot.ru")).status(Response.Status.NOT_FOUND).build();
     }
 }
