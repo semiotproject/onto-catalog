@@ -26,7 +26,7 @@ const PREFIXES = {
     "limapext" : "http://purl.org/NET/limapext#",
     "dul" : "http://www.loa-cnr.it/ontologies/DUL.owl#",
     "creativecommons" : "http://creativecommons.org/ns#",
-    "mmi": "http://mmisw.org/ont/mmi/device>",
+    "mmi": "http://mmisw.org/ont/mmi/device",
     "dc" : "http://purl.org/dc/elements/1.1/"
 };
 

@@ -94,7 +94,7 @@ export function loadSensorTypes() {
     */
    const promise = $.Deferred();
 
-    promise.resolve(['someprefix:Temperature', 'someprefix:Heat', 'someprefix:AirHumidity']);
+   promise.resolve(['emtr:PolyphaseVoltage', 'emtr:PolyphaseAmperage', 'emtr:PolyphaseElectricActivePower', 'emtr:PolyphaseElectricReactivePower']);
 
    return promise;
 }
