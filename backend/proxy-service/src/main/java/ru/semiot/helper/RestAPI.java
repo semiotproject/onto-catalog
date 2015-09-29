@@ -267,8 +267,8 @@ public class RestAPI {
         String token = db.getToken(hash);
         if (token != null) {
             db.remove(hash);
-            return Response.temporaryRedirect(new URI("http://semdesc.semiot.ru")).status(Response.Status.OK).build();
+            return Response.temporaryRedirect(new URI("http://semdesc.semiot.ru")).build();
         }
-        return Response.temporaryRedirect(new URI("http://semdesc.semiot.ru")).status(Response.Status.NOT_FOUND).build();
+        return Response.temporaryRedirect(new URI("http://semdesc.semiot.ru")).build();
     }
 }
