@@ -45,7 +45,7 @@ public interface ServiceConfig extends Config{
     @Key("github.secret")
     String githubSecret();
     
-    @DefaultValue("http://semdesc.semiot.ru:8085/api/login/code/")
+    @DefaultValue("http://semdesc.semiot.ru/api/login/code/")
     @Key("github.callback")
     String githubUrl();
 }

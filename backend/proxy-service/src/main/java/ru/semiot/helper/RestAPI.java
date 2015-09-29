@@ -106,8 +106,8 @@ public class RestAPI {
         if (model == null || model.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        Resource owner = model.getResource(uri).getPropertyResourceValue(_accessor.getModel().getProperty(model.getNsPrefixURI("prov") + "wasAttributedTo"));
-        Literal account = owner.getProperty(FOAF.accountName).getObject().asLiteral();
+        Resource owner = model.getResource(uri).getPropertyResourceValue(model.getProperty("http://www.w3.org/ns/prov#wasAttributedTo"));        
+        Literal account = owner.getProperty(FOAF.accountName).getObject().asLiteral();       
         if (!db.getLogin(hash).equals(account.getString())) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
