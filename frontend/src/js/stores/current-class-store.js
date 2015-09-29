@@ -248,7 +248,7 @@ class CurrentClassStore extends EventEmitter {
             url: CONFIG.URLS.class + (this._isNew ? "" : encodeURIComponent(model.uri)),
             type: this._isNew ? "POST" : "PUT",
             data: data,
-            contentType: "applcation/ls+json",
+            contentType: "application/ld+json",
             success() {
                 //
             },
