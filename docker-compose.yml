@@ -6,8 +6,8 @@ semdescbackend:
     - /semiot/wot-semdesc-helper/fuseki:/etc/fuseki
     - /semiot/wot-semdesc-helper/config/:/wot_semdesc_helper/backend/
   restart: always
-semdescfrontend:
-  image: docker.semiot.ru/wot-semdesc-helper-frontend
-  ports:
-    - "80:3000"
-  restart: always
+#semdescfrontend:
+#  image: docker.semiot.ru/wot-semdesc-helper-frontend
+#  ports:
+#    - "80:3000"
+#  restart: always
