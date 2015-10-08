@@ -1,7 +1,7 @@
 semdescbackend:
   image: docker.semiot.ru/wot-semdesc-helper-backend
   ports:
-    - "8085:8080"
+    - "8080:8080"
   volumes:
     - /semiot/wot-semdesc-helper/fuseki:/etc/fuseki
     - /semiot/wot-semdesc-helper/config/:/wot_semdesc_helper/backend/
