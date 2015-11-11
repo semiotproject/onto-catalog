@@ -14,6 +14,7 @@ import About from './components/about.react';
 import CurrentUserStore from './stores/current-user-store';
 import FieldStore from './stores/field-store';
 
+/*
 $.when(
     CurrentUserStore.load(),
     FieldStore.load()
@@ -30,3 +31,8 @@ $.when(
         </Router>
     , document.querySelector('body'));
 });
+*/
+
+import CurrentClassStore from './stores/current-class-store';
+
+CurrentClassStore.init();
