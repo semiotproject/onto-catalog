@@ -9,6 +9,7 @@ import { loadModelDetail } from '../sparql-adapter';
 import { getDevice, getSensor } from '../templates/index';
 import { parseTriples } from '../utils';
 import Device from '../models/device';
+import { createModel } from "../api-adapter";
 
 class ModelDetailStore extends EventEmitter {
     constructor() {
@@ -44,6 +45,7 @@ class ModelDetailStore extends EventEmitter {
     save() {
         this._device.toTurtle((res) => {
             console.info(`result ttl is: ${res}`);
+            createModel(res);
         });
     }
 

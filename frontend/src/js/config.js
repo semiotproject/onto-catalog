@@ -11,7 +11,7 @@ export default {
         login: proxyBase + "login/",
         logout: proxyBase + "logout/",
         currentUser: proxyBase + "login/user/",
-        class: proxyBase,
+        model: proxyBase + "model/",
         endpoint: fusekiBase
     }
 };

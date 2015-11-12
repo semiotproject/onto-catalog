@@ -28,7 +28,7 @@ function getTurtleResult(query) {
     return getQueryResult(query, "application/turtle");
 }
 
-export function loadClassList() {
+export function loadModelList() {
     return getSparqlJsonResult(`
         SELECT ?uri ?author ?label WHERE {
           GRAPH ?uri {
