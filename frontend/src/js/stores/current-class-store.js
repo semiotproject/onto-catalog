@@ -8,29 +8,9 @@ import { loadClassDetail } from '../sparql-adapter';
 import * as TEMPLATES from '../templates/index';
 import $ from 'jquery';
 import _ from 'lodash';
-import { Parser } from 'n3';
 import Device from '../models/device';
+import { parseTriples } from '../utils';
 
-const parser = new Parser();
-
-function parseTriples(turtle) {
-    const defer = $.Deferred();
-    const triples = [];
-
-    parser.parse(turtle, (err, triple) => {
-        if (err) {
-            console.error(`error while parsing triples: `, err);
-            defer.reject();
-        }
-        if (triple) {
-            triples.push(triple);
-        } else {
-            defer.resolve(triples);
-        }
-    });
-
-    return defer;
-}
 
 class CurrentClassStore extends EventEmitter {
     constructor() {
@@ -46,17 +26,20 @@ class CurrentClassStore extends EventEmitter {
     _createDevice() {
         const promise = $.Deferred();
 
-        const turtle = TEMPLATES.getDevice();
-
-        parseTriples(turtle).then((triples) => {
+        parseTriples(TEMPLATES.getDevice()).then((triples) => {
             this._device = new Device(triples);
-
-            console.log(this._device.label, this._device.manufacturer, this._device.creator);
-
-            this._device.label = "5";
-
-            console.log(this._device.label, this._device.manufacturer, this._device.creator);
-
+            this._device.addSensor(TEMPLATES.getSensor()).then(() => {
+                const sensors = this._device.sensors;
+                sensors.forEach((s) => {
+                    s.toTurtle((res) => {
+                        console.log(res);
+                    });
+                    console.log(s.measurementProperties);
+                    console.log(s.accuracy);
+                    console.log(s.sensitivity);
+                    console.log(s.resolution);
+                });
+            });
             promise.resolve();
         });
 

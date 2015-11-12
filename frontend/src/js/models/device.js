@@ -1,50 +1,18 @@
-import { Store, Util, Parser, Writer } from 'n3';
-import { JSONPrefixes } from '../prefixes';
-import _ from 'lodash';
+import { Util } from 'n3';
+import { parseTriples } from '../utils';
+import $ from 'jquery';
 
-const parser = new Parser();
-const store = new Store();
-store.addPrefixes(JSONPrefixes);
+import Sensor from './sensor';
+import Base from './base';
 
-const writer = new Writer({ prefixes: JSONPrefixes});
-
-export default class Device {
+export default class Device extends Base {
     constructor(triples, callback) {
+        super();
         triples.map((t) => {
-            store.addTriple(t.subject, t.predicate, t.object, t.graph);
+            this._store.addTriple(t.subject, t.predicate, t.object, t.graph);
         });
+        this._sensors = [];
         console.info(`device with ${triples.length} triples inited`);
-    }
-
-    find() {
-        return store.find(...arguments);
-    }
-    addTriple() {
-        return store.addTriple(...arguments);
-    }
-    removeTriple() {
-        return store.removeTriple(...arguments);
-    }
-
-    _findObject(sub, pred, ob) {
-        let object = store.find(sub, pred, ob, "");
-        if (object.length === 0 || !object[0].object) {
-            console.error(`error getting object`);
-            return null;
-        }
-        return object[0].object;
-    }
-    _findSubject(sub, pred, ob) {
-        let object = store.find(sub, pred, ob, "");
-        if (object.length === 0 || !object[0].subject) {
-            console.error(`error getting subject`);
-            return null;
-        }
-        return object[0].subject;
-    }
-    _replaceTriple(oldTriple, newTriple) {
-        store.removeTriple(oldTriple);
-        store.addTriple(newTriple);
     }
 
     get uri() {
@@ -55,7 +23,7 @@ export default class Device {
         return Util.getLiteralValue(this._findObject(this.uri, 'rdfs:label', null, ''));
     }
     set label(str) {
-        let oldLabel = store.find(this.uri, 'rdfs:label', null, '')[0];
+        let oldLabel = this._store.find(this.uri, 'rdfs:label', null, '')[0];
         let newLabel = _.assign({}, oldLabel, {
             object: `"${str}"`
         });
@@ -84,16 +52,23 @@ export default class Device {
         };
     }
 
-    toTurtle(callback) {
-        store.find(null, null, null, "").map((t) => {
-            writer.addTriple(t.subject, t.predicate, t.object, t.graph);
+    addSensor(turtle) {
+        const promise = $.Deferred();
+
+        parseTriples(turtle).then((triples) => {
+            this._sensors.push(new Sensor(triples));
+            promise.resolve();
         });
-        writer.end((err, result) => {
-            if (err) {
-                console.error(`error while writing device to Turtle: `, err);
-                return;
-            }
-            callback(result);
+
+        return promise;
+    }
+
+    get sensors() {
+        return this._sensors;
+    }
+    getSensor(uri) {
+        return _.find(this._sensors, (s) => {
+            return s.uri === uri;
         });
     }
 

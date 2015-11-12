@@ -28,7 +28,7 @@ export function getDevice(
 }
 
 export function getSensor(
-    label = "",
+    label = "awesome sensor",
     observes = "emtr:PolyphaseVoltage",
     units = "climate-feature:RelativeHumidity"
 ) {
@@ -38,31 +38,31 @@ export function getSensor(
             ssn:observes ${observes} ;
             ssn:hasMeasurementCapability [
                 a ssn:MeasurementCapability ;
-                ssn:forProperty ${observes}
-            ]
-            ssn:hasMeasurementProperty [
-                a ssn:Accuracy ;
-                ssn:hasValue [
-                    a DUL:Amount ;
-                    DUL:hasDataValue "0"^^xsd:double ;
-                    DUL:isClassifiedBy ${units}
+                ssn:forProperty ${observes} ;
+                ssn:hasMeasurementProperty [
+                    a ssn:Accuracy ;
+                    ssn:hasValue [
+                        a dul:Amount ;
+                        dul:hasDataValue "0"^^xsd:double ;
+                        dul:isClassifiedBy ${units}
+                    ]
+                ] ;
+                ssn:hasMeasurementProperty [
+                    a ssn:Sensitivity ;
+                    ssn:hasValue [
+                        a dul:Amount ;
+                        dul:hasDataValue "0"^^xsd:double ;
+                        dul:isClassifiedBy ${units}
+                    ]
+                ] ;
+                ssn:hasMeasurementProperty [
+                    a ssn:Resolution ;
+                    ssn:hasValue [
+                        a dul:Amount ;
+                        dul:hasDataValue "0"^^xsd:double ;
+                        dul:isClassifiedBy ${units}
+                    ]
                 ]
-            ] ;
-            ssn:hasMeasurementProperty [
-                a ssn:Sensitivity ;
-                ssn:hasValue [
-                    a DUL:Amount ;
-                    DUL:hasDataValue "0"^^xsd:double ;
-                    DUL:isClassifiedBy ${units}
-                ]
-            ] ;
-            ssn:hasMeasurementProperty [
-                a ssn:Resolution ;
-                ssn:hasValue [
-                    a DUL:Amount ;
-                    DUL:hasDataValue "0"^^xsd:double ;
-                    DUL:isClassifiedBy ${units}
-                ]
-            ]
+            ] .
     `;
 }
