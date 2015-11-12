@@ -3,10 +3,10 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import ClassListStore from '../stores/class-list-store';
-import CurrentUserStore from '../stores/current-user-store';
+import ModelListStore from '../../stores/model-list-store';
+import CurrentUserStore from '../../stores/current-user-store';
 
-export default class ClassView extends React.Component {
+export default class ModelList extends React.Component {
     constructor(props) {
         super(props);
 
@@ -29,7 +29,7 @@ export default class ClassView extends React.Component {
         this.setState({
             isLoading: true
         }, () => {
-            ClassListStore.load().done(() => {
+            ModelListStore.load().done(() => {
                 this.setState({
                     isLoading: false
                 });
@@ -54,16 +54,14 @@ export default class ClassView extends React.Component {
                         CurrentUserStore.isLoggedIn() &&
                             <div className="col-md-2" key={-1}>
                                 <Link to={'/model/new'}>
-                                    <button className="big" style={{
-                                        backgroundColor: "rgb(111, 219, 244)"
-                                    }}>
+                                    <button className="big indigo">
                                         <i className="fa fa-plus"></i>
                                     </button>
                                 </Link>
                             </div>
                     }
                     {
-                        ClassListStore.get().map((c) => {
+                        ModelListStore.get().map((c) => {
                             return (
                                 <div className="col-md-2" key={c.uri}>
                                     <Link to={'/model/' + encodeURIComponent(c.uri)}>

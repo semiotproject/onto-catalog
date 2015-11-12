@@ -1,17 +1,17 @@
 "use strict";
 
 import { EventEmitter } from 'events';
+import { loadModelList } from '../sparql-adapter';
 import _ from 'lodash';
-import { loadClassList } from '../sparql-adapter';
 
-class ClassStore extends EventEmitter {
+class ModelListStore extends EventEmitter {
     constructor() {
         super();
         this._data = [];
     }
     load() {
         // TODO: remove this mock
-        return loadClassList().done((res) => {
+        return loadModelList().done((res) => {
             this._data = res.results.bindings.map((b) => {
                 return {
                     uri: b.uri.value,
@@ -31,4 +31,4 @@ class ClassStore extends EventEmitter {
     }
 }
 
-export default new ClassStore();
+export default new ModelListStore();

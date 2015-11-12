@@ -15,7 +15,7 @@ const PREFIXES = {
     prov: 'http://www.w3.org/ns/prov#',
     foaf: 'http://xmlns.com/foaf/0.1#',
     xsd: 'http://www.w3.org/2001/XMLSchema#',
-    semdesc: "http://semdesc.semiot.ru/classes#",
+    semdesc: "http://semdesc.semiot.ru/model#",
     dul: "http://www.loa-cnr.it/ontologies/DUL.owl#",
     emtr: "http://purl.org/NET/ssnext/electricmeters#",
     "climate-feature": "https://purl.org//NET/ssnext/climate-feature#"

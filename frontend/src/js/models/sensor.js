@@ -1,4 +1,5 @@
 import { Util } from 'n3';
+import _ from 'lodash';
 
 import Base from './base';
 
@@ -19,7 +20,7 @@ export default class Sensor extends Base {
         return Util.getLiteralValue(this._findObject(this.uri, 'rdfs:label', null, ''));
     }
     set label(str) {
-        let oldLabel = this._store.find(this.uri, 'rdfs:label', null, '')[0];
+        let oldLabel = this.find(this.uri, 'rdfs:label', null, '')[0];
         let newLabel = _.assign({}, oldLabel, {
             object: `"${str}"`
         });
@@ -27,42 +28,83 @@ export default class Sensor extends Base {
     }
 
     get observes() {
-        return Util.getLiteralValue(this._findObject(this.uri, 'ssn:observes', null, ''));
+        const obs = this._findObject(this.uri, 'ssn:observes', null, '');
+        return obs;
+    }
+    set observes(str) {
+        const oldObs = this.find(this.uri, 'ssn:observes', null, '')[0];
+        const newObs = _.assign({}, oldObs, {
+            object: str
+        });
+        this._replaceTriple(oldObs, newObs);
     }
 
     get measurementPreperties() {
         const mc = this._findObject(this.uri, 'ssn:hasMeasurementCapability', null, '');
-
-        const props = this._store.find(mc, "ssn:hasMeasurementProperty", null, '');
-
-        debugger;
+        const props = this.find(mc, "ssn:hasMeasurementProperty", null, '');
 
         return props.map((triple) => {
             return triple.object;
         });
     }
     getMeasurementProperty(type) {
-        let capability;
+        let prop;
 
         this.measurementPreperties.map((mp) => {
             if (this._findObject(mp, "rdf:type", type)) {
-                capability = Util.getLiteralValue(this._findObject(
-                    this._findObject(this.uri, 'ssn:hasValue', null, ''),
+                prop = this.find(
+                    this._findObject(mp, 'ssn:hasValue', null, ''),
+                    "dul:hasDataValue",
+                    null
+                )[0];
+            }
+        });
+
+        return prop;
+    }
+    setMeasurementProperty(type, value) {
+        let oldProp = this.getMeasurementProperty(type);
+        let newProp = _.assign({}, oldProp, {
+            object: Util.createLiteral(value, Util.getLiteralType(oldProp.object))
+        });
+        console.log(`setting prop ${type} to ${value}`);
+        this._replaceTriple(oldProp, newProp);
+    }
+    getMeasurementPropertyValue(type) {
+        let prop;
+
+        this.measurementPreperties.map((mp) => {
+            if (this._findObject(mp, "rdf:type", type)) {
+                prop = Util.getLiteralValue(this._findObject(
+                    this._findObject(mp, 'ssn:hasValue', null, ''),
                     "dul:hasDataValue",
                     null
                 ));
             }
         });
-        return capability;
+
+        return prop;
     }
+
     get accuracy() {
-        return this.getMeasurementProperty('ssn:Accuracy');
+        return this.getMeasurementPropertyValue('ssn:Accuracy');
     }
+    set accuracy(str) {
+        this.setMeasurementProperty('ssn:Accuracy', str);
+    }
+
     get sensitivity() {
-        return this.getMeasurementProperty('ssn:Sensitivity');
+        return this.getMeasurementPropertyValue('ssn:Sensitivity');
     }
+    set sensitivity(str) {
+        this.setMeasurementProperty('ssn:Sensitivity', str);
+    }
+
     get resolution() {
-        return this.getMeasurementProperty('ssn:Resolution');
+        return this.getMeasurementPropertyValue('ssn:Resolution');
+    }
+    set resolution(str) {
+        this.setMeasurementProperty('ssn:Resolution', str);
     }
 
     get unit() {

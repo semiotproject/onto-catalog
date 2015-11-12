@@ -20,7 +20,6 @@ export default class Base {
     _findObject(sub, pred, ob) {
         let object = this._store.find(sub, pred, ob, "");
         if (object.length === 0 || !object[0].object) {
-            console.error(`error getting object`);
             return null;
         }
         return object[0].object;
@@ -37,6 +36,7 @@ export default class Base {
         this._store.removeTriple(oldTriple);
         this._store.addTriple(newTriple);
     }
+
     toTurtle(callback) {
         const writer = new Writer({ prefixes: JSONPrefixes});
 

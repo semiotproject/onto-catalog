@@ -2,11 +2,11 @@ import uuid from 'uuid';
 import { TurtlePrefixes } from '../prefixes';
 
 export function getDevice(
-    label = "1",
-    manufacturer = "2",
+    label = "",
+    manufacturer = "",
     creator = {
-        name: "3",
-        email: "4"
+        name: "",
+        email: ""
     }
 ) {
     const creatorUUID = uuid.v4();
@@ -43,7 +43,7 @@ export function getSensor(
                     a ssn:Accuracy ;
                     ssn:hasValue [
                         a dul:Amount ;
-                        dul:hasDataValue "0"^^xsd:double ;
+                        dul:hasDataValue "1"^^xsd:double ;
                         dul:isClassifiedBy ${units}
                     ]
                 ] ;
@@ -51,7 +51,7 @@ export function getSensor(
                     a ssn:Sensitivity ;
                     ssn:hasValue [
                         a dul:Amount ;
-                        dul:hasDataValue "0"^^xsd:double ;
+                        dul:hasDataValue "2"^^xsd:double ;
                         dul:isClassifiedBy ${units}
                     ]
                 ] ;
@@ -59,7 +59,7 @@ export function getSensor(
                     a ssn:Resolution ;
                     ssn:hasValue [
                         a dul:Amount ;
-                        dul:hasDataValue "0"^^xsd:double ;
+                        dul:hasDataValue "3"^^xsd:double ;
                         dul:isClassifiedBy ${units}
                     ]
                 ]

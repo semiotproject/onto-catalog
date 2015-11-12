@@ -24,8 +24,8 @@ function getSparqlJsonResult(query) {
     return getQueryResult(query, "application/sparql-results+json");
 }
 
-function getJsonLdResult(query) {
-    return getQueryResult(query, "application/ld+json");
+function getTurtleResult(query) {
+    return getQueryResult(query, "application/turtle");
 }
 
 export function loadClassList() {
@@ -38,24 +38,9 @@ export function loadClassList() {
           } .
         }
     `);
-    /*
-    const promise = $.Deferred();
-
-    promise.resolve(_.range(6).map((i) => {
-        return {
-            uri: 'http://example.com/' + i,
-            label: 'Device #' + i,
-            author: {
-                username: 'soylent-grin'
-            }
-        };
-    }));
-
-    return promise;
-    */
 }
-export function loadClassDetail(classURI) {
-    return getJsonLdResult(`
+export function loadModelDetail(classURI) {
+    return getTurtleResult(`
         CONSTRUCT { ?a ?b ?c . } WHERE {
            GRAPH <${classURI}> { ?a ?b ?c } .
         }
@@ -94,7 +79,20 @@ export function loadSensorTypes() {
     */
    const promise = $.Deferred();
 
-   promise.resolve(['emtr:PolyphaseVoltage', 'emtr:PolyphaseAmperage', 'emtr:PolyphaseElectricActivePower', 'emtr:PolyphaseElectricReactivePower']);
+   promise.resolve([
+        {
+            literal: "http://purl.org/NET/ssnext/electricmeters#PolyphaseVoltage",
+            label: "Polyphase voltage"
+        },
+        {
+            literal: "http://purl.org/NET/ssnext/electricmeters#PolyphaseAmperage",
+            label: "Polyphase amperage"
+        },
+        {
+            literal: "http://purl.org/NET/ssnext/electricmeters#PolyphaseElectricActivePower",
+            label: "Polyphase electric active power"
+        }
+    ]);
 
    return promise;
 }

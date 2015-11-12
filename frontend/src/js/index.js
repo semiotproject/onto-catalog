@@ -5,16 +5,16 @@ import React from 'react';
 import { Router, IndexRoute, Route, Link, History } from 'react-router';
 
 import App from './components/app.react';
-import ClassList from './components/class-list.react';
-import ClassDetail from './components/class-detail.react';
-import InstanceView from './components/instance.react';
+import ModelList from './components/model/model-list.react';
+import ModelDetail from './components/model/model-detail.react';
+import InstanceDetail from './components/instance/instance-detail.react';
 import Navigation from './components/nav.react';
 import About from './components/about.react';
 
 import CurrentUserStore from './stores/current-user-store';
 import FieldStore from './stores/field-store';
 
-/*
+
 $.when(
     CurrentUserStore.load(),
     FieldStore.load()
@@ -22,17 +22,12 @@ $.when(
     React.render(
         <Router>
             <Route path="/" component={App}>
-                <IndexRoute component={ClassList}/>
-                <Route path="/model" component={ClassList} />
-                <Route path="/model/:uri" component={ClassDetail} />
-                <Route path="/instance/:uri" component={InstanceView} />
+                <IndexRoute component={ModelList}/>
+                <Route path="/model" component={ModelList} />
+                <Route path="/model/:uri" component={ModelDetail} />
+                <Route path="/instance/:uri" component={InstanceDetail} />
                 <Route path="/about/" component={About} />
             </Route>
         </Router>
     , document.querySelector('body'));
 });
-*/
-
-import CurrentClassStore from './stores/current-class-store';
-
-CurrentClassStore.init();
