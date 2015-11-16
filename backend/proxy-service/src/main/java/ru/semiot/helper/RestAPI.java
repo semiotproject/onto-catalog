@@ -30,13 +30,13 @@ import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.update.UpdateExecutionFactory;
 import org.apache.jena.update.UpdateFactory;
 import org.apache.jena.update.UpdateRequest;
 import org.apache.jena.vocabulary.RDF;
-import org.json.JSONArray;
-import org.json.JSONException;
+import org.apache.jena.vocabulary.RDFS;
 import org.json.JSONObject;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.OAuthRequest;
@@ -106,8 +106,8 @@ public class RestAPI {
         if (model == null || model.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        Resource owner = model.getResource(uri).getPropertyResourceValue(model.getProperty("http://www.w3.org/ns/prov#wasAttributedTo"));        
-        Literal account = owner.getProperty(FOAF.accountName).getObject().asLiteral();       
+        Resource owner = model.getResource(uri).getPropertyResourceValue(model.getProperty("http://www.w3.org/ns/prov#wasAttributedTo"));
+        Literal account = owner.getProperty(FOAF.accountName).getObject().asLiteral();
         if (!db.getLogin(hash).equals(account.getString())) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
@@ -124,7 +124,7 @@ public class RestAPI {
 
     @POST
     @Path("/")
-    @Consumes({"application/ld+json", "application/json"})
+    @Consumes("text/turtle")
     public Response createClass(@CookieParam("hash") long hash, String object) {
         logger.info("Create method");
         String token = db.getToken(hash);
@@ -137,30 +137,14 @@ public class RestAPI {
         }
         try {
             Model m = ModelFactory.createDefaultModel();
-            InputStream stream = new ByteArrayInputStream(object.getBytes(StandardCharsets.UTF_8));
-            m.read(stream, null, "JSON-LD");
-            JSONObject json = new JSONObject(object);
-            String graph_uri = null;
-            try {
-                graph_uri = json.getString("@id");
-            } catch (JSONException ex) {
-                JSONArray array = json.getJSONArray("@graph");
-                int index = 0;
-                while (index < array.length()) {
-                    if (((JSONObject) array.getJSONObject(index)).has("@type") 
-                            && ((JSONObject) array.getJSONObject(index)).getString("@type").contains("System") 
-                            || ((JSONObject) array.getJSONObject(index)).has("rdfs:subClassOf")
-                            && ((JSONObject) array.getJSONObject(index)).getString("rdfs:subClassOf").contains("System")
-                            || ((JSONObject) array.getJSONObject(index)).has("<http://www.w3.org/2000/01/rdf-schema#subClassOf>")
-                            && ((JSONObject) array.getJSONObject(index)).getString("<http://www.w3.org/2000/01/rdf-schema#subClassOf>").contains("System")) {
-                        graph_uri = ((JSONObject) array.getJSONObject(index)).getString("@id");
-                        break;
-                    }
-                    index++;
-                }
-            }
-            if (_accessor.containsModel(graph_uri))
+            InputStream stream = new ByteArrayInputStream("blabla".getBytes(StandardCharsets.UTF_8));
+            m.read(stream, null, "TURTLE");
+            logger.info("Model done");
+            StmtIterator iter = m.listStatements(null, RDFS.subClassOf, m.getResource(m.getNsPrefixURI("ssn")+"System"));
+            String graph_uri = iter.next().getSubject().getURI();            
+            if (_accessor.containsModel(graph_uri)) {
                 return Response.status(Response.Status.BAD_REQUEST).build();
+            }
             UUID id = UUID.randomUUID();
             m.setNsPrefix("prov", "http://www.w3.org/ns/prov#");
             m.setNsPrefix("semdesc", "http://semdesc.semiot.ru/users/");
@@ -198,7 +182,7 @@ public class RestAPI {
 
     @PUT
     @Path("{class_uri:.*}")
-    @Consumes({"application/ld+json", "application/json"})
+    @Consumes("text/turtle")
     public Response editClass(@CookieParam("hash") long hash, @PathParam("class_uri") String uri, String object) {
         logger.info("Edit method");
         logger.debug("URI to edit is " + uri);
