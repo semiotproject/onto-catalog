@@ -90,7 +90,7 @@ public class RestAPI {
     }
 
     @DELETE
-    @Path("{class_uri:.*}")
+    @Path("model/{class_uri:.*}")
     public Response removeClass(@CookieParam("hash") long hash, @PathParam("class_uri") String uri) {
         logger.info("Remove method");
         logger.debug("URI to remove is " + uri);
@@ -123,7 +123,7 @@ public class RestAPI {
     }
 
     @POST
-    @Path("/")
+    @Path("model/")
     @Consumes("text/turtle")
     public Response createClass(@CookieParam("hash") long hash, String object) {
         logger.info("Create method");
@@ -181,7 +181,7 @@ public class RestAPI {
     }
 
     @PUT
-    @Path("{class_uri:.*}")
+    @Path("model/{class_uri:.*}")
     @Consumes("text/turtle")
     public Response editClass(@CookieParam("hash") long hash, @PathParam("class_uri") String uri, String object) {
         logger.info("Edit method");
