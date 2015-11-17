@@ -6,6 +6,6 @@ export function createModel(ttl) {
         type: "POST",
         url: URLS.model,
         data: ttl,
-        contentType: "application/turtle"
+        contentType: "text/turtle"
     });
 }
