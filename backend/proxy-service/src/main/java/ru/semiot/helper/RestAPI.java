@@ -137,7 +137,7 @@ public class RestAPI {
         }
         try {
             Model m = ModelFactory.createDefaultModel();
-            InputStream stream = new ByteArrayInputStream("blabla".getBytes(StandardCharsets.UTF_8));
+            InputStream stream = new ByteArrayInputStream(object.getBytes(StandardCharsets.UTF_8));
             m.read(stream, null, "TURTLE");
             logger.info("Model done");
             StmtIterator iter = m.listStatements(null, RDFS.subClassOf, m.getResource(m.getNsPrefixURI("ssn")+"System"));
