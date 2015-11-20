@@ -4,25 +4,23 @@ WORKDIR /root
 ENV MYSQL_CONNECTOR http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.22/mysql-connector-java-5.1.22.jar
 ENV WLDFL http://download.jboss.org/wildfly/8.2.0.Final/wildfly-8.2.0.Final.tar.gz
 ENV FUSEKI http://apache-mirror.rbc.ru/pub/apache/jena/binaries/apache-jena-fuseki-2.3.0.tar.gz
+ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64/jre
 
 # Java
-RUN apt-get update && apt-get install -y wget binutils java-common unzip && echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections && wget https://db.tt/dFU3BqFP -O /root/oracle-java8-installer_8u5-1~webupd8~3_all.deb && dpkg -i oracle-java8-installer_8u5-1~webupd8~3_all.deb && rm oracle-java8-installer_8u5-1~webupd8~3_all.deb && apt-get install -y nodejs npm && update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
+RUN apt-get update && apt-get install -y wget binutils java-common unzip default-jdk && apt-get install -y nodejs npm && update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
 
 # Utils
 RUN apt-get update && apt-get install -y maven git
-
-ENV JAVA_HOME /usr/lib/jvm/java-8-oracle/jre
-
-RUN git clone https://github.com/semiotproject/wot-semdesc-helper.git
 
 #Setup Wildfly
 RUN wget $WLDFL && tar xvzf wildfly-8.2.0.Final.tar.gz && rm wildfly-8.2.0.Final.tar.gz && mkdir -p wildfly-8.2.0.Final/modules/system/layers/base/mysql/mysql-connector-java/main
 
 #Config Wildfly
 RUN wget -P wildfly-8.2.0.Final/modules/system/layers/base/mysql/mysql-connector-java/main $MYSQL_CONNECTOR
-RUN cp /root/wot-semdesc-helper/backend/standalone.xml wildfly-8.2.0.Final/standalone/configuration && cp /root/wot-semdesc-helper/backend/module.xml wildfly-8.2.0.Final/modules/system/layers/base/mysql/mysql-connector-java/main
+ADD standalone.xml wildfly-8.2.0.Final/standalone/configuration/
+ADD module.xml wildfly-8.2.0.Final/modules/system/layers/base/mysql/mysql-connector-java/main/
 
-#Setup MySQL	
+#Setup MySQL
 RUN export DEBIAN_FRONTEND=noninteractive && apt-get -q -y install mysql-server
 
 #Download Fuseki
@@ -35,6 +33,9 @@ RUN service mysql start && mysql --execute="create database semdesc; connect sem
 RUN mkdir /etc/fuseki/
 ADD shiro.ini /etc/fuseki/
 ADD config.ttl /etc/fuseki/
+
+ADD https://github.com/semiotproject/wot-semdesc-helper/archive/master.zip /root/
+RUN unzip /root/master.zip && mv wot-semdesc-helper-master wot-semdesc-helper
 
 #Build frontend
 RUN cd /root/wot-semdesc-helper/frontend/ && npm i -g grunt-cli && npm i && npm run build && cd /root/wot-semdesc-helper/frontend/dist/ && cp -r . /root/wot-semdesc-helper/backend/proxy-service/src/main/webapp/ && cd /root/
