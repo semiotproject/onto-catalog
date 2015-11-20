@@ -4,10 +4,14 @@ WORKDIR /root
 ENV MYSQL_CONNECTOR http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.22/mysql-connector-java-5.1.22.jar
 ENV WLDFL http://download.jboss.org/wildfly/8.2.0.Final/wildfly-8.2.0.Final.tar.gz
 ENV FUSEKI http://apache-mirror.rbc.ru/pub/apache/jena/binaries/apache-jena-fuseki-2.3.0.tar.gz
-ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64/jre
+ENV JAVA_HOME /usr/lib/jvm/java-8-oracle/jre
 
 # Java
-RUN apt-get update && apt-get install -y wget binutils java-common unzip default-jdk && apt-get install -y nodejs npm && update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
+RUN apt-get update && apt-get install -y wget binutils java-common unzip && \
+echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections && \
+wget https://db.tt/dFU3BqFP -O /root/oracle-java8-installer_8u5-1~webupd8~3_all.deb && \
+dpkg -i oracle-java8-installer_8u5-1~webupd8~3_all.deb && rm oracle-java8-installer_8u5-1~webupd8~3_all.deb && \
+apt-get install -y nodejs npm && update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
 
 # Utils
 RUN apt-get update && apt-get install -y maven git
