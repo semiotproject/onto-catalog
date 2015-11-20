@@ -13,7 +13,7 @@ const PREFIXES = {
     mmi: "http://mmisw.org/ont/mmi/device#",
     om: 'http://purl.org/ifgi/om#',
     prov: 'http://www.w3.org/ns/prov#',
-    foaf: 'http://xmlns.com/foaf/0.1/#',
+    foaf: 'http://xmlns.com/foaf/0.1/',
     xsd: 'http://www.w3.org/2001/XMLSchema#',
     semdesc: "http://semdesc.semiot.ru/model#",
     dul: "http://www.loa-cnr.it/ontologies/DUL.owl#",
