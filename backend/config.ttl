@@ -50,9 +50,22 @@ tdb:GraphTDB rdfs:subClassOf ja:Model .
 		tdb:dataset <#tdbDataset> ;
 	     ] ;
 	     ja:content [
-		ja:externalContent <http://purl.oclc.org/NET/ssnx/ssn#> ;
-		ja:externalContent <http://qudt.org/1.1/schema/qudt#> ;
-		ja:externalContent <https://purl.org/NET/ssnext/climate-feature#> ;
+			ja:externalContent <http://purl.oclc.org/NET/ssnx/ssn#> ;
+			ja:externalContent <http://www.qudt.org/qudt/owl/1.0.0/qudt.owl> ;
+			ja:externalContent <http://www.w3.org/ns/prov#> ;
+			ja:externalContent <http://purl.org/NET/ssnext/electricmeters#> ;
+			ja:externalContent <http://purl.org/NET/ssnext/heatmeters#> ;
+			ja:externalContent <http://www.loa.istc.cnr.it/ontologies/DUL.owl> ;
+			ja:externalContent <http://purl.org/NET/ssnext/machinetools#> ;
+			ja:externalContent <http://purl.org/NET/ssnext/communication> ;
+			ja:externalContent <http://qudt.org/1.1/vocab/unit#> ;
+			ja:externalContent <http://qudt.org/1.1/vocab/quantity#> ;
+			ja:externalContent <http://xmlns.com/foaf/0.1/> ;
+			ja:externalContent <http://purl.org/ifgi/om> ;
+			ja:externalContent <http://ontology.tno.nl/saref.ttl> ;
+			ja:externalContent <http://www.w3.org/1999/02/22-rdf-syntax-ns> ;
+			ja:externalContent <http://www.w3.org/2000/01/rdf-schema> ;
+			ja:externalContent <http://mmisw.org/ont/mmi/device.ttl> ;
 	     ] ;
 	     ja:reasoner [
 		ja:reasonerURL <http://jena.hpl.hp.com/2003/RDFSExptRuleReasoner> ;
