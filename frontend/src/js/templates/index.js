@@ -2,7 +2,7 @@ import uuid from 'uuid';
 import { TurtlePrefixes } from '../prefixes';
 
 export function getDevice(
-    label = "",
+    label = "New Device",
     manufacturer = "",
     creator = {
         name: "",
@@ -28,12 +28,16 @@ export function getDevice(
 }
 
 export function getSensor(
+    systemURI,
     label = "awesome sensor",
     observes = "emtr:PolyphaseVoltage",
     units = "climate-feature:RelativeHumidity"
 ) {
+    const sensorUUID = uuid.v4();
     return TurtlePrefixes + `
-        semdesc:${uuid.v4()} a ssn:SensingDevice ;
+        <${systemURI}> ssn:hasSubSystem semdesc:${sensorUUID}.
+
+        semdesc:${sensorUUID} a ssn:SensingDevice ;
             rdfs:label "${label}" ;
             ssn:observes ${observes} ;
             ssn:hasMeasurementCapability [

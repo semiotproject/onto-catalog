@@ -26,7 +26,7 @@ class ModelDetailStore extends EventEmitter {
         return this._device;
     }
     addSensor() {
-        return this._device.addSensor(getSensor()).then(() => {
+        return this._device.addSensor(getSensor(this._device.uri)).then(() => {
             this.emit('update');
         });
     }
@@ -35,12 +35,8 @@ class ModelDetailStore extends EventEmitter {
         this.emit('update');
     }
     setSensorType(uri, type) {
-        this._device.sensors.map((s) => {
-            if (s.uri === uri) {
-                s.observes = type;
-                this.emit('update');
-            }
-        });
+        this._device.setSensorObserves(uri, type);
+        this.emit('update');
     }
     save() {
         this._device.toTurtle((res) => {
@@ -60,7 +56,16 @@ class ModelDetailStore extends EventEmitter {
         return promise;
     }
     _loadDevice(uri) {
-        // TODO
+        const promise = $.Deferred();
+
+        loadModelDetail(uri).then((ttl) => {
+            parseTriples(ttl).then((triples) => {
+                this._device = new Device(triples);
+                promise.resolve();
+            });
+        });
+
+        return promise;
     }
 }
 

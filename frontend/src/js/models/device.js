@@ -4,7 +4,6 @@ import $ from 'jquery';
 import _ from 'lodash';
 import { JSONPrefixes } from '../prefixes';
 
-import Sensor from './sensor';
 import Base from './base';
 
 export default class Device extends Base {
@@ -13,7 +12,6 @@ export default class Device extends Base {
         triples.map((t) => {
             this._store.addTriple(t.subject, t.predicate, t.object, t.graph);
         });
-        this._sensors = [];
         console.info(`device with ${triples.length} triples inited`);
     }
 
@@ -72,37 +70,124 @@ export default class Device extends Base {
         const promise = $.Deferred();
 
         parseTriples(turtle).then((triples) => {
-            const sensor = new Sensor(triples);
-            this._sensors.push(sensor);
-
-            // adding additional triple to device
-            this._store.addTriple(this.uri, "ssn:hasSubSystem", sensor.uri);
-
-            promise.resolve(sensor.uri);
+            triples.map((t) => {
+                this._store.addTriple(t.subject, t.predicate, t.object, t.graph);
+            });
+            promise.resolve();
         });
 
         return promise;
     }
 
+
+    /*
+    *
+    * Sensors mappings
+    *
+     */
     get sensors() {
-        return this._sensors;
-    }
-    getSensor(uri) {
-        return _.find(this._sensors, (s) => {
-            return s.uri === uri;
+        return this.find(this.uri, "ssn:hasSubSystem", null, null).map((r) => {
+            return r.object;
         });
     }
+
+    getSensorLabel(uri) {
+        return Util.getLiteralValue(this._findObject(uri, 'rdfs:label', null, ''));
+    }
+    setSensorLabel(uri, str) {
+        let oldLabel = this.find(uri, 'rdfs:label', null, '')[0];
+        let newLabel = _.assign({}, oldLabel, {
+            object: `"${str}"`
+        });
+        this._replaceTriple(oldLabel, newLabel);
+    }
+
+    getSensorObserves(uri) {
+        const obs = this._findObject(uri, 'ssn:observes', null, '');
+        return obs;
+    }
+    setSensorObserves(uri, str) {
+        const oldObs = this.find(uri, 'ssn:observes', null, '')[0];
+        const newObs = _.assign({}, oldObs, {
+            object: str
+        });
+        this._replaceTriple(oldObs, newObs);
+    }
+
+    getSensorMeasurementPreperties(uri) {
+        const mc = this._findObject(uri, 'ssn:hasMeasurementCapability', null, '');
+        const props = this.find(mc, "ssn:hasMeasurementProperty", null, '');
+
+        return props.map((triple) => {
+            return triple.object;
+        });
+    }
+    getSensorMeasurementProperty(uri, type) {
+        let prop;
+
+        this.getSensorMeasurementPreperties(uri).map((mp) => {
+            if (this._findObject(mp, "rdf:type", type)) {
+                prop = this.find(
+                    this._findObject(mp, 'ssn:hasValue', null, ''),
+                    "dul:hasDataValue",
+                    null
+                )[0];
+            }
+        });
+
+        return prop;
+    }
+    setSensorMeasurementProperty(uri, type, value) {
+        let oldProp = this.getSensorMeasurementProperty(uri, type);
+        let newProp = _.assign({}, oldProp, {
+            object: Util.createLiteral(value, Util.getLiteralType(oldProp.object))
+        });
+        console.log(`setting ${uri} prop ${type} to ${value}`);
+        this._replaceTriple(oldProp, newProp);
+    }
+    getSensorMeasurementPropertyValue(uri, type) {
+        let prop;
+
+        this.getSensorMeasurementPreperties(uri).map((mp) => {
+            if (this._findObject(mp, "rdf:type", type)) {
+                prop = Util.getLiteralValue(this._findObject(
+                    this._findObject(mp, 'ssn:hasValue', null, ''),
+                    "dul:hasDataValue",
+                    null
+                ));
+            }
+        });
+
+        return prop;
+    }
+
+    getSensorAccuracy(uri) {
+        return this.getSensorMeasurementPropertyValue(uri, 'ssn:Accuracy');
+    }
+    setSensorAccuracy(uri, str) {
+        this.setSensorMeasurementProperty(uri, 'ssn:Accuracy', str);
+    }
+
+    getSensorSensitivity(uri) {
+        return this.getSensorMeasurementPropertyValue(uri, 'ssn:Sensitivity');
+    }
+    setSensorSensitivity(uri, str) {
+        this.setSensorMeasurementProperty(uri, 'ssn:Sensitivity', str);
+    }
+
+    getSensorResolution(uri) {
+        return this.getSensorMeasurementPropertyValue(uri, 'ssn:Resolution');
+    }
+    setSensorResolution(uri, str) {
+        this.setSensorMeasurementProperty(uri, 'ssn:Resolution', str);
+    }
+
 
     toTurtle(callback) {
         const writer = new Writer({ prefixes: JSONPrefixes});
 
         this.find(null, null, null, "").map((t) => {
             writer.addTriple(t.subject, t.predicate, t.object, t.graph);
-        });
-        this._sensors.map((s) => {
-            s.find(null, null, null, "").map((t) => {
-                writer.addTriple(t.subject, t.predicate, t.object, t.graph);
-            });
         });
         writer.end((err, result) => {
             if (err) {

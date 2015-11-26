@@ -115,11 +115,11 @@ export default class ModelDetail extends React.Component {
                                     {
                                         sensors.map((s) => {
                                             return (
-                                                <div key={s.uri} onClick={this.setView(SensorView, { uri: s.uri })}>
+                                                <div key={s} onClick={this.setView(SensorView, { uri: s })}>
                                                     <h4>
                                                         {
                                                             _.find(FiledStore.getSensorTypes(), (t) => {
-                                                                return  s.observes === t.literal;
+                                                                return  device.getSensorObserves(s) === t.literal;
                                                             }).label
                                                         }
                                                     </h4>

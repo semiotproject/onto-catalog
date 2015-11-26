@@ -3,6 +3,7 @@
 import $ from 'jquery';
 import _ from 'lodash';
 import CONFIG from './config';
+import { getMockDevice } from './utils';
 import { SPARQLPrefixes } from './prefixes';
 
 function getQueryResult(query, accept) {
@@ -40,35 +41,44 @@ export function loadModelList() {
     `);
 }
 export function loadModelDetail(classURI) {
+
     return getTurtleResult(`
         CONSTRUCT { ?a ?b ?c . } WHERE {
            GRAPH <${classURI}> { ?a ?b ?c } .
         }
     `);
-}
 
-export function loadMeasurementProperties() {
     /*
-    return getSparqlJsonResult(`
-        TODO
-    `);
-    */
    const promise = $.Deferred();
 
-    promise.resolve(['ssn:Accuracy', 'ssn:ssn:Sensitivity']);
+   promise.resolve(getMockDevice());
 
    return promise;
+   */
 }
+
 export function loadUnitsOfMeasurement() {
-    /*
-    return getSparqlJsonResult(`
-        TODO
-    `);
-    */
    const promise = $.Deferred();
+
+   getSparqlJsonResult(`
+        SELECT ?literal ?label WHERE {
+          <http://qudt.org/vocab/quantity#SystemOfQuantities_SI> <http://qudt.org/schema/qudt#systemDerivedQuantityKind> ?x.
+          ?literal <http://qudt.org/schema/qudt#quantityKind> ?x;
+            <http://www.w3.org/2000/01/rdf-schema#label> ?label
+        }
+    `).then((r) => {
+        promise.resolve(r.results.bindings.map((b) => {
+            return {
+                label: b.label.value,
+                literal: b.literal.value
+            };
+        }));
+    });
+    /*
 
     promise.resolve(['qudt:Celcium', 'qudt:Kelvin', 'qudt:Joule']);
 
+   */
    return promise;
 }
 export function loadSensorTypes() {
