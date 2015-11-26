@@ -2,8 +2,6 @@
 
 let React = require('react');
 
-import Select from 'react-select';
-
 import Store from '../../../stores/model-detail-store';
 import FieldStore from '../../../stores/field-store';
 import _ from 'lodash';
