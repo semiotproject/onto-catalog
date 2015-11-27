@@ -10,8 +10,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-oracle/jre
 RUN apt-get update && apt-get install -y wget binutils java-common unzip && \
 echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections && \
 wget https://db.tt/dFU3BqFP -O /root/oracle-java8-installer_8u5-1~webupd8~3_all.deb && \
-dpkg -i oracle-java8-installer_8u5-1~webupd8~3_all.deb && rm oracle-java8-installer_8u5-1~webupd8~3_all.deb && \
-apt-get install -y nodejs npm && update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
+dpkg -i oracle-java8-installer_8u5-1~webupd8~3_all.deb && rm oracle-java8-installer_8u5-1~webupd8~3_all.deb
 
 # Utils
 RUN apt-get update && apt-get install -y maven git
