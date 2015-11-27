@@ -7,7 +7,7 @@ const PREFIXES = {
     ssncom: 'http://purl.org/NET/ssnext/communication#',
     saref: 'http://ontology.tno.nl/saref#',
     mcht: 'http://purl.org/NET/ssnext/machinetools#',
-    qudt: 'http://www.qudt.org/qudt/owl/1.0.0/qudt.owl#',
+    qudt: 'http://qudt.org/schema/qudt#',
     "qudt-quantity": 'http://qudt.org/vocab/quantity#',
     "qudt-unit": "http://qudt.org/vocab/unit#",
     mmi: "http://mmisw.org/ont/mmi/device#",
