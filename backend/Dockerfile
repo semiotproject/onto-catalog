@@ -41,7 +41,7 @@ ADD https://github.com/semiotproject/wot-semdesc-helper/archive/master.zip /root
 RUN unzip /root/master.zip && mv wot-semdesc-helper-master wot-semdesc-helper
 
 # Add frontend
-ADD frontend/dist/ /root/wot-semdesc-helper/backend/proxy-service/src/main/webapp/
+ADD ../frontend/dist/ /root/wot-semdesc-helper/backend/proxy-service/src/main/webapp/
 
 RUN cd /root/
 
