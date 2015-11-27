@@ -1,3 +1,7 @@
+var argv = require('yargs').argv;
+
+console.log("Building app in " + (argv.dev ? "debug" : "production") + " mode");
+
 module.exports = function (grunt) {
 
     "use strict";
@@ -37,7 +41,7 @@ module.exports = function (grunt) {
                 dest: BUILD_CONFIG.dist_dir + "js/index.js",
                 options: {
                     browserifyOptions: {
-                        debug: true
+                        debug: argv.dev || false
                     },
                     transform: ['babelify'],
                     watch: true
