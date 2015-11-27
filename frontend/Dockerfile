@@ -1,19 +1,27 @@
-FROM ubuntu:14.04
+# pull base image
+FROM ubuntu
 
-ENV DEBIAN_FRONTEND noninteractive
+# install NGINX
+RUN apt-get install -y software-properties-common && \
+    add-apt-repository -y ppa:nginx/stable && \
+    apt-get update && \
+    apt-get install -y nginx && \
+    rm -rf /var/lib/apt/lists/* && \
+    chown -R www-data:www-data /var/lib/nginx && \
+    useradd nginx
 
-RUN apt-get update
-RUN apt-get -qq update
-RUN apt-get install -y nodejs npm
+# add NGINX conf
+ADD ./nginx.conf /etc/nginx/nginx.conf
 
-# debian installs `node` as `nodejs`
-RUN update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
+# add app
+ADD ./dist /var/www/html
 
-ADD . /webapp
-RUN cd /webapp && npm i -g grunt-cli && npm i && npm run build
+# Define working directory.
+WORKDIR /etc/nginx
 
-EXPOSE 3000
+# Define default command.
+CMD ["nginx"]
 
-WORKDIR /webapp
-
-CMD ls && pwd && npm run serve
+# Expose ports.
+EXPOSE 80
+EXPOSE 443
