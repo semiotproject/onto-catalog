@@ -101,8 +101,8 @@ export function loadSensorTypes() {
     ]);
     */
    getSparqlJsonResult(`
-        SELECT ?property ?label {
-          ?property a ssn:Property ;
+        SELECT ?literal ?label {
+          ?literal a ssn:Property ;
             rdfs:label ?label .
         }
     `).then((r) => {
