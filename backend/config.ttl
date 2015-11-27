@@ -55,6 +55,8 @@ tdb:GraphTDB rdfs:subClassOf ja:Model .
 			#QUDT Quantity (Schema & Vocabulary)
 			ja:externalContent <http://qudt.org/1.1/vocab/quantity#> ;
 			ja:externalContent <http://qudt.org/1.1/schema/quantity#> ;
+			#QUDT Unit (Vocabulary)
+			ja:externalContent <http://qudt.org/1.1/vocab/unit> ;
 			#QUDT Schema
 			ja:externalContent <http://qudt.org/1.1/schema/qudt#>;
 			#RDF Schema
