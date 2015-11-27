@@ -12,10 +12,10 @@ export default class DescriptionView extends React.Component {
         super(props);
         this.handleChange = (type) => {
             const device = Store.getDevice();
-            device[type] = this.refs[type].getDOMNode().value;
+            device[type] = this.refs[type].value;
         };
         this.handleLabelChange = () => {
-            Store.setDeviceLabel(this.refs['label'].getDOMNode().value);
+            Store.setDeviceLabel(this.refs['label'].value);
         };
     }
 

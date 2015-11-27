@@ -2,6 +2,7 @@
 
 import $ from 'jquery';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { Router, IndexRoute, Route, Link, History } from 'react-router';
 
 import App from './components/app.react';
@@ -19,7 +20,7 @@ $.when(
     CurrentUserStore.load(),
     FieldStore.load()
 ).always(() => {
-    React.render(
+    ReactDOM.render(
         <Router>
             <Route path="/" component={App}>
                 <IndexRoute component={ModelList}/>
@@ -29,5 +30,5 @@ $.when(
                 <Route path="/about/" component={About} />
             </Route>
         </Router>
-    , document.querySelector('body'));
+    , document.querySelector('#main-wrapper'));
 });

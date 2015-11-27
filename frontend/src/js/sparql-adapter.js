@@ -61,7 +61,7 @@ export function loadUnitsOfMeasurement() {
    const promise = $.Deferred();
 
    getSparqlJsonResult(`
-        SELECT ?literal ?label WHERE {
+        SELECT DISTINCT ?literal ?label WHERE {
           <http://qudt.org/vocab/quantity#SystemOfQuantities_SI> <http://qudt.org/schema/qudt#systemDerivedQuantityKind> ?x.
           ?literal <http://qudt.org/schema/qudt#quantityKind> ?x;
             <http://www.w3.org/2000/01/rdf-schema#label> ?label
@@ -82,13 +82,9 @@ export function loadUnitsOfMeasurement() {
    return promise;
 }
 export function loadSensorTypes() {
-    /*
-    return getSparqlJsonResult(`
-        TODO
-    `);
-    */
    const promise = $.Deferred();
 
+   /*
    promise.resolve([
         {
             literal: "http://purl.org/NET/ssnext/electricmeters#PolyphaseVoltage",
@@ -103,6 +99,37 @@ export function loadSensorTypes() {
             label: "Polyphase electric active power"
         }
     ]);
+    */
+   getSparqlJsonResult(`
+        SELECT DISTINCT ?literal ?label {
+          ?literal rdfs:subClassOf ssn:Property ;
+            rdfs:label ?label .
+          FILTER NOT EXISTS {
+            {?literal rdfs:subClassOf ssn:MeasurementCapability }
+            UNION
+            { ?literal rdfs:subClassOf ssn:MeasurementProperty }
+            UNION
+            { ?literal rdfs:subClassOf ssn:SurvivalProperty }
+            UNION
+            { ?literal rdfs:subClassOf ssn:OperatingProperty }
+            UNION
+            { ?literal rdfs:subClassOf ssn:Condition }
+            UNION
+            { ?literal rdfs:subClassOf ssn:OperatingRange }
+            UNION
+            { ?literal rdfs:subClassOf ssn:SurvivalRange }
+          }
+          FILTER(?literal != ssn:Property)
+          FILTER(LANG(?label) = "en")
+        }
+    `).then((r) => {
+        promise.resolve(r.results.bindings.map((b) => {
+            return {
+                label: b.label.value,
+                literal: b.literal.value
+            };
+        }));
+    });
 
    return promise;
 }

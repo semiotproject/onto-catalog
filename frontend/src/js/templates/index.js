@@ -1,5 +1,6 @@
 import uuid from 'uuid';
 import { TurtlePrefixes } from '../prefixes';
+import FieldStore from '../stores/field-store';
 
 export function getDevice(
     label = "New Device",
@@ -29,42 +30,66 @@ export function getDevice(
 
 export function getSensor(
     systemURI,
-    label = "awesome sensor",
-    observes = "emtr:PolyphaseVoltage",
-    units = "climate-feature:RelativeHumidity"
+    label = "awesome sensor"
 ) {
+    let defaultSensorType;
+
+    if (!defaultSensorType) {
+        const sensorTypes = FieldStore.getSensorTypes();
+        if (sensorTypes.length === 0) {
+            throw new Error('no sensor types found; possible SPARQL endpoint error');
+        } else {
+            defaultSensorType = sensorTypes[0].literal;
+        }
+    }
+
+    let defaultUnits;
+
+    if (!defaultUnits) {
+        const units = FieldStore.getUnitsOfMeasurement();
+        if (units.length === 0) {
+            throw new Error('no units of measurement found; possible SPARQL endpoint error');
+        } else {
+            defaultUnits = units[0].literal;
+        }
+    }
+
     const sensorUUID = uuid.v4();
     return TurtlePrefixes + `
         <${systemURI}> ssn:hasSubSystem semdesc:${sensorUUID}.
 
         semdesc:${sensorUUID} a ssn:SensingDevice ;
             rdfs:label "${label}" ;
-            ssn:observes ${observes} ;
+            ssn:observes <${defaultSensorType}> ;
             ssn:hasMeasurementCapability [
                 a ssn:MeasurementCapability ;
-                ssn:forProperty ${observes} ;
+                ssn:forProperty <${defaultSensorType}> ;
+                ssn:hasMeasurementProperty [
+                    a qudt:Unit ;
+                    ssn:hasValue [
+                        a qudt:Quantity ;
+                        ssn:hasValue <${defaultUnits}> ;
+                    ]
+                ] ;
                 ssn:hasMeasurementProperty [
                     a ssn:Accuracy ;
                     ssn:hasValue [
-                        a dul:Amount ;
-                        dul:hasDataValue "1"^^xsd:double ;
-                        dul:isClassifiedBy ${units}
+                        a qudt:QuantityValue ;
+                        ssn:hasValue "1.0"^^xsd:double ;
                     ]
                 ] ;
                 ssn:hasMeasurementProperty [
                     a ssn:Sensitivity ;
                     ssn:hasValue [
-                        a dul:Amount ;
-                        dul:hasDataValue "2"^^xsd:double ;
-                        dul:isClassifiedBy ${units}
+                        a qudt:QuantityValue ;
+                        ssn:hasValue "2.0"^^xsd:double ;
                     ]
                 ] ;
                 ssn:hasMeasurementProperty [
                     a ssn:Resolution ;
                     ssn:hasValue [
-                        a dul:Amount ;
-                        dul:hasDataValue "3"^^xsd:double ;
-                        dul:isClassifiedBy ${units}
+                        a qudt:QuantityValue ;
+                        ssn:hasValue "3.0"^^xsd:double ;
                     ]
                 ]
             ] .

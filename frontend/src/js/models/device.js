@@ -73,6 +73,7 @@ export default class Device extends Base {
             triples.map((t) => {
                 this._store.addTriple(t.subject, t.predicate, t.object, t.graph);
             });
+            console.log(`added sensor with ${triples.length} triples`);
             promise.resolve();
         });
 
@@ -129,7 +130,7 @@ export default class Device extends Base {
             if (this._findObject(mp, "rdf:type", type)) {
                 prop = this.find(
                     this._findObject(mp, 'ssn:hasValue', null, ''),
-                    "dul:hasDataValue",
+                    "ssn:hasValue",
                     null
                 )[0];
             }
@@ -138,6 +139,14 @@ export default class Device extends Base {
         return prop;
     }
     setSensorMeasurementProperty(uri, type, value) {
+        let oldProp = this.getSensorMeasurementProperty(uri, type);
+        let newProp = _.assign({}, oldProp, {
+            object: value
+        });
+        console.log(`setting ${uri} prop ${type} to ${value}`);
+        this._replaceTriple(oldProp, newProp);
+    }
+    setSensorMeasurementPropertyLiteral(uri, type, value) {
         let oldProp = this.getSensorMeasurementProperty(uri, type);
         let newProp = _.assign({}, oldProp, {
             object: Util.createLiteral(value, Util.getLiteralType(oldProp.object))
@@ -150,36 +159,46 @@ export default class Device extends Base {
 
         this.getSensorMeasurementPreperties(uri).map((mp) => {
             if (this._findObject(mp, "rdf:type", type)) {
-                prop = Util.getLiteralValue(this._findObject(
+                prop = this._findObject(
                     this._findObject(mp, 'ssn:hasValue', null, ''),
-                    "dul:hasDataValue",
+                    "ssn:hasValue",
                     null
-                ));
+                );
             }
         });
 
         return prop;
     }
+    getSensorMeasurementPropertyValueLiteral(uri, type) {
+        return Util.getLiteralValue(this.getSensorMeasurementPropertyValue(uri, type));
+    }
 
     getSensorAccuracy(uri) {
-        return this.getSensorMeasurementPropertyValue(uri, 'ssn:Accuracy');
+        return this.getSensorMeasurementPropertyValueLiteral(uri, 'ssn:Accuracy');
     }
     setSensorAccuracy(uri, str) {
-        this.setSensorMeasurementProperty(uri, 'ssn:Accuracy', str);
+        this.setSensorMeasurementPropertyLiteral(uri, 'ssn:Accuracy', str);
     }
 
     getSensorSensitivity(uri) {
-        return this.getSensorMeasurementPropertyValue(uri, 'ssn:Sensitivity');
+        return this.getSensorMeasurementPropertyValueLiteral(uri, 'ssn:Sensitivity');
     }
     setSensorSensitivity(uri, str) {
-        this.setSensorMeasurementProperty(uri, 'ssn:Sensitivity', str);
+        this.setSensorMeasurementPropertyLiteral(uri, 'ssn:Sensitivity', str);
     }
 
     getSensorResolution(uri) {
-        return this.getSensorMeasurementPropertyValue(uri, 'ssn:Resolution');
+        return this.getSensorMeasurementPropertyValueLiteral(uri, 'ssn:Resolution');
     }
     setSensorResolution(uri, str) {
-        this.setSensorMeasurementProperty(uri, 'ssn:Resolution', str);
+        this.setSensorMeasurementPropertyLiteral(uri, 'ssn:Resolution', str);
+    }
+
+    getSensorUnit(uri) {
+        return this.getSensorMeasurementPropertyValue(uri, 'qudt:Unit');
+    }
+    setSensorUnit(uri, str) {
+        this.setSensorMeasurementProperty(uri, 'qudt:Unit', str);
     }
 
 

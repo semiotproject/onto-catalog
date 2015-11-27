@@ -44,6 +44,9 @@ class ModelDetailStore extends EventEmitter {
             createModel(res);
         });
     }
+    triggerUpdate() {
+        this.emit('update');
+    }
 
     _createDevice() {
         const promise = $.Deferred();
