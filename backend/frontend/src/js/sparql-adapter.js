@@ -62,7 +62,7 @@ export function loadUnitsOfMeasurement() {
 
    getSparqlJsonResult(`
         SELECT DISTINCT ?literal ?label WHERE {
-          <http://qudt.org/vocab/quantity#SystemOfQuantities_SI> <http://qudt.org/schema/qudt#systemDerivedQuantityKind> ?x.
+          <http://qudt.org/vocab/quantity#SystemOfQuantities_SI> <http://qudt.org/schema/qudt#systemDerivedQuantityKind>|<http://qudt.org/schema/qudt#systemBaseQuantityKind> ?x.
           ?literal <http://qudt.org/schema/qudt#quantityKind> ?x;
             <http://www.w3.org/2000/01/rdf-schema#label> ?label
         }
