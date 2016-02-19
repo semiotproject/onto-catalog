@@ -39,7 +39,7 @@ export default class Navigation extends React.Component {
         let items = [];
         for (let key in links) {
             items.push(
-                <li key={key} className={this.state.item === key ? "active" : ""} onClick={this.handleMenuItemClick(key)}>
+                <li key={key} className={this.props.path === links[key].to ? "active" : ""} onClick={this.handleMenuItemClick(key)}>
                     <Link to={links[key].to}>{links[key].text}</Link>
                 </li>
             );

@@ -14,7 +14,7 @@ export default class App extends Component {
         return (
             <div id="main-wrapper">
                 <div id="nav">
-                    <Navigation />
+                    <Navigation path={this.props.location.pathname}/>
                 </div>
                 <div id="app-wrapper">
                     {this.props.children}
