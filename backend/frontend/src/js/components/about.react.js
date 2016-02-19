@@ -28,12 +28,12 @@ export default class About extends React.Component {
                         WoT SemDesc Helper was originally developed as a poster demo for <a href="http://2015.kesw.ru/">2015 KESW conference</a> by a command of <a href="http://semiot.ru">SemIoT project</a>. Stay tuned!
                     </p>
                     <h3>Current limitations and known issues</h3>
-                    <p>
+                    <div>
                         <ul>
                             <li>Device instance view is currentrly in progress</li>
                             <li>A set of fields is under discussion</li>
                         </ul>
-                    </p>
+                    </div>
                     <p style={{textAlign: "center"}}>&copy; SemIoT Project, 2015</p>
                 </div>
             </div>
