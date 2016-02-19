@@ -7,3 +7,5 @@ backend/proxy-service/src/main/webapp
 !backend/proxy-service/src/main/webapp/WEB-INF
 **/fuseki-db
 **/run
+backend/frontend/dist
+backend/frontend/node_modules
