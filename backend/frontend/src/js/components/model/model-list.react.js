@@ -74,9 +74,6 @@ export default class ModelList extends React.Component {
                                             <div>
                                                 author: {c.author}
                                             </div>
-                                            <div>
-                                                <Link to={'/instance/' + encodeURIComponent(c.uri)}>Create instance</Link>
-                                            </div>
                                         </button>
                                     </Link>
                                 </div>

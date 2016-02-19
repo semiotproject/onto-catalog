@@ -16,6 +16,7 @@ class CurrentUserStore extends EventEmitter {
         return this._data !== null;
     }
     load() {
+        /*
         return $.ajax({
             url: CONFIG.URLS.currentUser,
             success: (res) => {
@@ -25,6 +26,12 @@ class CurrentUserStore extends EventEmitter {
 
             }
         });
+        */
+        const promise = $.Deferred();
+
+        promise.resolve();
+
+        return promise;
     }
 }
 

@@ -3,7 +3,7 @@
 import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router, IndexRoute, Route, Link, History } from 'react-router';
+import { Router, IndexRoute, Route, Link, browserHistory } from 'react-router';
 
 import App from './components/app.react';
 import ModelList from './components/model/model-list.react';
@@ -21,13 +21,13 @@ $.when(
     FieldStore.load()
 ).always(() => {
     ReactDOM.render(
-        <Router>
+        <Router history={browserHistory}>
             <Route path="/" component={App}>
                 <IndexRoute component={ModelList}/>
-                <Route path="/model" component={ModelList} />
-                <Route path="/model/:uri" component={ModelDetail} />
-                <Route path="/instance/:uri" component={InstanceDetail} />
-                <Route path="/about/" component={About} />
+                <Route path="model" component={ModelList} />
+                <Route path="model/:uri" component={ModelDetail} />
+                <Route path="instance/:uri" component={InstanceDetail} />
+                <Route path="about/" component={About} />
             </Route>
         </Router>
     , document.querySelector('#main-wrapper'));
