@@ -18,23 +18,31 @@ class FieldStore extends EventEmitter {
     load() {
         const promise = $.Deferred();
 
-        let requests = [
-            loadSensorTypes(),
-            loadUnitsOfMeasurement()
-        ];
-
-        $.when(...requests).done((
-            sensorTypes,
-            unitsOfMeasurement
-        ) => {
-            console.log(
-                'loaded: sensor types - ', sensorTypes,
-                ', units of measurement - ', unitsOfMeasurement
-            );
+        loadSensorTypes().done((sensorTypes) => {
+            console.log('loaded: sensor types - ', sensorTypes);
             this._data = {
-                sensorTypes: sensorTypes,
-                unitsOfMeasurement: unitsOfMeasurement
+                sensorTypes: sensorTypes
             };
+            if (sensorTypes.length > 0) {
+                console.log('loading units of measurement for sensotr type ', sensorTypes[0]);
+                this.loadUnitsOfMeasurement(sensorTypes[0].literal).done(() => {
+                    promise.resolve(this._data);
+                });
+            } else {
+                this._data.unitsOfMeasurement = [];
+                promise.resolve(this._data);
+            }
+        });
+
+        return promise;
+    }
+
+    loadUnitsOfMeasurement(sensorTypeURI) {
+        const promise = $.Deferred();
+
+        loadUnitsOfMeasurement(sensorTypeURI).done((unitsOfMeasurement) => {
+            console.log('loaded units of measurement - ', unitsOfMeasurement);
+            this._data.unitsOfMeasurement = unitsOfMeasurement;
             promise.resolve(this._data);
         });
 

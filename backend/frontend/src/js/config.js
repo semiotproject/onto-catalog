@@ -1,7 +1,7 @@
 "use strict";
 
 const BACKEND_PORT = 80;
-const BACKEND_HOST = `${location.protocol}//${location.hostname}:${BACKEND_PORT}`;
+const BACKEND_HOST = `${location.protocol}//semdesc.semiot.ru:${BACKEND_PORT}`;
 const proxyBase = `${BACKEND_HOST}/api/`;
 const fusekiBase = `http://semdesc.semiot.ru/fuseki/ds/sparql`;
 

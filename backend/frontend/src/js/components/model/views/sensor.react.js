@@ -22,7 +22,9 @@ export default class SensorView extends React.Component {
         };
         this.handleSensorTypeChange = (e) => {
             Store.getDevice().setSensorObserves(uri, e.value);
-            Store.triggerUpdate();
+            FieldStore.loadUnitsOfMeasurement(e.value).done(() => {
+                Store.triggerUpdate();
+            });
         };
         this.handleSensorUnitChange = (e) => {
             Store.getDevice().setSensorUnit(uri, e.value);
@@ -64,6 +66,7 @@ export default class SensorView extends React.Component {
                         <Select
                             value={device.getSensorObserves(uri)}
                             clearable={false}
+                            searchable={true}
                             options={
                                 FieldStore.getSensorTypes().map((t) => {
                                     return {
@@ -80,6 +83,7 @@ export default class SensorView extends React.Component {
                         <Select
                             value={device.getSensorUnit(uri)}
                             clearable={false}
+                            searchable={true}
                             options={
                                 FieldStore.getUnitsOfMeasurement().map((t) => {
                                     return {

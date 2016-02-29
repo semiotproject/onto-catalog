@@ -119,7 +119,7 @@ export default class ModelDetail extends React.Component {
                                                     <h4>
                                                         {
                                                             _.find(FiledStore.getSensorTypes(), (t) => {
-                                                                return  device.getSensorObserves(s) === t.literal;
+                                                                return device.getSensorObserves(s) === t.literal;
                                                             }).label
                                                         }
                                                     </h4>
