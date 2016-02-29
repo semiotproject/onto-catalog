@@ -62,7 +62,7 @@ export default class SensorView extends React.Component {
                         />
                     </div>
                     <div key="observes" className="form-group">
-                        <label htmlFor="">Sensor type: </label>
+                        <label htmlFor="">Feature of interest: </label>
                         <Select
                             value={device.getSensorObserves(uri)}
                             clearable={false}

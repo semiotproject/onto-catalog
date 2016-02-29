@@ -9,3 +9,12 @@ export function createModel(ttl) {
         contentType: "text/turtle"
     });
 }
+
+export function updateModel(uri, ttl) {
+    return $.ajax({
+        type: "PUT",
+        url: URLS.model + encodeURIComponent(uri),
+        data: ttl.replace(/\n/g, " "),
+        contentType: "text/turtle"
+    });
+}

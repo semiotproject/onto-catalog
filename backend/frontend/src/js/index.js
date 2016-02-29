@@ -7,7 +7,7 @@ import { Router, IndexRoute, Route, Link, browserHistory } from 'react-router';
 
 import App from './components/app.react';
 import ModelList from './components/model/model-list.react';
-import ModelDetail from './components/model/model-detail.react';
+import { ModelDetailCreate, ModelDetailUpdate } from './components/model/model-detail.react';
 import InstanceDetail from './components/instance/instance-detail.react';
 import Navigation from './components/nav.react';
 import About from './components/about.react';
@@ -25,7 +25,8 @@ $.when(
             <Route path="/" component={App}>
                 <IndexRoute component={ModelList}/>
                 <Route path="model" component={ModelList} />
-                <Route path="model/:uri" component={ModelDetail} />
+                <Route path="model/new" component={ModelDetailCreate} />
+                <Route path="model/:uri" component={ModelDetailUpdate} />
                 <Route path="instance/:uri" component={InstanceDetail} />
                 <Route path="about/" component={About} />
             </Route>

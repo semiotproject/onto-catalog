@@ -64,7 +64,6 @@ export default class ModelList extends React.Component {
                         ModelListStore.get().map((c) => {
                             return (
                                 <div className="col-md-2" key={c.uri}>
-                                    <Link to={'/model/' + encodeURIComponent(c.uri)}>
                                         <button className="big">
                                             <div style={{
                                                 fontSize: "16px"
@@ -74,8 +73,15 @@ export default class ModelList extends React.Component {
                                             <div>
                                                 author: {c.author}
                                             </div>
+                                            <div className="button-container">
+                                                <Link to={'/model/' + encodeURIComponent(c.uri)}>
+                                                    Edit
+                                                </Link>
+                                                <Link to={'/instance/' + encodeURIComponent(c.uri)}>
+                                                    Create instance
+                                                </Link>
+                                            </div>
                                         </button>
-                                    </Link>
                                 </div>
                             );
                         })

@@ -17,7 +17,7 @@ import CurrentUserStore from '../../stores/current-user-store';
 
 const logger = console;
 
-export default class ModelDetail extends React.Component {
+class ModelDetail extends React.Component {
 
     constructor(props) {
         super(props);
@@ -36,7 +36,7 @@ export default class ModelDetail extends React.Component {
             this.forceUpdate();
         };
         this.handleSaveClick = () => {
-            ModelDetailStore.save();
+            return this.isNew ? ModelDetailStore.save() : ModelDetailStore.update(this.props.params.uri);
         };
         this.handleAddSensor = () => {
             ModelDetailStore.addSensor().done((uri) => {
@@ -174,5 +174,21 @@ export default class ModelDetail extends React.Component {
                 </div>
             </div>
         );
+    }
+}
+
+export class ModelDetailCreate extends ModelDetail {
+    constructor(props) {
+        console.log('initialising new model detail view');
+        super();
+        this.isNew = true;
+    }
+}
+
+export class ModelDetailUpdate extends ModelDetail {
+    constructor(props) {
+        console.log('initialising existing model detail view');
+        super();
+        this.isNew = false;
     }
 }
