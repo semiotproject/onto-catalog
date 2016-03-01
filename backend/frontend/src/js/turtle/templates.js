@@ -5,10 +5,6 @@ const MEASUREMENT_CAPABILITY_URI = 'semdesc:mc';
 
 export function getModel(model) {
     const creatorUUID = uuid.v4();
-    const creator = {
-        name: "soylent-grin",
-        email: "hocico16@gmail.com"
-    };
     return `
         <${model.uri}> rdfs:subClassOf ssn:System ;
             a prov:Entity, mmi:Device ;
@@ -19,9 +15,9 @@ export function getModel(model) {
                 rdfs:label "${model.manufacturer}" ;
             ] .
 
-        semdesc:${creatorUUID} a prov:Agent, prov:Person ;
-            foaf:givenName "${creator.name}"^^xsd:string ;
-            foaf:mbox <mailto:${creator.email}> .
+        semdesc:${model.creator.uri} a prov:Agent, prov:Person ;
+            foaf:givenName "${model.creator.name}"^^xsd:string ;
+            foaf:mbox <mailto:${model.creator.email}> .
     `;
 }
 

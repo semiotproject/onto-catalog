@@ -15,6 +15,7 @@ function fromTurtle(ttl) {
             uri: model.uri,
             label: model.label,
             manufacturer: model.manufacturer,
+            creator: model.creator,
             sensors: model.sensors.map((sensorURI) => {
                 return {
                     uri: sensorURI,

@@ -131,10 +131,18 @@ class ModelDetailStore extends EventEmitter {
     _createModel() {
         const promise = $.Deferred();
         promise.resolve();
+
+        const user = CurrentUserStore.getCurrentUser();
+
         this._model = {
             uri: CONFIG.SEMDESC_PREFIX + uuid.v4(),
             label: 'label',
             manufacturer: 'manufacturer',
+            creator: {
+                uri: 'semdesc:' + uuid.v4(),
+                email: user.email,
+                name: user.name
+            },
             sensors: []
         };
         return promise;

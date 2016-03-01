@@ -94,14 +94,15 @@ class ModelDetail extends React.Component {
                 <div className="minimap-container">
                     <div onClick={this.setView(DescriptionView)}>
                         {
-                            <span onClick={this.handleRemoveClick} className="fa fa-remove"></span>
+                            !this.isNew &&
+                                <span onClick={this.handleRemoveClick} className="fa fa-remove"></span>
                         }
                         <h4>
                             <span>{model.label}</span>
                             {
                                 <button className="btn btn-primary" onClick={this.handleSaveClick}>
                                     <i className="fa fa-save"></i>
-                                    <span>Save</span>
+                                    <span>{this.isNew ? "Create" : "Update"}</span>
                                 </button>
                             }
                         </h4>

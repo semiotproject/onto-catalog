@@ -10,10 +10,13 @@ class CurrentUserStore extends EventEmitter {
         this._data = null;
     }
     getCurrentUser() {
-        return this._data;
+        return this._data || {
+            email: "fixme",
+            name: "fixme"
+        };
     }
     isLoggedIn() {
-        return true;
+        return this._data === null;
     }
     load() {
         return $.ajax({
