@@ -14,13 +14,13 @@ export default class SensorView extends React.Component {
 
         const { uri } = props.data;
 
-        const sensor = this.getCurrentSensor();
-
         this.handleLabelChange = (e) => {
+        const sensor = this.getCurrentSensor();
             sensor.label = e.value;
             Store.triggerUpdate();
         };
         this.handleFeatureOfInterestChange = (e) => {
+        const sensor = this.getCurrentSensor();
             sensor.featureOfInterest = e.value;
             FieldStore.loadUnitsOfMeasurement(e.value).done(() => {
                 sensor.unitsOfMeasurement = Store.getDefaultUnitsOfMeasurement();
@@ -28,10 +28,12 @@ export default class SensorView extends React.Component {
             });
         };
         this.handleSensorUnitChange = (e) => {
+        const sensor = this.getCurrentSensor();
             sensor.unitsOfMeasurement = e.value;
             Store.triggerUpdate();
         };
         this.handleAddPropClick = () => {
+        const sensor = this.getCurrentSensor();
             sensor.props.push({
                 type: this.refs['new-prop-type'].value,
                 value: 1.0
@@ -39,6 +41,7 @@ export default class SensorView extends React.Component {
             Store.triggerUpdate();
         };
         this.handlePropChanged = (type) => {
+        const sensor = this.getCurrentSensor();
             return (e) => {
                 sensor.props.forEach((p, index) => {
                     console.log(p.type, type, e);
@@ -50,6 +53,7 @@ export default class SensorView extends React.Component {
             };
         };
         this.handleRemovePropClick = (type) => {
+        const sensor = this.getCurrentSensor();
             return () => {
                 _.remove(sensor.props, (p) => {
                     return p.type === type;
@@ -60,14 +64,17 @@ export default class SensorView extends React.Component {
     }
 
     renderProp(prop) {
-        const label = _.find(Store.MEASUREMENT_PROPERTIES, (mp) => {
+        const targetProp = _.find(Store.MEASUREMENT_PROPERTIES, (mp) => {
             return prop.type === mp.type;
-        }).label;
+        });
+        if (!targetProp) {
+            return;
+        }
         return (
             <div key={prop.type} className="form-group">
-                <span>{label}</span>
-                &nbsp;
                 <label htmlFor="">
+                    <span>{targetProp.label}</span>
+                    &nbsp;
                     <i className="fa fa-remove" onClick={this.handleRemovePropClick(prop.type)}></i>
                 </label>
                 <input type="text"
@@ -151,7 +158,11 @@ export default class SensorView extends React.Component {
                                     <i className="fa fa-add"></i>
                                     <span>Add property</span>
                                 </button>
-                                <select ref="new-prop-type">
+                                <select ref="new-prop-type" className="form-control" style={{
+                                    display: "inline-block",
+                                    width: "300px",
+                                    marginLeft: "11px"
+                                }}>
                                     {
                                         availableToAddProps.map((p) => {
                                             return <option value={p.type} key={p.type}>{p.label}</option>;

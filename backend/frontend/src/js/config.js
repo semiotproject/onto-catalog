@@ -6,7 +6,7 @@ const proxyBase = `${BACKEND_HOST}/api/`;
 const fusekiBase = `http://semdesc.semiot.ru/fuseki/ds/sparql`;
 
 export default {
-    BASE_CLASS_URI: "http://semdesc.semiot.ru/model/",
+    SEMDESC_PREFIX: "http://semdesc.semiot.ru/model/",
     URLS: {
         login: proxyBase + "login/",
         logout: proxyBase + "logout/",

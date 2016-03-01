@@ -28,7 +28,7 @@ export default class DescriptionView extends React.Component {
                     <div className="form-group">
                         <label htmlFor="">URI</label>
                         <p>
-                            <a href={uri}>{uri}</a>
+                            <a className="form-control" href={uri}>{uri}</a>
                         </p>
                     </div>
                     <div className="form-group">

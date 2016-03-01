@@ -10,7 +10,7 @@ export function getModel(model) {
         email: "hocico16@gmail.com"
     };
     return `
-        semdesc:${model.uri} rdfs:subClassOf ssn:System ;
+        <${model.uri}> rdfs:subClassOf ssn:System ;
             a prov:Entity, mmi:Device ;
             prov:wasAttributedTo semdesc:${creatorUUID} ;
             rdfs:label "${model.label}" ;
@@ -27,19 +27,19 @@ export function getModel(model) {
 
 export function getSensor(systemURI, sensor) {
     let str = `
-        semdesc:${systemURI} ssn:hasSubSystem semdesc:${sensor.uri}.
+        <${systemURI}> ssn:hasSubSystem semdesc:${sensor.uri}.
 
         semdesc:${sensor.uri} a ssn:SensingDevice ;
             rdfs:label "${sensor.label}" ;
             ssn:observes <${sensor.featureOfInterest}> ;
-            ssn:hasMeasurementCapability ${MEASUREMENT_CAPABILITY_URI} .
+            ssn:hasMeasurementCapability ${MEASUREMENT_CAPABILITY_URI}-${sensor.uri} .
 
-        ${MEASUREMENT_CAPABILITY_URI} a ssn:MeasurementCapability ;
+        ${MEASUREMENT_CAPABILITY_URI}-${sensor.uri} a ssn:MeasurementCapability ;
             ssn:forProperty <${sensor.featureOfInterest}> .
     `;
     if (sensor.unitsOfMeasurement) {
         str += `
-            ${MEASUREMENT_CAPABILITY_URI}  ssn:hasMeasurementProperty [
+            ${MEASUREMENT_CAPABILITY_URI}-${sensor.uri} ssn:hasMeasurementProperty [
                 a qudt:Unit ;
                 ssn:hasValue [
                     a qudt:Quantity ;
@@ -51,14 +51,14 @@ export function getSensor(systemURI, sensor) {
     return str;
 }
 
-export function getMeasurementProperty(prop) {
+export function getMeasurementProperty(sensorURI, prop) {
     return `
-        ${MEASUREMENT_CAPABILITY_URI} ssn:hasMeasurementProperty [
+        ${MEASUREMENT_CAPABILITY_URI}-${sensorURI} ssn:hasMeasurementProperty [
             a ${prop.type} ;
             ssn:hasValue [
                 a qudt:QuantityValue ;
                 ssn:hasValue "${prop.value}"^^xsd:double ;
-            ] .
+            ]
         ].
     `;
 }

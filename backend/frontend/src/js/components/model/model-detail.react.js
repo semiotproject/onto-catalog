@@ -47,6 +47,14 @@ class ModelDetail extends React.Component {
         this.handleRemoveClick = () => {
             ModelDetailStore.remove();
         };
+        this.handleRemoveSensor = (uri) => {
+            return (e) => {
+                e.stopPropagation();
+                ModelDetailStore.removeSensor(uri);
+                ViewManager.setView(SensorsView);
+                ModelDetailStore.triggerUpdate();
+            };
+        };
 
         ViewManager.setView(DescriptionView);
     }
@@ -118,6 +126,9 @@ class ModelDetail extends React.Component {
                                                                 return s.featureOfInterest === t.literal;
                                                             }).label
                                                         }
+                                                        <button className="btn btn-primary btn-add" onClick={this.handleRemoveSensor(s.uri)}>
+                                                            <i className="fa fa-minus"></i>
+                                                        </button>
                                                     </h4>
                                                 </div>
                                             );

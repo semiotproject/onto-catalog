@@ -20,12 +20,12 @@ function fromTurtle(ttl) {
                     uri: sensorURI,
                     label: model.getSensorLabel(sensorURI),
                     featureOfInterest: model.getSensorFeatureOfInterest(sensorURI),
-                    unitsOfMeasurement: model.getSensorunitsOfMeasurement(sensorURI),
+                    unitsOfMeasurement: model.getSensorUnitsOfMeasurement(sensorURI),
                     props: model.getSensorMeasurementPreperties(sensorURI).map((propURI) => {
                         return {
                             uri: propURI,
-                            type: 'TODO',
-                            value: 'TODO'
+                            type: model.getSensorMeasurementPropertyType(propURI),
+                            value:  model.getSensorMeasurementPropertyValue(propURI)
                         };
                     })
                 };
@@ -48,7 +48,7 @@ function toTurtle(model) {
     model.sensors.map((s) => {
         str += getSensor(model.uri, s);
         s.props.map((p) => {
-            str += getMeasurementProperty(p);
+            str += getMeasurementProperty(s.uri, p);
         });
     });
 
