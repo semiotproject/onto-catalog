@@ -72,16 +72,8 @@ class Model extends Base {
     }
     get creator() {
         return {
-            name: Util.getLiteralValue(this._findObject(
-                this._findObject(this.uri, "prov:wasAttributedTo", null),
-                "foaf:givenName",
-                null
-            )),
-            email: this._findObject(
-                this._findObject(this.uri, "prov:wasAttributedTo", null),
-                "foaf:mbox",
-                null
-            )
+            name: "todo",
+            email: "todo"
         };
     }
 
@@ -150,7 +142,11 @@ class Model extends Base {
         return Util.getLiteralValue(this.getSensorMeasurementPropertyValueByType(uri, type));
     }
     getSensorUnitsOfMeasurement(uri) {
-        return this.getSensorMeasurementPropertyValueByType(uri, 'qudt:Unit');
+        try {
+            return this.getSensorMeasurementPropertyValueByType(uri, 'qudt:Unit');
+        } catch(e) {
+            return null;
+        }
     }
 
     /*
