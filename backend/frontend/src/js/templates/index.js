@@ -70,28 +70,24 @@ export function getSensor(
                         a qudt:Quantity ;
                         ssn:hasValue <${defaultUnits}> ;
                     ]
-                ] ;
-                ssn:hasMeasurementProperty [
-                    a ssn:Accuracy ;
-                    ssn:hasValue [
-                        a qudt:QuantityValue ;
-                        ssn:hasValue "1.0"^^xsd:double ;
-                    ]
-                ] ;
-                ssn:hasMeasurementProperty [
-                    a ssn:Sensitivity ;
-                    ssn:hasValue [
-                        a qudt:QuantityValue ;
-                        ssn:hasValue "2.0"^^xsd:double ;
-                    ]
-                ] ;
-                ssn:hasMeasurementProperty [
-                    a ssn:Resolution ;
-                    ssn:hasValue [
-                        a qudt:QuantityValue ;
-                        ssn:hasValue "3.0"^^xsd:double ;
-                    ]
                 ]
+            ] .
+    `;
+}
+
+export function getMeasurementProperty(
+    measurementCapabilityURI,
+    propType
+) {
+
+    const propUUID = uuid.v4();
+    return TurtlePrefixes + `
+        <${measurementCapabilityURI}> ssn:hasMeasurementProperty semdesc:${propUUID}.
+
+        semdesc:${propUUID} a ${propType} ;
+            ssn:hasValue [
+                a qudt:QuantityValue ;
+                ssn:hasValue "1.0"^^xsd:double ;
             ] .
     `;
 }

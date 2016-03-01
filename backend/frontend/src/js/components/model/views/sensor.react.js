@@ -43,6 +43,20 @@ export default class SensorView extends React.Component {
             Store.getDevice().setSensorResolution(uri, e.target.value);
             Store.triggerUpdate();
         };
+        this.handleAddPropClick = () => {
+            Store.addSensorProperty(uri, this.refs['new-prop-type'].value);
+        };
+    }
+
+    renderProps() {
+        const device = Store.getDevice();
+        const { uri } = this.props;
+
+        console.log(device.getSensorMeasurementPreperties(uri));
+
+        return device.getSensorMeasurementPreperties(uri).map((p) => {
+            return <div key={p}>{p}</div>;
+        });
     }
 
     render() {
@@ -95,33 +109,22 @@ export default class SensorView extends React.Component {
                             onChange={this.handleSensorUnitChange}
                          />
                     </div>
-                    <div key="accuracy" className="form-group">
-                        <label htmlFor="">Accuracy: </label>
-                        <input type="number"
-                            className="form-control"
-                            ref="accuracy"
-                            onChange={this.handleAccuracyChange}
-                            defaultValue={device.getSensorAccuracy(uri)}
-                        />
+                    <div className="form-group">
+                        <button className="btn btn-primary" onClick={this.handleAddPropClick}>
+                            <i className="fa fa-add"></i>
+                            <span>Add property</span>
+                        </button>
+                        <select ref="new-prop-type">
+                            {
+                                Store.MEASUREMENT_PROPERTIES.map((p) => {
+                                    return <option value={p} key={p}>{p}</option>;
+                                })
+                            }
+                        </select>
                     </div>
-                    <div key="sensitivity" className="form-group">
-                        <label htmlFor="">Sensitivity: </label>
-                        <input type="number"
-                            className="form-control"
-                            ref="sensitivity"
-                            onChange={this.handleSensitivityChange}
-                            defaultValue={device.getSensorSensitivity(uri)}
-                        />
-                    </div>
-                    <div key="resolution" className="form-group">
-                        <label htmlFor="">Resolution: </label>
-                        <input type="number"
-                            className="form-control"
-                            ref="resolution"
-                            onChange={this.handleResolutionChange}
-                            defaultValue={device.getSensorResolution(uri)}
-                        />
-                    </div>
+                    {
+                        this.renderProps()
+                    }
                 </div>
             </div>
         );

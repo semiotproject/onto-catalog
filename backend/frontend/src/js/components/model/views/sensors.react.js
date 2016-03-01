@@ -19,7 +19,7 @@ export default class SensorsView extends React.Component {
 
         };
         this.handleAddSensor = () => {
-            let newSensorURI = Store.addSensor();
+            Store.addSensor();
         };
         this.handleClick = (uri) => {
             return () => {

@@ -1,20 +1,91 @@
-import { Util, Writer } from 'n3';
-import { parseTriples } from '../utils';
+import { parseTriples } from './utils';
+import { Store, Writer, Util } from 'n3';
+import { JSONPrefixes } from './prefixes';
 import $ from 'jquery';
 import _ from 'lodash';
-import { JSONPrefixes } from '../prefixes';
 
-import Base from './base';
+class Base {
+    constructor() {
+        this._store = new Store();
+        this._store.addPrefixes(JSONPrefixes);
+    }
 
-export default class Device extends Base {
+    find() {
+        return this._store.find(...arguments);
+    }
+    addTriple() {
+        return this._store.addTriple(...arguments);
+    }
+    removeTriple() {
+        return this._store.removeTriple(...arguments);
+    }
+
+    _findObject(sub, pred, ob) {
+        let object = this._store.find(sub, pred, ob, "");
+        if (object.length === 0 || !object[0].object) {
+            return null;
+        }
+        return object[0].object;
+    }
+    _findSubject(sub, pred, ob) {
+        let object = this._store.find(sub, pred, ob, "");
+        if (object.length === 0 || !object[0].subject) {
+            console.error(`error getting subject`);
+            return null;
+        }
+        return object[0].subject;
+    }
+    _replaceTriple(oldTriple, newTriple) {
+        this._store.removeTriple(oldTriple);
+        this._store.addTriple(newTriple);
+    }
+
+    // remove all triples, where ${uri} is a subject, and related object
+    cascadeRemove(uri) {
+        console.info(`removing all information about triple, related to uri = ${uri}`);
+
+        // cascade remove all triples, coming from $uri
+        this._store.find(uri, null, null, "").map((t) => {
+            this._store.removeTriple(t);
+            this.cascadeRemove(t.object);
+        });
+
+        // non-cascade remove all triples, containes $uri as an object
+        this._store.find(null, null, uri, "").map((t) => {
+            this._store.removeTriple(t);
+        });
+    }
+
+    toTurtle(callback) {
+        const writer = new Writer({ prefixes: JSONPrefixes});
+
+        this._store.find(null, null, null, "").map((t) => {
+            writer.addTriple(t.subject, t.predicate, t.object, t.graph);
+        });
+        writer.end((err, result) => {
+            if (err) {
+                console.error(`error while writing model to Turtle: `, err);
+                return;
+            }
+            callback(result);
+        });
+    }
+}
+
+class Model extends Base {
     constructor(triples, callback) {
         super();
         triples.map((t) => {
             this._store.addTriple(t.subject, t.predicate, t.object, t.graph);
         });
-        console.info(`device with ${triples.length} triples inited`);
+        console.info(`model with ${triples.length} triples inited`);
     }
 
+    /*
+    *
+    * Device mappings
+    *
+     */
     get uri() {
         return this._findSubject(null, 'rdfs:subClassOf', 'ssn:System', '');
     }
@@ -103,7 +174,7 @@ export default class Device extends Base {
         this._replaceTriple(oldLabel, newLabel);
     }
 
-    getSensorObserves(uri) {
+    getSensorFeatureOfInterest(uri) {
         const obs = this._findObject(uri, 'ssn:observes', null, '');
         return obs;
     }
@@ -194,11 +265,30 @@ export default class Device extends Base {
         this.setSensorMeasurementPropertyLiteral(uri, 'ssn:Resolution', str);
     }
 
-    getSensorUnit(uri) {
+    getSensorUnitOfMeasurement(uri) {
         return this.getSensorMeasurementPropertyValue(uri, 'qudt:Unit');
     }
     setSensorUnit(uri, str) {
         this.setSensorMeasurementProperty(uri, 'qudt:Unit', str);
+    }
+
+    /*
+    *
+    * Measuremet properties mappings
+    *
+     */
+    addSensorProperty(turtle) {
+        const promise = $.Deferred();
+
+        parseTriples(turtle).then((triples) => {
+            triples.map((t) => {
+                this._store.addTriple(t.subject, t.predicate, t.object, t.graph);
+            });
+            console.info(`added sensor measurement property with ${triples.length} triples`);
+            promise.resolve();
+        });
+
+        return promise;
     }
 
 
@@ -210,7 +300,7 @@ export default class Device extends Base {
         });
         writer.end((err, result) => {
             if (err) {
-                console.error(`error while writing device to Turtle: `, err);
+                console.error(`error while writing model to Turtle: `, err);
                 return;
             }
             callback(result);
@@ -218,3 +308,48 @@ export default class Device extends Base {
     }
 
 }
+
+function fromTurtle(ttl) {
+    const promise =  $.Deferred();
+
+    parseTriples(ttl).then((triples) => {
+
+        const model = new Model(triples);
+
+        const normalisedModel = {
+            uri: model.uri,
+            label: model.label,
+            manufacturer: model.manufacturer,
+            sensors: model.sensors.map((sensorURI) => {
+                return {
+                    uri: sensorURI,
+                    label: model.getSensorLabel(sensorURI),
+                    featureOfInterest: model.getSensorFeatureOfInterest(sensorURI),
+                    unitOfMeasurement: model.getSensorUnitOfMeasurement(sensorURI),
+                    props: model.getSensorMeasurementPreperties(sensorURI).map((propURI) => {
+                        return {
+                            uri: propURI,
+                            type: 'TODO',
+                            value: 'TODO'
+                        };
+                    })
+                };
+            })
+        };
+
+        console.info(`normalized model is: `, normalisedModel);
+
+        promise.resolve(normalisedModel);
+    });
+
+    return promise;
+}
+
+function toTurtle(model) {
+    //
+}
+
+export default {
+    fromTurtle,
+    toTurtle
+};
