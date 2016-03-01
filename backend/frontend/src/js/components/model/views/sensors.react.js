@@ -29,8 +29,8 @@ export default class SensorsView extends React.Component {
     }
 
     render() {
-        const device = Store.getDevice();
-        const { sensors } = device;
+        const model = Store.getModel();
+        const { sensors } = model;
         return (
             <div>
                 <h3>Sensors</h3>
@@ -46,14 +46,12 @@ export default class SensorsView extends React.Component {
                         sensors.map((s, index) => {
                             return (
                                 <div className="col-md-4" key={s}>
-                                    <button className="big" onClick={this.handleClick(s)}>
-                                        <div>
-                                            {
-                                                _.find(FieldStore.getSensorTypes(), (t) => {
-                                                    return  device.getSensorObserves(s) === t.literal;
-                                                }).label
-                                            }
-                                        </div>
+                                    <button className="big" onClick={this.handleClick(s.uri)}>
+                                        <div>{
+                                            _.find(FieldStore.getSensorTypes(), (t) => {
+                                                return s.featureOfInterest === t.literal;
+                                            }).label
+                                        }</div>
                                     </button>
                                 </div>
                             );

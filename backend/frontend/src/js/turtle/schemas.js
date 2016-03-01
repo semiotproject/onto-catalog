@@ -1,6 +1,7 @@
-import { parseTriples } from './utils';
+import { parseTriples } from '../utils';
 import { Store, Writer, Util } from 'n3';
-import { JSONPrefixes } from './prefixes';
+import { JSONPrefixes } from '../prefixes';
+import { getModel, getSensor, getMeasurementProperty } from './templates';
 import $ from 'jquery';
 import _ from 'lodash';
 
@@ -265,7 +266,7 @@ class Model extends Base {
         this.setSensorMeasurementPropertyLiteral(uri, 'ssn:Resolution', str);
     }
 
-    getSensorUnitOfMeasurement(uri) {
+    getSensorunitsOfMeasurement(uri) {
         return this.getSensorMeasurementPropertyValue(uri, 'qudt:Unit');
     }
     setSensorUnit(uri, str) {
@@ -325,7 +326,7 @@ function fromTurtle(ttl) {
                     uri: sensorURI,
                     label: model.getSensorLabel(sensorURI),
                     featureOfInterest: model.getSensorFeatureOfInterest(sensorURI),
-                    unitOfMeasurement: model.getSensorUnitOfMeasurement(sensorURI),
+                    unitsOfMeasurement: model.getSensorunitsOfMeasurement(sensorURI),
                     props: model.getSensorMeasurementPreperties(sensorURI).map((propURI) => {
                         return {
                             uri: propURI,
@@ -345,11 +346,4 @@ function fromTurtle(ttl) {
     return promise;
 }
 
-function toTurtle(model) {
-    //
-}
-
-export default {
-    fromTurtle,
-    toTurtle
-};
+export default Model;

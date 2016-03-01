@@ -1,6 +1,4 @@
-"use strict";
-
-let React = require('react');
+import React from 'react';
 
 import _ from 'lodash';
 import CONFIG from '../../../config';
@@ -10,17 +8,19 @@ export default class DescriptionView extends React.Component {
 
     constructor(props) {
         super(props);
-        this.handleChange = (type) => {
-            const device = Store.getDevice();
-            device[type] = this.refs[type].value;
+        const model = Store.getModel();
+        this.handleManufacturerChange = () => {
+            model.manufacturer = this.refs['manufacturer'].value;
+            Store.triggerUpdate();
         };
         this.handleLabelChange = () => {
-            Store.setDeviceLabel(this.refs['label'].value);
+            model.label = this.refs['label'].value;
+            Store.triggerUpdate();
         };
     }
 
     render() {
-        let { uri, label, manufacturer } = Store.getDevice();
+        let { uri, label, manufacturer } = Store.getModel();
         return (
             <div>
                 <h3>Device</h3>
@@ -45,7 +45,7 @@ export default class DescriptionView extends React.Component {
                             type="text"
                             ref="manufacturer"
                             defaultValue={manufacturer}
-                            onChange={this.handleChange.bind(this, "manufacturer")}/>
+                            onChange={this.handleManufacturerChange.bind(this, "manufacturer")}/>
                     </div>
                 </div>
             </div>

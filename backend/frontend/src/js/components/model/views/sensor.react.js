@@ -14,54 +14,86 @@ export default class SensorView extends React.Component {
 
         const { uri } = props.data;
 
-        this.handleChange = (type) => {
-            let sensor = _.find(Store.getDevice().sensors, (s) => {
-                return s.uri === uri;
-            });
-            sensor[type] = this.refs[type].value;
+        const sensor = this.getCurrentSensor();
+
+        this.handleLabelChange = (e) => {
+            sensor.label = e.value;
+            Store.triggerUpdate();
         };
-        this.handleSensorTypeChange = (e) => {
-            Store.getDevice().setSensorObserves(uri, e.value);
+        this.handleFeatureOfInterestChange = (e) => {
+            sensor.featureOfInterest = e.value;
             FieldStore.loadUnitsOfMeasurement(e.value).done(() => {
+                sensor.unitsOfMeasurement = Store.getDefaultUnitsOfMeasurement();
                 Store.triggerUpdate();
             });
         };
         this.handleSensorUnitChange = (e) => {
-            Store.getDevice().setSensorUnit(uri, e.value);
-            Store.triggerUpdate();
-        };
-
-        this.handleAccuracyChange = (e) => {
-            Store.getDevice().setSensorAccuracy(uri, e.target.value);
-            Store.triggerUpdate();
-        };
-        this.handleSensitivityChange = (e) => {
-            Store.getDevice().setSensorSensitivity(uri, e.target.value);
-            Store.triggerUpdate();
-        };
-        this.handleResolutionChange = (e) => {
-            Store.getDevice().setSensorResolution(uri, e.target.value);
+            sensor.unitsOfMeasurement = e.value;
             Store.triggerUpdate();
         };
         this.handleAddPropClick = () => {
-            Store.addSensorProperty(uri, this.refs['new-prop-type'].value);
+            sensor.props.push({
+                type: this.refs['new-prop-type'].value,
+                value: 1.0
+            });
+            Store.triggerUpdate();
+        };
+        this.handlePropChanged = (type) => {
+            return (e) => {
+                sensor.props.forEach((p, index) => {
+                    console.log(p.type, type, e);
+                    if (p.type === type) {
+                        sensor.props[index].value = e.target.value;
+                    }
+                });
+                Store.triggerUpdate();
+            };
+        };
+        this.handleRemovePropClick = (type) => {
+            return () => {
+                _.remove(sensor.props, (p) => {
+                    return p.type === type;
+                });
+                Store.triggerUpdate();
+            };
         };
     }
 
-    renderProps() {
-        const device = Store.getDevice();
-        const { uri } = this.props;
+    renderProp(prop) {
+        const label = _.find(Store.MEASUREMENT_PROPERTIES, (mp) => {
+            return prop.type === mp.type;
+        }).label;
+        return (
+            <div key={prop.type} className="form-group">
+                <span>{label}</span>
+                &nbsp;
+                <label htmlFor="">
+                    <i className="fa fa-remove" onClick={this.handleRemovePropClick(prop.type)}></i>
+                </label>
+                <input type="text"
+                    className="form-control"
+                    ref="label"
+                    onChange={this.handlePropChanged(prop.type)}
+                    defaultValue={prop.value}
+                />
+            </div>
+        );
+    }
 
-        console.log(device.getSensorMeasurementPreperties(uri));
-
-        return device.getSensorMeasurementPreperties(uri).map((p) => {
-            return <div key={p}>{p}</div>;
-        });
+    getCurrentSensor() {
+        const { uri } = this.props.data;
+        const model = Store.getModel();
+        return _.find(model.sensors, (s) => { return s.uri === uri; });
     }
 
     render() {
-        const device = Store.getDevice();
-        const { uri } = this.props;
+        const { uri } = this.props.data;
+        const sensor = this.getCurrentSensor();
+        const availableToAddProps = Store.MEASUREMENT_PROPERTIES.filter((p) => {
+            return !_.find(sensor.props, (pp) => {
+                return pp.type === p.type;
+            });
+        });
         return (
             <div>
                 <h3>Sensor</h3>
@@ -71,14 +103,14 @@ export default class SensorView extends React.Component {
                         <input type="text"
                             className="form-control"
                             ref="label"
-                            onChange={this.handleChange.bind(this, 'label')}
-                            defaultValue={device.getSensorLabel(uri)}
+                            onChange={this.handleLabelChange.bind(this, 'label')}
+                            defaultValue={sensor.label}
                         />
                     </div>
                     <div key="observes" className="form-group">
                         <label htmlFor="">Feature of interest: </label>
                         <Select
-                            value={device.getSensorObserves(uri)}
+                            value={sensor.featureOfInterest}
                             clearable={false}
                             searchable={true}
                             options={
@@ -89,41 +121,47 @@ export default class SensorView extends React.Component {
                                     };
                                 })
                             }
-                            onChange={this.handleSensorTypeChange}
+                            onChange={this.handleFeatureOfInterestChange}
                          />
-                    </div>
-                    <div key="unit" className="form-group">
-                        <label htmlFor="">Unit of measurement: </label>
-                        <Select
-                            value={device.getSensorUnit(uri)}
-                            clearable={false}
-                            searchable={true}
-                            options={
-                                FieldStore.getUnitsOfMeasurement().map((t) => {
-                                    return {
-                                        value: t.literal,
-                                        label: t.label
-                                    };
-                                })
-                            }
-                            onChange={this.handleSensorUnitChange}
-                         />
-                    </div>
-                    <div className="form-group">
-                        <button className="btn btn-primary" onClick={this.handleAddPropClick}>
-                            <i className="fa fa-add"></i>
-                            <span>Add property</span>
-                        </button>
-                        <select ref="new-prop-type">
-                            {
-                                Store.MEASUREMENT_PROPERTIES.map((p) => {
-                                    return <option value={p} key={p}>{p}</option>;
-                                })
-                            }
-                        </select>
                     </div>
                     {
-                        this.renderProps()
+                        FieldStore.getUnitsOfMeasurement().length > 0 &&
+                            <div key="unit" className="form-group">
+                                <label htmlFor="">Unit of measurement: </label>
+                                <Select
+                                    value={sensor.unitsOfMeasurement}
+                                    clearable={false}
+                                    searchable={true}
+                                    options={
+                                        FieldStore.getUnitsOfMeasurement().map((t) => {
+                                            return {
+                                                value: t.literal,
+                                                label: t.label
+                                            };
+                                        })
+                                    }
+                                    onChange={this.handleSensorUnitChange}
+                                 />
+                            </div>
+                    }
+                    {
+                        availableToAddProps.length > 0 &&
+                            <div className="form-group">
+                                <button className="btn btn-primary" onClick={this.handleAddPropClick}>
+                                    <i className="fa fa-add"></i>
+                                    <span>Add property</span>
+                                </button>
+                                <select ref="new-prop-type">
+                                    {
+                                        availableToAddProps.map((p) => {
+                                            return <option value={p.type} key={p.type}>{p.label}</option>;
+                                        })
+                                    }
+                                </select>
+                            </div>
+                    }
+                    {
+                        sensor.props.map(this.renderProp.bind(this))
                     }
                 </div>
             </div>

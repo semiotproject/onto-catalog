@@ -13,7 +13,7 @@ class CurrentUserStore extends EventEmitter {
         return this._data;
     }
     isLoggedIn() {
-        return this._data !== null;
+        return true;
     }
     load() {
         return $.ajax({

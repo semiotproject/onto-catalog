@@ -1,61 +1,15 @@
-"use strict";
-
 import $ from 'jquery';
 import _ from 'lodash';
 import EventEmitter from 'events';
 import CONFIG from '../config';
 import CurrentUserStore from '../stores/current-user-store';
 import { loadModelDetail } from '../sparql-adapter';
-import { getModel, getSensor, getMeasurementProperty } from '../templates/index';
-import { parseTriples } from '../utils';
-// import Model from '../models/model';
-import { fromTurtle, toTurtle } from '../turtle-adapter';
+import { fromTurtle, toTurtle } from '../turtle/converters';
 import { createModel, updateModel } from "../api-adapter";
+import FieldStore from './field-store';
+import uuid from 'uuid';
 
 class ModelDetailStore extends EventEmitter {
-    constructor() {
-        super();
-    }
-    init(uri) {
-        if (!uri) {
-            return this._createModel();
-        }
-        return this._loadModel(uri);
-    }
-    _createModel() {
-        this._model = {
-            uri: 'uri',
-            label: 'label',
-            manufacturer: 'manufacturer',
-            sensors: []
-        };
-    }
-    _loadModel(uri) {
-        const promise = $.Deferred();
-
-        loadModelDetail(uri).then((ttl) => {
-            fromTurtle(ttl).then((model) => {
-                this._model = model;
-            });
-        });
-
-        return promise;
-    }
-    getModel() {
-        return this._model;
-    }
-    addSensor() {
-        this._model.sensors.push({
-            uri: 'todo',
-            label: 'new sensor',
-            featureOfInterest: ''
-        });
-        this.triggerUpdate();
-    }
-    triggerUpdate() {
-        this.emit('update');
-    }
-    /*
 
     get MEASUREMENT_PROPERTIES() {
         return [
@@ -70,12 +24,16 @@ class ModelDetailStore extends EventEmitter {
             'ResponseTime',
             'Latency',
             'Resolution'
-        ].map((p) => { return `ssn:${p}`; });
+        ].map((p) => {
+            return {
+                label: p,
+                type: `ssn:${p}`
+            };
+        });
     }
 
     constructor() {
         super();
-        this._model = null;
     }
     init(uri) {
         if (!uri) {
@@ -83,67 +41,75 @@ class ModelDetailStore extends EventEmitter {
         }
         return this._loadModel(uri);
     }
-    getModel() {
-        return this._model;
-    }
-    addSensor() {
-        return this._model.addSensor(getSensor(this._model.uri)).then(() => {
-            this.emit('update');
-        });
-    }
-    addSensorProperty(sensorURI, propType) {
-        console.info(`adding prop ${propType} to ${sensorURI}`);
-        return this._model.addSensor(getMeasurementProperty(sensorURI, propType)).then(() => {
-            this.emit('update');
-        });
-    }
-    setModelLabel(label) {
-        this._model.label = label;
-        this.emit('update');
-    }
-    setSensorType(uri, type) {
-        this._model.setSensorObserves(uri, type);
-        this.emit('update');
-    }
-    save() {
-        this._model.toTurtle((res) => {
-            console.info(`result ttl is: ${res}`);
-            createModel(res);
-        });
-    }
-    update(uri) {
-        this._model.toTurtle((res) => {
-            console.info(`result ttl is: ${res}`);
-            updateModel(uri, res);
-        });
-    }
-    triggerUpdate() {
-        this.emit('update');
-    }
-
     _createModel() {
         const promise = $.Deferred();
-
-        parseTriples(getModel()).then((triples) => {
-            this._model = new Model(triples);
-            promise.resolve();
-        });
-
+        promise.resolve();
+        this._model = {
+            uri: 'uri',
+            label: 'label',
+            manufacturer: 'manufacturer',
+            sensors: []
+        };
         return promise;
     }
     _loadModel(uri) {
         const promise = $.Deferred();
 
         loadModelDetail(uri).then((ttl) => {
-            parseTriples(ttl).then((triples) => {
-                this._model = new Model(triples);
+            fromTurtle(ttl).then((model) => {
+                this._model = model;
                 promise.resolve();
             });
         });
 
         return promise;
     }
-    */
+    getModel() {
+        return this._model;
+    }
+    addSensor() {
+        const newSensorURI = uuid.v4();
+
+        this._model.sensors.push({
+            uri: newSensorURI,
+            label: 'New sensor',
+            featureOfInterest: this.getDeafultFeatureOfInterest(),
+            getUnitsOfMeasurement: this.getDefaultUnitsOfMeasurement(),
+            props: []
+        });
+        this.triggerUpdate();
+
+        return newSensorURI;
+    }
+    getDeafultFeatureOfInterest() {
+        let featureOfInterest;
+        const sensorTypes = FieldStore.getSensorTypes();
+        if (sensorTypes.length === 0) {
+            throw new Error('no sensor types found; possible SPARQL endpoint error');
+        } else {
+            featureOfInterest = sensorTypes[0].literal;
+        }
+        return featureOfInterest;
+    }
+    getDefaultUnitsOfMeasurement() {
+        let defaultUnits;
+        const units = FieldStore.getUnitsOfMeasurement();
+        if (units.length > 0) {
+            defaultUnits = units[0].literal;
+        }
+        return defaultUnits;
+    }
+
+    triggerUpdate() {
+        console.info('current model is ', this._model, '; triggering update');
+        this.emit('update');
+    }
+
+    save() {
+        const ttl = toTurtle(this._model);
+        console.log(`creating new model: ${ttl}`);
+        createModel(ttl);
+    }
 }
 
 export default new ModelDetailStore();

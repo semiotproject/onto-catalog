@@ -5,7 +5,7 @@ import $ from 'jquery';
 import _ from 'lodash';
 import saveAs from 'browser-filesaver';
 import { Link } from 'react-router';
-import FiledStore from '../../stores/field-store';
+import FieldStore from '../../stores/field-store';
 
 import SensorsView from './views/sensors.react.js';
 import SensorView from './views/sensor.react.js';
@@ -39,10 +39,9 @@ class ModelDetail extends React.Component {
             return this.isNew ? ModelDetailStore.save() : ModelDetailStore.update(this.props.params.uri);
         };
         this.handleAddSensor = () => {
-            ModelDetailStore.addSensor().done((uri) => {
-                this.setView(SensorView, {
-                    uri: uri
-                });
+            const newSensorURI = ModelDetailStore.addSensor();
+            this.setView(SensorView, {
+                uri: newSensorURI
             });
         };
         this.handleRemoveClick = () => {
@@ -66,9 +65,6 @@ class ModelDetail extends React.Component {
         ViewManager.on('update', this.handleStoreUpdate);
         ModelDetailStore.on('update', this.handleStoreUpdate);
     }
-    componentWillReceiveProps(nextProps) {
-        //
-    }
     componentWillUnmount() {
         ViewManager.removeListener('update', this.handleStoreUpdate);
         ModelDetailStore.removeListener('update', this.handleStoreUpdate);
@@ -83,8 +79,8 @@ class ModelDetail extends React.Component {
     }
     // render helpers
     renderMiniMap() {
-        let device = ModelDetailStore.getDevice();
-        let sensors = device.sensors;
+        let model = ModelDetailStore.getModel();
+        let sensors = model.sensors;
         return (
             <div className="col-md-6">
                 <div className="minimap-container">
@@ -93,7 +89,7 @@ class ModelDetail extends React.Component {
                             <span onClick={this.handleRemoveClick} className="fa fa-remove"></span>
                         }
                         <h4>
-                            <span>{device.label}</span>
+                            <span>{model.label}</span>
                             {
                                 <button className="btn btn-primary" onClick={this.handleSaveClick}>
                                     <i className="fa fa-save"></i>
@@ -115,11 +111,11 @@ class ModelDetail extends React.Component {
                                     {
                                         sensors.map((s) => {
                                             return (
-                                                <div key={s} onClick={this.setView(SensorView, { uri: s })}>
+                                                <div key={s.uri} onClick={this.setView(SensorView, { uri: s.uri })}>
                                                     <h4>
                                                         {
-                                                            _.find(FiledStore.getSensorTypes(), (t) => {
-                                                                return device.getSensorObserves(s) === t.literal;
+                                                            _.find(FieldStore.getSensorTypes(), (t) => {
+                                                                return s.featureOfInterest === t.literal;
                                                             }).label
                                                         }
                                                     </h4>
