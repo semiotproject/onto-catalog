@@ -72,8 +72,16 @@ class Model extends Base {
     }
     get creator() {
         return {
-            name: "todo",
-            email: "todo"
+            name: Util.getLiteralValue(this._findObject(
+                this._findObject(this.uri, "prov:wasAttributedTo", null),
+                "foaf:givenName",
+                null
+            )),
+            email: this._findObject(
+                this._findObject(this.uri, "prov:wasAttributedTo", null),
+                "foaf:mbox",
+                null
+            )
         };
     }
 
