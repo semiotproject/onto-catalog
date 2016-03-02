@@ -15,7 +15,7 @@ export function getModel(model) {
                 rdfs:label "${model.manufacturer}" ;
             ] .
 
-        semdesc:${model.creator.uri} a prov:Agent, prov:Person ;
+        semdesc:${creatorUUID} a prov:Agent, prov:Person ;
             foaf:givenName "${model.creator.name}"^^xsd:string ;
             foaf:mbox <mailto:${model.creator.email}> .
     `;
