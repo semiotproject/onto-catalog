@@ -5,8 +5,8 @@ import { instanceToTurtle, fromTurtle, toTurtle } from '../turtle/converters';
 import saveAs from 'browser-filesaver';
 
 const DEFAULT_LOCATION = {
-    lat: 30,
-    lng: 60
+    lat: 60,
+    lng: 30
 };
 
 class InstanceDetailStore extends EventEmitter {

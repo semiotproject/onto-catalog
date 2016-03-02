@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import Store from '../../stores/instance-detail-store';
 import DateTimeField from 'react-bootstrap-datetimepicker';
+import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
 
 const AVAILABLE_FORMATS = {
     ttl: {
@@ -24,11 +25,26 @@ export default class InstanceView extends React.Component {
                 Store.saveAsTurtle();
             };
         };
-        this.handleChange = (prop) => {
+        this.handleChange = (prop, getValue) => {
             return (e) => {
-                console.info(`prop ${prop} changed to ${e}..`);
-                //
+                console.info(`prop ${prop} changed to `, e);
+                const instance = Store.getInstance();
+                instance[prop] = getValue.call(this);
+                console.log(instance);
+                this.forceUpdate();
             };
+        };
+        this.handleTimeChange = (e) => {
+            console.info(`time changed to ${JSON.stringify(e)}..`);
+            const instance = Store.getInstance();
+            instance.deploymentTime = e;
+            this.forceUpdate();
+        };
+        this.handleLocationChange = (e) => {
+            console.info(`location changed to ${JSON.stringify(e.latlng)}..`);
+            const instance = Store.getInstance();
+            instance.location = e.latlng;
+            this.forceUpdate();
         };
     }
 
@@ -38,6 +54,13 @@ export default class InstanceView extends React.Component {
                 isLoading: false
             });
         });
+    }
+
+    getLabel() {
+        return this.refs.label.value;
+    }
+    getDeploymentTime() {
+        return this.refs.deploymentTime.value;
     }
 
     // render helpers
@@ -69,7 +92,7 @@ export default class InstanceView extends React.Component {
                         className="form-control"
                         ref="label"
                         value={instance.label}
-                        onChange={this.handleChange('label')}
+                        onChange={this.handleChange('label', this.getLabel)}
                     />
                 </div>
                 <div className="form-group">
@@ -77,8 +100,25 @@ export default class InstanceView extends React.Component {
                     <DateTimeField
                         ref="deploymentTime"
                         dateTime={instance.deploymentTime}
-                        onChange={this.handleChange('deploymentTime')}
+                        onChange={this.handleTimeChange}
                     />
+                </div>
+                <div className="form-group">
+                    <label>Deployemnt Location</label>
+                    <div style={{
+                        height: "300px"
+                    }}>
+                        <Map center={[60, 30]} zoom={7} style={{
+                            height: "300px",
+                            width: "100%"
+                        }} onLeafletClick={this.handleLocationChange}>
+                            <TileLayer
+                                url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+                                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                            />
+                            <Marker position={instance.location}></Marker>
+                        </Map>
+                    </div>
                 </div>
             </div>
         );
