@@ -50,7 +50,7 @@ export function getSensor(systemURI, sensor) {
 export function getMeasurementProperty(sensorURI, prop) {
     return `
         ${MEASUREMENT_CAPABILITY_URI}-${sensorURI} ssn:hasMeasurementProperty [
-            a ${prop.type} ;
+            a <${prop.type}> ;
             ssn:hasValue [
                 a qudt:QuantityValue ;
                 ssn:hasValue "${prop.value}"^^xsd:double ;
