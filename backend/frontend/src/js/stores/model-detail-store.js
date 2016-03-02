@@ -5,7 +5,7 @@ import CONFIG from '../config';
 import CurrentUserStore from '../stores/current-user-store';
 import { loadModelDetail } from '../sparql-adapter';
 import { fromTurtle, toTurtle } from '../turtle/converters';
-import { createModel, updateModel } from "../api-adapter";
+import { createModel, updateModel, removeModel } from "../api-adapter";
 import FieldStore from './field-store';
 import uuid from 'uuid';
 
@@ -213,6 +213,9 @@ class ModelDetailStore extends EventEmitter {
         const ttl = toTurtle(this._model);
         console.log(`updating model: ${ttl}`);
         updateModel(this._model.uri, ttl);
+    }
+    remove() {
+        removeModel(this._model.uri);
     }
 }
 

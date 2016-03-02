@@ -18,3 +18,11 @@ export function updateModel(uri, ttl) {
         contentType: "text/turtle"
     });
 }
+
+
+export function removeModel(uri) {
+    return $.ajax({
+        type: "DELETE",
+        url: URLS.model + encodeURIComponent(uri)
+    });
+}
