@@ -209,6 +209,11 @@ class ModelDetailStore extends EventEmitter {
         console.log(`creating new model: ${ttl}`);
         createModel(ttl);
     }
+    update() {
+        const ttl = toTurtle(this._model);
+        console.log(`updating model: ${ttl}`);
+        updateModel(this._model.uri, ttl);
+    }
 }
 
 export default new ModelDetailStore();

@@ -15,25 +15,22 @@ export default class SensorView extends React.Component {
         const { uri } = props.data;
 
         this.handleLabelChange = (e) => {
-        const sensor = this.getCurrentSensor();
+            const sensor = this.getCurrentSensor();
             sensor.label = e.value;
             Store.triggerUpdate();
         };
         this.handleFeatureOfInterestChange = (e) => {
-        const sensor = this.getCurrentSensor();
+            const sensor = this.getCurrentSensor();
             sensor.featureOfInterest = e.value;
-            FieldStore.loadUnitsOfMeasurement(e.value).done(() => {
-                sensor.unitsOfMeasurement = Store.getDefaultUnitsOfMeasurement();
-                Store.triggerUpdate();
-            });
+            this.updateUnitsOfMeasurement();
         };
         this.handleSensorUnitChange = (e) => {
-        const sensor = this.getCurrentSensor();
+            const sensor = this.getCurrentSensor();
             sensor.unitsOfMeasurement = e.value;
             Store.triggerUpdate();
         };
         this.handleAddPropClick = () => {
-        const sensor = this.getCurrentSensor();
+            const sensor = this.getCurrentSensor();
             sensor.props.push({
                 type: this.refs['new-prop-type'].value,
                 value: 1.0
@@ -41,7 +38,7 @@ export default class SensorView extends React.Component {
             Store.triggerUpdate();
         };
         this.handlePropChanged = (type) => {
-        const sensor = this.getCurrentSensor();
+            const sensor = this.getCurrentSensor();
             return (e) => {
                 sensor.props.forEach((p, index) => {
                     console.log(p.type, type, e);
@@ -53,7 +50,7 @@ export default class SensorView extends React.Component {
             };
         };
         this.handleRemovePropClick = (type) => {
-        const sensor = this.getCurrentSensor();
+            const sensor = this.getCurrentSensor();
             return () => {
                 _.remove(sensor.props, (p) => {
                     return p.type === type;
@@ -61,6 +58,24 @@ export default class SensorView extends React.Component {
                 Store.triggerUpdate();
             };
         };
+    }
+    componentDidMount() {
+        this.updateUnitsOfMeasurement();
+    }
+    componentDidUpdate(prevProps) {
+        if (this.props.data.uri !== prevProps.data.uri) {
+            this.updateUnitsOfMeasurement();
+        }
+    }
+
+    updateUnitsOfMeasurement() {
+        const sensor = this.getCurrentSensor();
+        const featureOfInterest = sensor.featureOfInterest;
+        FieldStore.loadUnitsOfMeasurement(featureOfInterest).done(() => {
+            // TODO: set default units on demand
+            // sensor.unitsOfMeasurement = Store.getDefaultUnitsOfMeasurement();
+            Store.triggerUpdate();
+        });
     }
 
     renderProp(prop) {
@@ -120,6 +135,7 @@ export default class SensorView extends React.Component {
                             value={sensor.featureOfInterest}
                             clearable={false}
                             searchable={true}
+                            ref="feature-of-interest"
                             options={
                                 FieldStore.getSensorTypes().map((t) => {
                                     return {
