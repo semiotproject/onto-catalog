@@ -42,9 +42,10 @@
     "jquery": "~2.1.4",
     "lodash": "^3.10.0",
     "n3": "~0.4.5",
-    "rdfstore": "^0.9.7",
     "react": "^0.14",
+    "react-bootstrap-datetimepicker": "0.0.22",
     "react-dom": "^0.14.7",
+    "react-leaflet": "^0.10.1",
     "react-router": "^2.0.0",
     "react-select": "~1.0.0-beta5"
   }
