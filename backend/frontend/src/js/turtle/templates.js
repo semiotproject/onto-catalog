@@ -4,20 +4,14 @@ import FieldStore from '../stores/field-store';
 const MEASUREMENT_CAPABILITY_URI = 'semdesc:mc';
 
 export function getModel(model) {
-    const creatorURI = uuid.v4();
     return `
         <${model.uri}> rdfs:subClassOf ssn:System ;
             a prov:Entity, mmi:Device ;
-            prov:wasAttributedTo semdesc:${creatorURI} ;
             rdfs:label "${model.label}" ;
             mmi:hasManufacturer [
                 a mmi:Manufacturer ;
                 rdfs:label "${model.manufacturer}" ;
             ] .
-
-        semdesc:${creatorURI} a prov:Agent, prov:Person ;
-            foaf:givenName "${model.creator.name}"^^xsd:string ;
-            foaf:mbox <mailto:${model.creator.email}> .
     `;
 }
 
