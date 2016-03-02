@@ -1,5 +1,5 @@
 import { parseTriples } from '../utils';
-import { getModel, getSensor, getMeasurementProperty } from './templates';
+import { getModel, getSensor, getMeasurementProperty, getInstance } from './templates';
 import $ from 'jquery';
 import { TurtlePrefixes } from '../prefixes';
 import Model from './schemas';
@@ -58,7 +58,16 @@ function toTurtle(model) {
     return str;
 }
 
+function instanceToTurtle(instance) {
+    let str = TurtlePrefixes;
+
+    str += getInstance(instance);
+
+    return str;
+}
+
 export default {
     fromTurtle,
-    toTurtle
+    toTurtle,
+    instanceToTurtle
 };

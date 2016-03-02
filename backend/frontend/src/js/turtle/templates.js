@@ -4,18 +4,18 @@ import FieldStore from '../stores/field-store';
 const MEASUREMENT_CAPABILITY_URI = 'semdesc:mc';
 
 export function getModel(model) {
-    const creatorUUID = uuid.v4();
+    const creatorURI = uuid.v4();
     return `
         <${model.uri}> rdfs:subClassOf ssn:System ;
             a prov:Entity, mmi:Device ;
-            prov:wasAttributedTo semdesc:${creatorUUID} ;
+            prov:wasAttributedTo semdesc:${creatorURI} ;
             rdfs:label "${model.label}" ;
             mmi:hasManufacturer [
                 a mmi:Manufacturer ;
                 rdfs:label "${model.manufacturer}" ;
             ] .
 
-        semdesc:${creatorUUID} a prov:Agent, prov:Person ;
+        semdesc:${creatorURI} a prov:Agent, prov:Person ;
             foaf:givenName "${model.creator.name}"^^xsd:string ;
             foaf:mbox <mailto:${model.creator.email}> .
     `;
@@ -56,5 +56,15 @@ export function getMeasurementProperty(sensorURI, prop) {
                 ssn:hasValue "${prop.value}"^^xsd:double ;
             ]
         ].
+    `;
+}
+
+export function getInstance(instance) {
+    const instanceURI = uuid.v4();
+    return `
+        semdesc:${instanceURI} rdfs:subClassOf ssn:System ;
+            rdfs:label "${instance.label}"
+
+            FIXME Lorem ipsum dolor sit amet, consectetur adipisicing elit. Unde eos eaque quae vero ullam dicta suscipit voluptate magni, repellat in consequatur sunt iure ipsam eum. Eum illum, cumque tempore odit.
     `;
 }

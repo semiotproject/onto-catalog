@@ -3,7 +3,6 @@
 import React from 'react';
 import $ from 'jquery';
 import _ from 'lodash';
-import saveAs from 'browser-filesaver';
 import { Link } from 'react-router';
 import FieldStore from '../../stores/field-store';
 

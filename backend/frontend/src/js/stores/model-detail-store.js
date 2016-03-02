@@ -94,7 +94,7 @@ const MOCK_MODEL = `
 
         semdesc:mc-2894e85b-ad9e-4052-a1d2-d298d91fd2e7 a ssn:MeasurementCapability ;
             ssn:forProperty <http://qudt.org/vocab/quantity#AreaTime> .
-    `;
+`;
 
 class ModelDetailStore extends EventEmitter {
 
