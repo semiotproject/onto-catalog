@@ -207,15 +207,21 @@ class ModelDetailStore extends EventEmitter {
     save() {
         const ttl = toTurtle(this._model);
         console.log(`creating new model: ${ttl}`);
-        createModel(ttl);
+        createModel(ttl).done(() => {
+            location.path = '/';
+        });
     }
     update() {
         const ttl = toTurtle(this._model);
         console.log(`updating model: ${ttl}`);
-        updateModel(this._model.uri, ttl);
+        updateModel(this._model.uri, ttl).done(() => {
+            location.path = '/';
+        });
     }
     remove() {
-        removeModel(this._model.uri);
+        removeModel(this._model.uri).done(() => {
+            location.path = '/';
+        });
     }
 }
 
