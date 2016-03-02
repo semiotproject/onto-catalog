@@ -49,10 +49,13 @@ export default class ModelList extends React.Component {
                         <p>Describe generic device model</p>
                     </div>
                 </div>
-                <div className="app-container container-fluid class-list">
+                <div className="app-container container-fluid model-list" style={{
+                    margin: "0 auto",
+                    maxWidth: "1160px"
+                }}>
                     {
                         CurrentUserStore.isLoggedIn() &&
-                            <div className="col-md-2" key={-1}>
+                            <div key={-1}>
                                 <Link to={'/model/new'}>
                                     <button className="big indigo">
                                         <i className="fa fa-plus"></i>
@@ -63,7 +66,7 @@ export default class ModelList extends React.Component {
                     {
                         ModelListStore.get().map((c) => {
                             return (
-                                <div className="col-md-2" key={c.uri}>
+                                <div key={c.uri}>
                                         <button className="big">
                                             <div style={{
                                                 fontSize: "16px"
