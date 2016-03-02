@@ -8,6 +8,7 @@ import { fromTurtle, toTurtle } from '../turtle/converters';
 import { createModel, updateModel, removeModel } from "../api-adapter";
 import FieldStore from './field-store';
 import uuid from 'uuid';
+import { browserHistory } from 'react-router';
 
 
 const MOCK_MODEL = `
@@ -208,19 +209,19 @@ class ModelDetailStore extends EventEmitter {
         const ttl = toTurtle(this._model);
         console.log(`creating new model: ${ttl}`);
         createModel(ttl).done(() => {
-            location.path = '/';
+            browserHistory.push('/');
         });
     }
     update() {
         const ttl = toTurtle(this._model);
         console.log(`updating model: ${ttl}`);
         updateModel(this._model.uri, ttl).done(() => {
-            location.path = '/';
+            browserHistory.push('/');
         });
     }
     remove() {
         removeModel(this._model.uri).done(() => {
-            location.path = '/';
+            browserHistory.push('/');
         });
     }
 }
