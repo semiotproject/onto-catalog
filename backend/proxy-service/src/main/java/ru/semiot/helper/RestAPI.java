@@ -1,6 +1,7 @@
 package ru.semiot.helper;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -69,6 +70,11 @@ public class RestAPI {
     private final String TOKEN = "access_token=${TOKEN}&scope=&token_type=bearer";
     private final String DROP_GRAPH = "DROP GRAPH <${URI}>";
 
+    // TODO: get this from request params
+    private String constructClassURI(String uuid) {
+        return String.format("http://semdesc.semiot.ru/model/%s", uuid);
+    }
+
     @PostConstruct
     private void _init() {
         logger.info("Initialize Web-service");
@@ -87,6 +93,24 @@ public class RestAPI {
                 .apiSecret(config.githubSecret())
                 .callback(config.githubUrl()).build();
         authUrl = service.getAuthorizationUrl(null);
+    }
+
+    @GET
+    @Path("model/{class_uuid:.*}")
+    @Consumes("text/turtle")
+    public Response getClassAsTurtle(@PathParam("class_uri") String uuid) {
+        try {
+            String classURI = constructClassURI(uuid);
+            logger.info("finding class with URI = ", classURI);
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            _accessor.getModel(classURI).write(outputStream, "TURTLE");
+
+            return Response.ok(new String(outputStream.toByteArray(), StandardCharsets.UTF_8)).build();
+        } catch (Exception ex) {
+            logger.error("failed to load class with UUID = ", uuid, "; exception: ", ex.getMessage(), "; stacktrace: ", ex.getStackTrace());
+            return Response.serverError().entity(ex.getMessage()).build();
+        }
     }
 
     @DELETE
