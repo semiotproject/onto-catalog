@@ -7,7 +7,7 @@ import javax.ws.rs.core.Application;
  *
  * @author Daniil Garayzuev <garayzuev@gmail.com>
  */
-@javax.ws.rs.ApplicationPath("/model/")
+@javax.ws.rs.ApplicationPath("/ldi/model/")
 public class ApplicationConfig extends Application {
 
     @Override
@@ -26,5 +26,5 @@ public class ApplicationConfig extends Application {
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(LDIApi.class);
     }
-    
+
 }
