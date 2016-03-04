@@ -12,3 +12,4 @@ backend/frontend/node_modules
 .idea
 proxy-service/.idea
 proxy-service/proxy-service.iml
+backend/proxy-service/proxy-service.iml

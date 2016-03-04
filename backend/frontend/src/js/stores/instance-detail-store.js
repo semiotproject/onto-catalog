@@ -24,6 +24,7 @@ class InstanceDetailStore extends EventEmitter {
                     model,
                     label: 'New instance',
                     deploymentTime: Date.now(),
+                    version: 1.0,
                     location: {
                         lat: DEFAULT_LOCATION.lat,
                         lng: DEFAULT_LOCATION.lng

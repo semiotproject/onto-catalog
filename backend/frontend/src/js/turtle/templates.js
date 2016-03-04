@@ -55,10 +55,37 @@ export function getMeasurementProperty(sensorURI, prop) {
 
 export function getInstance(instance) {
     const instanceURI = uuid.v4();
-    return `
-        semdesc:${instanceURI} rdfs:subClassOf ssn:System ;
-            rdfs:label "${instance.label}"
-
-            FIXME Lorem ipsum dolor sit amet, consectetur adipisicing elit. Unde eos eaque quae vero ullam dicta suscipit voluptate magni, repellat in consequatur sunt iure ipsam eum. Eum illum, cumque tempore odit.
+    let str = `
+        semdesc:${instanceURI} rdfs:subClassOf ssn:System, fipa:Device ;
+            semdesc:hasPrototypeOf ${instance.model.uri};
+            rdfs:label "${instance.label}" .
     `;
+    if (instance.location) {
+        str += `
+            semdesc:${instanceURI} dul:hasLocation [
+                a geo:Point ;
+                geo:latitude "${instance.location.lat}" ;
+                geo:longitude "${instance.location.lat}" ;
+            ]
+        `;
+    }
+    if (instance.deploymentTime) {
+        str += `
+            semdesc:${instanceURI} semdesc:hasDeploymentTime ${new Date(parseInt(instance.deploymentTime))}
+        `;
+    }
+    if (instance.version) {
+        str += `
+            semdesc:${instanceURI} fipa:hasHwProperties [ a fipa:HwDescription ;
+                    fipa:hasConnection [
+                        a fipa:ConnectionDescription ;
+                        fipa:hasConnectionInfo [
+                            a fipa:InfoDescription ;
+                            fipa:hasVersion "${instance.version}" .
+                        ]
+                    ]
+                ] .
+        `;
+    }
+    return str;
 }

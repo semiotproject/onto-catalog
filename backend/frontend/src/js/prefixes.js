@@ -18,6 +18,7 @@ const PREFIXES = {
     dul: "http://www.loa-cnr.it/ontologies/DUL.owl#",
     emtr: "http://purl.org/NET/ssnext/electricmeters#",
     "climate-feature": "https://purl.org//NET/ssnext/climate-feature#",
+    fipa: "https://purl.org/fipa/ontology#>",
     semdesc: CONFIG.SEMDESC_PREFIX
 };
 

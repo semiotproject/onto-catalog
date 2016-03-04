@@ -61,6 +61,9 @@ export default class InstanceView extends React.Component {
     getLabel() {
         return this.refs.label.value;
     }
+    getLabel() {
+        return this.refs.version.value;
+    }
     getDeploymentTime() {
         return this.refs.deploymentTime.value;
     }
@@ -101,6 +104,16 @@ export default class InstanceView extends React.Component {
                         ref="label"
                         value={instance.label}
                         onChange={this.handleChange('label', this.getLabel)}
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Version</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        ref="version"
+                        value={instance.version}
+                        onChange={this.handleChange('version', this.getVersion)}
                     />
                 </div>
                 <div className="form-group">
