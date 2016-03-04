@@ -65,7 +65,7 @@ class ModelDetail extends React.Component {
         this.setState({
             isLoading: true
         }, () => {
-            ModelDetailStore.init(this.props.params.uri === "new" ? null : this.getURI()).done(() => {
+            ModelDetailStore.init(this.isNew ? null : this.getURI()).done(() => {
                 this.setState({
                     isLoading: false
                 });
@@ -194,7 +194,7 @@ class ModelDetail extends React.Component {
 export class ModelDetailCreate extends ModelDetail {
     constructor(props) {
         console.log('initialising new model detail view');
-        super();
+        super(props);
         this.isNew = true;
     }
 }
@@ -202,7 +202,7 @@ export class ModelDetailCreate extends ModelDetail {
 export class ModelDetailUpdate extends ModelDetail {
     constructor(props) {
         console.log('initialising existing model detail view');
-        super();
+        super(props);
         this.isNew = false;
     }
 }
