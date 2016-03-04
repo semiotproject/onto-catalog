@@ -14,6 +14,8 @@ import ViewManager from './view-manager';
 import ModelDetailStore from '../../stores/model-detail-store';
 import CurrentUserStore from '../../stores/current-user-store';
 
+import { constructURIFromUUID } from '../../utils';
+
 const logger = console;
 
 class ModelDetail extends React.Component {
@@ -35,7 +37,7 @@ class ModelDetail extends React.Component {
             this.forceUpdate();
         };
         this.handleSaveClick = () => {
-            return this.isNew ? ModelDetailStore.save() : ModelDetailStore.update(this.props.params.uri);
+            return this.isNew ? ModelDetailStore.save() : ModelDetailStore.update(this.getURI());
         };
         this.handleAddSensor = () => {
             const newSensorURI = ModelDetailStore.addSensor();
@@ -63,7 +65,7 @@ class ModelDetail extends React.Component {
         this.setState({
             isLoading: true
         }, () => {
-            ModelDetailStore.init(this.props.params.uri === "new" ? null : this.props.params.uri).done(() => {
+            ModelDetailStore.init(this.getURI() === "new" ? null : this.getURI()).done(() => {
                 this.setState({
                     isLoading: false
                 });
@@ -151,9 +153,14 @@ class ModelDetail extends React.Component {
         let payload = ViewManager.getCurrentPayload();
         return (
             <div className="col-md-6">
-                <Component classURI={this.props.params.uri} data={payload}></Component>
+                <Component classURI={this.getURI()} data={payload}></Component>
             </div>
         );
+    }
+
+    getURI() {
+        console.log(this.props.params.uri, constructURIFromUUID(this.props.params.uri));
+        return constructURIFromUUID(this.props.params.uri);
     }
 
     render() {

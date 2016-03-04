@@ -107,15 +107,27 @@ module.exports = function (grunt) {
                 runInBackground: true,
                 ext: "html"
             }
+        },
+        'uglify': {
+            'index': {
+                files: {
+                    src: BUILD_CONFIG.dist_dir + 'js/*.js',  // source files mask
+                    dest: BUILD_CONFIG.dist_dir + 'js/',    // destination folder
+                    expand: true,    // allow dynamic building
+                    flatten: true,   // remove all unnecessary nesting
+                }
+            }
         }
     });
 
     var buildTasks = ["eslint", "less", "browserify", "copy"];
     var watchTasks = ["http-server", "watch"];
+    var prodTasks = ["uglify"];
 
     grunt.registerTask('build', buildTasks);
     grunt.registerTask('serve', watchTasks);
     grunt.registerTask('dev', buildTasks.concat(watchTasks))
+    // grunt.registerTask('prod', buildTasks.concat(prodTasks))
 
     grunt.registerTask("default", ["dev"]);
 };

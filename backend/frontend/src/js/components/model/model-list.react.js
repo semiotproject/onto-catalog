@@ -6,6 +6,8 @@ import { Link } from 'react-router';
 import ModelListStore from '../../stores/model-list-store';
 import CurrentUserStore from '../../stores/current-user-store';
 
+import { parseUUIDFromURI } from '../../utils';
+
 export default class ModelList extends React.Component {
     constructor(props) {
         super(props);
@@ -77,10 +79,10 @@ export default class ModelList extends React.Component {
                                                 author: {c.author}
                                             </div>
                                             <div className="button-container">
-                                                <Link to={'/model/' + encodeURIComponent(c.uri)}>
+                                                <Link to={'/model/' + parseUUIDFromURI(c.uri)}>
                                                     Edit
                                                 </Link>
-                                                <Link to={'/instance/' + encodeURIComponent(c.uri)}>
+                                                <Link to={'/instance/' + parseUUIDFromURI(c.uri)}>
                                                     Create instance
                                                 </Link>
                                             </div>

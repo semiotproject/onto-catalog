@@ -4,6 +4,8 @@ import Store from '../../stores/instance-detail-store';
 import DateTimeField from 'react-bootstrap-datetimepicker';
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
 
+import { constructURIFromUUID } from '../../utils';
+
 const AVAILABLE_FORMATS = {
     ttl: {
         label: "Turtle"
@@ -49,7 +51,7 @@ export default class InstanceView extends React.Component {
     }
 
     componentDidMount() {
-        Store.init(this.props.params.uri).done(() => {
+        Store.init(this.getURI()).done(() => {
             this.setState({
                 isLoading: false
             });
@@ -62,6 +64,12 @@ export default class InstanceView extends React.Component {
     getDeploymentTime() {
         return this.refs.deploymentTime.value;
     }
+
+
+    getURI() {
+        return constructURIFromUUID(this.props.params.uri);
+    }
+
 
     // render helpers
     renderView() {

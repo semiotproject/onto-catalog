@@ -3,7 +3,6 @@
 import $ from 'jquery';
 import _ from 'lodash';
 import CONFIG from './config';
-import { getMockDevice } from './utils';
 import { SPARQLPrefixes } from './prefixes';
 
 function getQueryResult(query, accept) {
@@ -41,25 +40,15 @@ export function loadModelList() {
     `);
 }
 export function loadModelDetail(classURI) {
-
     return getTurtleResult(`
         CONSTRUCT { ?a ?b ?c . } WHERE {
            GRAPH <${classURI}> { ?a ?b ?c } .
         }
     `);
-
-    /*
-   const promise = $.Deferred();
-
-   promise.resolve(getMockDevice());
-
-   return promise;
-   */
 }
 
 export function loadUnitsOfMeasurement(featureOfInterest) {
    const promise = $.Deferred();
-
    getSparqlJsonResult(`
         SELECT ?literal ?label WHERE {
           ?literal a qudt:Unit ;
@@ -74,32 +63,10 @@ export function loadUnitsOfMeasurement(featureOfInterest) {
             };
         }));
     });
-    /*
-
-    promise.resolve(['qudt:Celcium', 'qudt:Kelvin', 'qudt:Joule']);
-
-   */
    return promise;
 }
 export function loadSensorTypes() {
    const promise = $.Deferred();
-
-   /*
-   promise.resolve([
-        {
-            literal: "http://purl.org/NET/ssnext/electricmeters#PolyphaseVoltage",
-            label: "Polyphase voltage"
-        },
-        {
-            literal: "http://purl.org/NET/ssnext/electricmeters#PolyphaseAmperage",
-            label: "Polyphase amperage"
-        },
-        {
-            literal: "http://purl.org/NET/ssnext/electricmeters#PolyphaseElectricActivePower",
-            label: "Polyphase electric active power"
-        }
-    ]);
-    */
    getSparqlJsonResult(`
         SELECT ?literal ?label {
           ?literal a ssn:Property ;
@@ -113,6 +80,5 @@ export function loadSensorTypes() {
             };
         }));
     });
-
    return promise;
 }

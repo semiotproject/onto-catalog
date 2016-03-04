@@ -9,3 +9,6 @@ backend/proxy-service/src/main/webapp
 **/run
 backend/frontend/dist
 backend/frontend/node_modules
+.idea
+proxy-service/.idea
+proxy-service/proxy-service.iml
