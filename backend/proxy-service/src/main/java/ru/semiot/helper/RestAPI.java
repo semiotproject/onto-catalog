@@ -98,7 +98,7 @@ public class RestAPI {
     @GET
     @Path("model/{class_uuid:.*}")
     @Consumes("text/turtle")
-    public Response getClassAsTurtle(@PathParam("class_uri") String uuid) {
+    public Response getClassAsTurtle(@PathParam("class_uuid") String uuid) {
         try {
             String classURI = constructClassURI(uuid);
             logger.info("finding class with URI = ", classURI);
