@@ -68,22 +68,40 @@ public class LDIApi {
         return new String(outputStream.toByteArray(), StandardCharsets.UTF_8);
     }
 
-    @GET
-    @Path("{class_uuid:.*}")
-    @Produces("text/turtle")
-    public Response getClassAsTurtle(@PathParam("class_uuid") String uuid) {
+    private Response getClass(String uuid, String format) {
         try {
             String classURI = constructClassURI(uuid);
             logger.info("finding class with URI = ", classURI);
 
             return Response.ok(
                     serializeClassToFormat(
-                            getClassForURI(classURI), "TURTLE"
+                            getClassForURI(classURI), format
                     )
             ).build();
         } catch (Exception ex) {
             logger.error("failed to load class with UUID = ", uuid, "; exception: ", ex.getMessage(), "; stacktrace: ", ex.getStackTrace());
             return Response.serverError().entity(ex.getMessage()).build();
         }
+    }
+
+    @GET
+    @Path("{class_uuid:.*}")
+    @Produces("text/turtle")
+    public Response getClassAsTurtle(@PathParam("class_uuid") String uuid) {
+        return getClass(uuid, "TURTLE");
+    }
+
+    @GET
+    @Path("{class_uuid:.*}")
+    @Produces("application/rdf+xml")
+    public Response getClassAsRDFXML(@PathParam("class_uuid") String uuid) {
+        return getClass(uuid, "RDF/XML");
+    }
+
+    @GET
+    @Path("{class_uuid:.*}")
+    @Produces("application/ld+json")
+    public Response getClassAsJSONLD(@PathParam("class_uuid") String uuid) {
+        return getClass(uuid, "JSON-LD");
     }
 }
