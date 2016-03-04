@@ -65,7 +65,7 @@ class ModelDetail extends React.Component {
         this.setState({
             isLoading: true
         }, () => {
-            ModelDetailStore.init(this.getURI() === "new" ? null : this.getURI()).done(() => {
+            ModelDetailStore.init(this.props.params.uri === "new" ? null : this.getURI()).done(() => {
                 this.setState({
                     isLoading: false
                 });
