@@ -56,14 +56,14 @@ export default class ModelList extends React.Component {
                     maxWidth: "1160px"
                 }}>
                     {
-                        CurrentUserStore.isLoggedIn() &&
+                        !CurrentUserStore.isLoggedIn() &&
                             <div key={-1}>
                                 <Link to={'/model/new'}>
-                                    <button className="big indigo">
+                                    <div className="big indigo">
                                         <i className="fa fa-plus" style={{
                                             fontSize: "24px"
                                         }}></i>
-                                    </button>
+                                    </div>
                                 </Link>
                             </div>
                     }
@@ -72,25 +72,27 @@ export default class ModelList extends React.Component {
                             return (
                                 <div key={c.uri}>
                                         <div className="big">
-                                            <div style={{
-                                                fontSize: "16px"
-                                            }}>
-                                                {c.label}
-                                            </div>
                                             <div>
-                                                author: {c.author}
-                                            </div>
-                                            <div className="button-container">
-                                                <Link to={'/model/' + parseUUIDFromURI(c.uri)}>
-                                                    {
-                                                        CurrentUserStore.isEditable(c) ?
-                                                            "Edit" :
-                                                            "View"
-                                                    }
-                                                </Link>
-                                                <Link to={'/instance/' + parseUUIDFromURI(c.uri)}>
-                                                    Create instance
-                                                </Link>
+                                                <div style={{
+                                                    fontSize: "16px"
+                                                }}>
+                                                    {c.label}
+                                                </div>
+                                                <div>
+                                                    author: {c.author}
+                                                </div>
+                                                <div className="button-container">
+                                                    <Link to={'/model/' + parseUUIDFromURI(c.uri)}>
+                                                        {
+                                                            CurrentUserStore.isEditable(c) ?
+                                                                "Edit" :
+                                                                "View"
+                                                        }
+                                                    </Link>
+                                                    <Link to={'/instance/' + parseUUIDFromURI(c.uri)}>
+                                                        Create instance
+                                                    </Link>
+                                                </div>
                                             </div>
                                         </div>
                                 </div>

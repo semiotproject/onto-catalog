@@ -77,12 +77,13 @@ button.btn {
     color: white;
     border: none;
     height: 100px;
+    line-height: 100px;
     border-radius: 5px;
     margin-bottom: 30px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     transition: all .2s ease-in-out;
     text-align: center;
-    padding: 20px 10px 0 10px;
+    padding: 0 10px;
 
     .button-mixin(@button-color);
     &.indigo {
@@ -94,6 +95,11 @@ button.btn {
     }
     a {
         color: white;
+    }
+    > * {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 1.5;
     }
 }
 .form-group label {

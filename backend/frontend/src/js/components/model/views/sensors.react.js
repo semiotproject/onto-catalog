@@ -40,22 +40,22 @@ export default class SensorsView extends React.Component {
                     {
                         !isDisabled &&
                             <div className="col-md-4" key={-1}>
-                                <button className="big indigo" onClick={this.handleAddSensor}>
+                                <div className="big indigo" onClick={this.handleAddSensor}>
                                     <i className="fa fa-plus"></i>
-                                </button>
+                                </div>
                             </div>
                     }
                     {
                         sensors.map((s, index) => {
                             return (
                                 <div className="col-md-4" key={s.uri}>
-                                    <button className="big" onClick={this.handleClick(s.uri)}>
+                                    <div className="big" onClick={this.handleClick(s.uri)}>
                                         <div>{
                                             _.find(FieldStore.getSensorTypes(), (t) => {
                                                 return s.featureOfInterest === t.literal;
                                             }).label
                                         }</div>
-                                    </button>
+                                    </div>
                                 </div>
                             );
                         })
