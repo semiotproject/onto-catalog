@@ -13,7 +13,7 @@ class CurrentUserStore extends EventEmitter {
         return this._data;
     }
     isEditable(model) {
-        return this.isLoggedIn() && this._data.name === model.creator.name;
+        return this.isLoggedIn() && this._data.name === model.author;
     }
     isLoggedIn() {
         return this._data !== null;

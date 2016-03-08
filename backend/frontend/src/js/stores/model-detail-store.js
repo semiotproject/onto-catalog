@@ -139,9 +139,7 @@ class ModelDetailStore extends EventEmitter {
             uri: CONFIG.SEMDESC_PREFIX + uuid.v4(),
             label: 'label',
             manufacturer: 'manufacturer',
-            creator: {
-                name: user.name
-            },
+            author: user.name,
             sensors: []
         };
         return promise;
