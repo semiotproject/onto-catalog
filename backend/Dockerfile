@@ -66,4 +66,4 @@ ADD frontend/dist/ /var/www/html
 
 EXPOSE 80
 
-CMD service mysql start && /root/wildfly-8.2.0.Final/bin/standalone.sh -b 0.0.0.0 && service nginx start
+CMD eval "service mysql start && /root/wildfly-8.2.0.Final/bin/standalone.sh -b 0.0.0.0 &" && service nginx start
