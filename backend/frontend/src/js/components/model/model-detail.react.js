@@ -104,7 +104,7 @@ class ModelDetail extends React.Component {
                                 CurrentUserStore.isEditable(model) &&
                                     <button className="btn btn-primary" onClick={this.handleSaveClick}>
                                         <i className="fa fa-save"></i>
-                                        <span>{this.isNew ? "Create" : "UpdateEd"}</span>
+                                        <span>{this.isNew ? "Create" : "Update"}</span>
                                     </button>
                             }
                         </h4>
