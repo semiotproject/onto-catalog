@@ -56,7 +56,7 @@ button.btn {
         margin-right: 5px;
     }
 }
-button.big {
+div.big {
     @button-color: rgb(151, 234, 174);
     @button-indigo-color: rgb(111, 219, 244);
     @button-color-disable: #CDCDCD;
@@ -81,6 +81,9 @@ button.big {
     margin-bottom: 30px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     transition: all .2s ease-in-out;
+    text-align: center;
+    padding: 20px 10px 0 10px;
+
     .button-mixin(@button-color);
     &.indigo {
         .button-mixin(@button-indigo-color);

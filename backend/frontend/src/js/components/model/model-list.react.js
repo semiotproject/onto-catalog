@@ -71,7 +71,7 @@ export default class ModelList extends React.Component {
                         ModelListStore.get().map((c) => {
                             return (
                                 <div key={c.uri}>
-                                        <button className="big">
+                                        <div className="big">
                                             <div style={{
                                                 fontSize: "16px"
                                             }}>
@@ -92,7 +92,7 @@ export default class ModelList extends React.Component {
                                                     Create instance
                                                 </Link>
                                             </div>
-                                        </button>
+                                        </div>
                                 </div>
                             );
                         })
