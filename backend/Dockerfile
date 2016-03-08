@@ -1,10 +1,6 @@
 FROM ubuntu
 WORKDIR /root
 
-#
-# BACKEND
-#
-
 ENV MYSQL_CONNECTOR http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.22/mysql-connector-java-5.1.22.jar
 ENV WLDFL http://download.jboss.org/wildfly/8.2.0.Final/wildfly-8.2.0.Final.tar.gz
 ENV FUSEKI http://apache-mirror.rbc.ru/pub/apache/jena/binaries/apache-jena-fuseki-2.3.0.tar.gz
@@ -44,26 +40,15 @@ ADD config.ttl /etc/fuseki/
 ADD https://github.com/semiotproject/wot-semdesc-helper/archive/master.zip /root/
 RUN unzip /root/master.zip && mv wot-semdesc-helper-master wot-semdesc-helper
 
+# Add frontend
+ADD frontend/dist/ /root/wot-semdesc-helper/backend/proxy-service/src/main/webapp/
+
 RUN cd /root/
 
 # Deploy to Wildfly
 WORKDIR /root/wot-semdesc-helper/backend/proxy-service/
 RUN mvn clean install && cp /root/apache-jena-fuseki-2.3.0/fuseki.war /root/wildfly-8.2.0.Final/standalone/deployments/ && cp /root/wot-semdesc-helper/backend/proxy-service/target/ROOT.war /root/wildfly-8.2.0.Final/standalone/deployments/
 
-#
-# FRONTEND
-#
+EXPOSE 8080
 
-# install NGINX
-RUN apt-get update && \
-    apt-get install -y nginx
-
-# add NGINX conf
-ADD ./nginx.conf /etc/nginx/nginx.conf
-
-# Add frontend
-ADD frontend/dist/ /var/www/html
-
-EXPOSE 80
-
-CMD eval "service mysql start && /root/wildfly-8.2.0.Final/bin/standalone.sh -b 0.0.0.0 &" && service nginx start
+CMD service mysql start && /root/wildfly-8.2.0.Final/bin/standalone.sh -b 0.0.0.0
