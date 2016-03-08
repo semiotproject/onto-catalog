@@ -56,7 +56,7 @@ export default class ModelList extends React.Component {
                     maxWidth: "1160px"
                 }}>
                     {
-                        !CurrentUserStore.isLoggedIn() &&
+                        CurrentUserStore.isLoggedIn() &&
                             <div key={-1}>
                                 <Link to={'/model/new'}>
                                     <div className="big indigo">
