@@ -3,6 +3,7 @@ import React from 'react';
 import _ from 'lodash';
 import CONFIG from '../../../config';
 import Store from '../../../stores/model-detail-store';
+import CurrentUserStore from '../../../stores/current-user-store';
 
 export default class DescriptionView extends React.Component {
 
@@ -21,6 +22,7 @@ export default class DescriptionView extends React.Component {
 
     render() {
         let { uri, label, manufacturer } = Store.getModel();
+        const isDisabled = !CurrentUserStore.isEditable(Store.getModel());
         return (
             <div>
                 <h3>Device</h3>
@@ -28,7 +30,7 @@ export default class DescriptionView extends React.Component {
                     <div className="form-group">
                         <label htmlFor="">URI</label>
                         <p>
-                            <a className="form-control" href={uri}>{uri}</a>
+                            <a className="form-control-static" href={uri}>{uri}</a>
                         </p>
                     </div>
                     <div className="form-group">
@@ -37,7 +39,8 @@ export default class DescriptionView extends React.Component {
                             type="text"
                             ref="label"
                             defaultValue={label}
-                            onChange={this.handleLabelChange}/>
+                            onChange={this.handleLabelChange}
+                            disabled={isDisabled}/>
                     </div>
                     <div className="form-group">
                         <label>Manufacturer</label>
@@ -45,7 +48,8 @@ export default class DescriptionView extends React.Component {
                             type="text"
                             ref="manufacturer"
                             defaultValue={manufacturer}
-                            onChange={this.handleManufacturerChange.bind(this, "manufacturer")}/>
+                            onChange={this.handleManufacturerChange.bind(this, "manufacturer")}
+                            disabled={isDisabled}/>
                     </div>
                 </div>
             </div>

@@ -95,16 +95,17 @@ class ModelDetail extends React.Component {
                 <div className="minimap-container">
                     <div onClick={this.setView(DescriptionView)}>
                         {
-                            !this.isNew &&
+                            !this.isNew && CurrentUserStore.isEditable(model) &&
                                 <span onClick={this.handleRemoveClick} className="fa fa-remove"></span>
                         }
                         <h4>
                             <span>{model.label}</span>
                             {
-                                <button className="btn btn-primary" onClick={this.handleSaveClick}>
-                                    <i className="fa fa-save"></i>
-                                    <span>{this.isNew ? "Create" : "Update"}</span>
-                                </button>
+                                CurrentUserStore.isEditable(model) &&
+                                    <button className="btn btn-primary" onClick={this.handleSaveClick}>
+                                        <i className="fa fa-save"></i>
+                                        <span>{this.isNew ? "Create" : "UpdateEd"}</span>
+                                    </button>
                             }
                         </h4>
                         <div className="children">
@@ -112,9 +113,10 @@ class ModelDetail extends React.Component {
                                 <h4>
                                     <span>Sensors</span>
                                     {
-                                        <button className="btn btn-primary btn-add" title="add" onClick={this.handleAddSensor}>
-                                            <i className="fa fa-plus"></i>
-                                        </button>
+                                        CurrentUserStore.isEditable(model) &&
+                                            <button className="btn btn-primary btn-add" title="Add Sensor" onClick={this.handleAddSensor}>
+                                                <i className="fa fa-plus"></i>
+                                            </button>
                                     }
                                 </h4>
                                 <div className="children">
@@ -128,9 +130,12 @@ class ModelDetail extends React.Component {
                                                                 return s.featureOfInterest === t.literal;
                                                             }).label
                                                         }
-                                                        <button className="btn btn-primary btn-add" onClick={this.handleRemoveSensor(s.uri)}>
-                                                            <i className="fa fa-minus"></i>
-                                                        </button>
+                                                        {
+                                                            CurrentUserStore.isEditable(model) &&
+                                                                <button className="btn btn-primary btn-add" onClick={this.handleRemoveSensor(s.uri)}>
+                                                                    <i className="fa fa-minusremove" title="Remove sensor"></i>
+                                                                </button>
+                                                        }
                                                     </h4>
                                                 </div>
                                             );
@@ -151,8 +156,9 @@ class ModelDetail extends React.Component {
     renderView() {
         let Component = ViewManager.getCurrentView() || DescriptionView;
         let payload = ViewManager.getCurrentPayload();
+        let className = "col-md-6";
         return (
-            <div className="col-md-6">
+            <div className={className}>
                 <Component classURI={this.getURI()} data={payload}></Component>
             </div>
         );

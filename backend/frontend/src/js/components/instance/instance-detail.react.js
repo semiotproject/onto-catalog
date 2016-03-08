@@ -91,7 +91,7 @@ export default class InstanceView extends React.Component {
                     result.observations.length > 0 &&
                         result.observations.map((s, i) => {
                             return (
-                                <div className="form-group">
+                                <div className="form-group" key={i}>
                                     <label className="control-label">
                                         <span>{capitalizeFirstLetter(s.type)} description </span>
                                         <i className="fa fa-download" onClick={this.download(`${s.type}-observation`, s)}></i>

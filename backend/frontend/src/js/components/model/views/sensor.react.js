@@ -5,6 +5,7 @@ import Select from 'react-select';
 
 import Store from '../../../stores/model-detail-store';
 import FieldStore from '../../../stores/field-store';
+import CurrentUserStore from '../../../stores/current-user-store';
 import _ from 'lodash';
 
 export default class SensorView extends React.Component {
@@ -85,18 +86,23 @@ export default class SensorView extends React.Component {
         if (!targetProp) {
             return;
         }
+        const isDisabled = !CurrentUserStore.isEditable(Store.getModel());
         return (
             <div key={prop.type} className="form-group">
                 <label htmlFor="">
                     <span>{targetProp.label}</span>
                     &nbsp;
-                    <i className="fa fa-remove" onClick={this.handleRemovePropClick(prop.type)}></i>
+                    {
+                        !isDisabled &&
+                            <i className="fa fa-remove" onClick={this.handleRemovePropClick(prop.type)}></i>
+                    }
                 </label>
                 <input type="text"
                     className="form-control"
                     ref="label"
                     onChange={this.handlePropChanged(prop.type)}
                     defaultValue={prop.value}
+                    disabled={isDisabled}
                 />
             </div>
         );
@@ -116,6 +122,7 @@ export default class SensorView extends React.Component {
                 return pp.type === p.type;
             });
         });
+        const isDisabled = !CurrentUserStore.isEditable(Store.getModel());
         return (
             <div>
                 <h3>Sensor</h3>
@@ -127,6 +134,7 @@ export default class SensorView extends React.Component {
                             ref="label"
                             onChange={this.handleLabelChange.bind(this, 'label')}
                             defaultValue={sensor.label}
+                            disabled={isDisabled}
                         />
                     </div>
                     <div key="observes" className="form-group">
@@ -145,6 +153,7 @@ export default class SensorView extends React.Component {
                                 })
                             }
                             onChange={this.handleFeatureOfInterestChange}
+                            disabled={isDisabled}
                          />
                     </div>
                     {
@@ -164,11 +173,12 @@ export default class SensorView extends React.Component {
                                         })
                                     }
                                     onChange={this.handleSensorUnitChange}
+                                    disabled={isDisabled}
                                  />
                             </div>
                     }
                     {
-                        availableToAddProps.length > 0 &&
+                        !isDisabled && availableToAddProps.length > 0 &&
                             <div className="form-group">
                                 <button className="btn btn-primary" onClick={this.handleAddPropClick}>
                                     <i className="fa fa-add"></i>

@@ -140,8 +140,6 @@ class ModelDetailStore extends EventEmitter {
             label: 'label',
             manufacturer: 'manufacturer',
             creator: {
-                uri: 'semdesc:' + uuid.v4(),
-                email: user.email,
                 name: user.name
             },
             sensors: []

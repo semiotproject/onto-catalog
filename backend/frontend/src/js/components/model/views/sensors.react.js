@@ -6,6 +6,7 @@ import Store from '../../../stores/model-detail-store';
 import ViewManager from '../view-manager';
 import FieldStore from '../../../stores/field-store';
 import _ from 'lodash';
+import CurrentUserStore from '../../../stores/current-user-store';
 
 import SensorView from './sensor.react';
 
@@ -31,16 +32,18 @@ export default class SensorsView extends React.Component {
     render() {
         const model = Store.getModel();
         const { sensors } = model;
+        const isDisabled = !CurrentUserStore.isEditable(model);
         return (
             <div>
                 <h3>Sensors</h3>
                 <div>
                     {
-                        <div className="col-md-4" key={-1}>
-                            <button className="big indigo" onClick={this.handleAddSensor}>
-                                <i className="fa fa-plus"></i>
-                            </button>
-                        </div>
+                        !isDisabled &&
+                            <div className="col-md-4" key={-1}>
+                                <button className="big indigo" onClick={this.handleAddSensor}>
+                                    <i className="fa fa-plus"></i>
+                                </button>
+                            </div>
                     }
                     {
                         sensors.map((s, index) => {

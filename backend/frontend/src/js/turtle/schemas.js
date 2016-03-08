@@ -1,7 +1,6 @@
 import { parseTriples } from '../utils';
 import { Store, Writer, Util } from 'n3';
 import { JSONPrefixes } from '../prefixes';
-import { getModel, getSensor, getMeasurementProperty } from './templates';
 import $ from 'jquery';
 import _ from 'lodash';
 
@@ -72,8 +71,11 @@ class Model extends Base {
     }
     get creator() {
         return {
-            name: "",
-            email: ""
+            name: Util.getLiteralValue(this._findObject(
+                this._findObject(this.uri, "prov:wasAttributedTo", null),
+                "foaf:name",
+                null
+            ))
         };
     }
 

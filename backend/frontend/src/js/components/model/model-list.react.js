@@ -60,7 +60,9 @@ export default class ModelList extends React.Component {
                             <div key={-1}>
                                 <Link to={'/model/new'}>
                                     <button className="big indigo">
-                                        <i className="fa fa-plus"></i>
+                                        <i className="fa fa-plus" style={{
+                                            fontSize: "24px"
+                                        }}></i>
                                     </button>
                                 </Link>
                             </div>
@@ -80,7 +82,11 @@ export default class ModelList extends React.Component {
                                             </div>
                                             <div className="button-container">
                                                 <Link to={'/model/' + parseUUIDFromURI(c.uri)}>
-                                                    Edit
+                                                    {
+                                                        CurrentUserStore.isEditable(c) ?
+                                                            "Edit" :
+                                                            "View"
+                                                    }
                                                 </Link>
                                                 <Link to={'/instance/' + parseUUIDFromURI(c.uri)}>
                                                     Create instance
