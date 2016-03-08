@@ -19,6 +19,9 @@ const PREFIXES = {
     emtr: "http://purl.org/NET/ssnext/electricmeters#",
     "climate-feature": "https://purl.org//NET/ssnext/climate-feature#",
     fipa: "https://purl.org/fipa/ontology#",
+    dcterms: "http://purl.org/dc/terms/",
+    proto: "http://w3id.org/semiot/ontologies/proto#",
+    geo: "http://www.w3.org/2003/01/geo/wgs84_pos#",
     semdesc: CONFIG.SEMDESC_PREFIX
 };
 

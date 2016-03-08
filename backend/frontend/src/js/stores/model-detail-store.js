@@ -4,7 +4,7 @@ import EventEmitter from 'events';
 import CONFIG from '../config';
 import CurrentUserStore from '../stores/current-user-store';
 import { loadModelDetail } from '../sparql-adapter';
-import { fromTurtle, toTurtle } from '../turtle/converters';
+import { modelFromTurtle, modelToTurtle } from '../turtle/converters/model';
 import { createModel, updateModel, removeModel } from "../api-adapter";
 import FieldStore from './field-store';
 import uuid from 'uuid';
@@ -152,7 +152,7 @@ class ModelDetailStore extends EventEmitter {
         const promise = $.Deferred();
 
         loadModelDetail(uri).then((ttl) => {
-            fromTurtle(ttl).then((model) => {
+            modelFromTurtle(ttl).then((model) => {
                 console.log('parsed model: ', model);
                 this._model = model;
                 promise.resolve();
@@ -206,14 +206,14 @@ class ModelDetailStore extends EventEmitter {
     }
 
     save() {
-        const ttl = toTurtle(this._model);
+        const ttl = modelToTurtle(this._model);
         console.log(`creating new model: ${ttl}`);
         createModel(ttl).done(() => {
             browserHistory.push('/');
         });
     }
     update() {
-        const ttl = toTurtle(this._model);
+        const ttl = modelToTurtle(this._model);
         console.log(`updating model: ${ttl}`);
         updateModel(this._model.uri, ttl).done(() => {
             browserHistory.push('/');

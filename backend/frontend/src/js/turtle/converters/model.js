@@ -1,10 +1,10 @@
-import { parseTriples } from '../utils';
-import { getModel, getSensor, getMeasurementProperty, getInstance } from './templates';
+import { parseTriples } from '../../utils';
+import { getModel, getSensor, getMeasurementProperty } from '../templates/model';
 import $ from 'jquery';
-import { TurtlePrefixes } from '../prefixes';
-import Model from './schemas';
+import { TurtlePrefixes } from '../../prefixes';
+import Model from '../schemas';
 
-function fromTurtle(ttl) {
+function modelFromTurtle(ttl) {
     const promise =  $.Deferred();
 
     parseTriples(ttl).then((triples) => {
@@ -41,7 +41,7 @@ function fromTurtle(ttl) {
     return promise;
 }
 
-function toTurtle(model) {
+function modelToTurtle(model) {
     let str = TurtlePrefixes;
 
     str += getModel(model);
@@ -58,16 +58,7 @@ function toTurtle(model) {
     return str;
 }
 
-function instanceToTurtle(instance) {
-    let str = TurtlePrefixes;
-
-    str += getInstance(instance);
-
-    return str;
-}
-
 export default {
-    fromTurtle,
-    toTurtle,
-    instanceToTurtle
+    modelFromTurtle,
+    modelToTurtle
 };
