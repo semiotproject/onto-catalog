@@ -55,13 +55,8 @@ RUN mvn clean install && cp /root/apache-jena-fuseki-2.3.0/fuseki.war /root/wild
 #
 
 # install NGINX
-RUN apt-get install -y software-properties-common && \
-    add-apt-repository -y ppa:nginx/stable && \
-    apt-get update && \
-    apt-get install -y nginx && \
-    rm -rf /var/lib/apt/lists/* && \
-    chown -R www-data:www-data /var/lib/nginx && \
-    useradd nginx
+RUN apt-get update && \
+    apt-get install -y nginx
 
 # add NGINX conf
 ADD ./nginx.conf /etc/nginx/nginx.conf

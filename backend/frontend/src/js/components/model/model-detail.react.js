@@ -133,7 +133,7 @@ class ModelDetail extends React.Component {
                                                         {
                                                             CurrentUserStore.isEditable(model) &&
                                                                 <button className="btn btn-primary btn-add" onClick={this.handleRemoveSensor(s.uri)}>
-                                                                    <i className="fa fa-minusremove" title="Remove sensor"></i>
+                                                                    <i className="fa fa-remove" title="Remove sensor"></i>
                                                                 </button>
                                                         }
                                                     </h4>
