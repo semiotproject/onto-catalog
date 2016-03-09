@@ -39,7 +39,7 @@ tdb:GraphTDB rdfs:subClassOf ja:Model .
            .
 
 <#tdbDataset> a tdb:DatasetTDB ;
-	   tdb:location "fuseki-db" ;
+	   tdb:location "/etc/fuseki/databases/fuseki-db" ;
 	   tdb:unionDefaultGraph true;
 	   ja:defaultGraph <#model_inf>
 	   .
