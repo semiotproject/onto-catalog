@@ -13,7 +13,7 @@ wget https://db.tt/dFU3BqFP -O /root/oracle-java8-installer_8u5-1~webupd8~3_all.
 dpkg -i oracle-java8-installer_8u5-1~webupd8~3_all.deb && rm oracle-java8-installer_8u5-1~webupd8~3_all.deb
 
 # Utils
-RUN apt-get update && apt-get install -y maven git
+RUN apt-get update && apt-get install -y maven git curl
 
 # Setup Wildfly
 RUN wget $WLDFL && tar xvzf wildfly-8.2.0.Final.tar.gz && rm wildfly-8.2.0.Final.tar.gz && mkdir -p wildfly-8.2.0.Final/modules/system/layers/base/mysql/mysql-connector-java/main
@@ -51,4 +51,6 @@ RUN mvn clean install && cp /root/apache-jena-fuseki-2.3.1/fuseki.war /root/wild
 
 EXPOSE 8080
 
-CMD service mysql start && /root/wildfly-8.2.0.Final/bin/standalone.sh -b 0.0.0.0
+WORKDIR /root/wot-semdesc-helper/backend/
+
+CMD sh run.sh

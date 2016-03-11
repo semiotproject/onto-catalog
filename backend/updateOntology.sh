@@ -1,0 +1,7 @@
+while ! curl -Isf localhost:8080/fuseki/
+do
+	echo "$(date) - Failed to connect to Fuseki! Trying once more time..."   
+	sleep 5;
+done
+echo "$(date) - Connected to Fuseki successfully"
+curl -s -X POST -d "update=LOAD+%3Chttp%3A%2F%2Fqudt.org%2F1.1%2Fschema%2FOSG_qudt-(v1.01).ttl%3E%3B%0ALOAD+%3Chttp%3A%2F%2Fqudt.org%2F1.1%2Fschema%2FOSG_quantity-(v1.1).ttl%3E%3B%0ALOAD+%3Chttp%3A%2F%2Fqudt.org%2F1.1%2Fvocab%2FOVG_quantities-qudt-(v1.1).ttl%3E%3B%0ALOAD+%3Chttp%3A%2F%2Fqudt.org%2F1.1%2Fvocab%2FOVG_units-qudt-(v1.1).ttl%3E%3B%0ALOAD+%3Chttp%3A%2F%2Fmmisw.org%2Font%3Fform%3Drdf%26uri%3Dhttp%3A%2F%2Fmmisw.org%2Font%2Fmmi%2Fdevice%3E%3B%0ALOAD+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%3B%0ALOAD+%3Chttps%3A%2F%2Fwww.w3.org%2Fns%2Fprov%23%3E%3B%0ALOAD+%3Chttp%3A%2F%2Fpurl.oclc.org%2FNET%2Fssnx%2Fssn%23%3E%3B%0ALOAD+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%3E%3B%0ALOAD+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%3E%3B%0AINSERT+DATA+%7B%0A++%3Chttp%3A%2F%2Fqudt.org%2Fschema%2Fqudt%23QuantityKind%3E+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23subClassOf%3E+%3Chttp%3A%2F%2Fpurl.oclc.org%2FNET%2Fssnx%2Fssn%23Property%3E%0A%7D" localhost:8080/fuseki/default/update

@@ -11,6 +11,7 @@
 <#service1> a fuseki:Service ;
     fuseki:name                         "default" ;
     fuseki:serviceQuery                 "sparql" ;
+	fuseki:serviceUpdate                "update" ;
     fuseki:serviceQuery                 "query" ;
     fuseki:dataset                      <#defaultDataset> ;
     .
@@ -29,30 +30,6 @@
     
 <#infModel> a ja:InfModel ;
     ja:baseModel <#tdbGraph> ;
-    ja:content [
-        #Semantic Sensor Network
-        ja:externalContent <http://purl.oclc.org/NET/ssnx/ssn#> ;
-        #QUDT Quantity (Schema & Vocabulary)
-        ja:externalContent <http://qudt.org/1.1/vocab/quantity#> ;
-        ja:externalContent <http://qudt.org/1.1/schema/quantity#> ;
-        #QUDT Unit (Vocabulary)
-        ja:externalContent <http://qudt.org/1.1/vocab/unit> ;
-        #QUDT Schema
-        ja:externalContent <http://qudt.org/1.1/schema/qudt#>;
-        #RDF Schema
-        ja:externalContent <http://www.w3.org/2000/01/rdf-schema> ;
-        #RDF
-        ja:externalContent <http://www.w3.org/1999/02/22-rdf-syntax-ns> ;
-        #PROV Ontology
-        ja:externalContent <http://www.w3.org/ns/prov#> ;
-        #MMI Device Ontology
-        ja:externalContent <http://mmisw.org/ont/mmi/device.ttl> ;
-        #FOAF Ontology
-        ja:externalContent <http://xmlns.com/foaf/0.1/> ;
-
-        #Mappings
-        ja:externalContent <https://raw.githubusercontent.com/semiotproject/wot-semdesc-helper/master/mappings/qudt-to-ssn.ttl> ;
-    ] ;
     ja:reasoner [
         ja:reasonerURL <http://jena.hpl.hp.com/2003/RDFSExptRuleReasoner> ;
     ] ;
