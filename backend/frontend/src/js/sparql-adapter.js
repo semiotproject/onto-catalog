@@ -5,9 +5,11 @@ import _ from 'lodash';
 import CONFIG from './config';
 import { SPARQLPrefixes } from './prefixes';
 
-function getQueryResult(query, accept) {
+function getQueryResult(url, query, accept) {
+    console.log(CONFIG.URLS.endpoint);
     return $.ajax({
-        url: CONFIG.URLS.endpoint,
+        type: "POST",
+        url,
         data: {
             query: SPARQLPrefixes + query
         },
@@ -20,16 +22,32 @@ function getQueryResult(query, accept) {
     });
 }
 
-function getSparqlJsonResult(query) {
-    return getQueryResult(query, "application/sparql-results+json");
+function getPrivateQueryResult(query, accept) {
+    return getQueryResult(CONFIG.URLS.endpoint.private, query, accept);
 }
 
-function getTurtleResult(query) {
-    return getQueryResult(query, "application/turtle");
+function getPublicQueryResult(query, accept) {
+    return getQueryResult(CONFIG.URLS.endpoint.public, query, accept);
+}
+
+function getPrivateSparqlJsonResult(query) {
+    return getPrivateQueryResult(query, "application/sparql-results+json");
+}
+
+function getPrivateTurtleResult(query) {
+    return getPrivateQueryResult(query, "application/turtle");
+}
+
+function getPublicSparqlJsonResult(query) {
+    return getPublicQueryResult(query, "application/sparql-results+json");
+}
+
+function getPublicTurtleResult(query) {
+    return getPublicQueryResult(query, "application/turtle");
 }
 
 export function loadModelList() {
-    return getSparqlJsonResult(`
+    return getPrivateSparqlJsonResult(`
         SELECT ?uri ?author ?label WHERE {
           GRAPH ?uri {
             ?a rdfs:label ?label .
@@ -40,7 +58,7 @@ export function loadModelList() {
     `);
 }
 export function loadModelDetail(classURI) {
-    return getTurtleResult(`
+    return getPrivateTurtleResult(`
         CONSTRUCT { ?a ?b ?c . } WHERE {
            GRAPH <${classURI}> { ?a ?b ?c } .
         }
@@ -49,7 +67,7 @@ export function loadModelDetail(classURI) {
 
 export function loadUnitsOfMeasurement(featureOfInterest) {
    const promise = $.Deferred();
-   getSparqlJsonResult(`
+   getPublicSparqlJsonResult(`
         SELECT ?literal ?label WHERE {
           ?literal a qudt:Unit ;
             qudt:quantityKind <${featureOfInterest}> ;
@@ -67,7 +85,7 @@ export function loadUnitsOfMeasurement(featureOfInterest) {
 }
 export function loadSensorTypes() {
    const promise = $.Deferred();
-   getSparqlJsonResult(`
+   getPublicSparqlJsonResult(`
         SELECT ?literal ?label {
           ?literal a ssn:Property ;
             rdfs:label ?label .
