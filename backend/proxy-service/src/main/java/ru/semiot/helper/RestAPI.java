@@ -148,13 +148,13 @@ public class RestAPI {
             }
             UUID id = UUID.randomUUID();
             m.setNsPrefix("prov", "http://www.w3.org/ns/prov#");
-            m.setNsPrefix("semdesc", "http://semdesc.semiot.ru/users/");
+            m.setNsPrefix("semdesc-user", "http://semdesc.semiot.ru/users/");
             m.setNsPrefix("foaf", FOAF.getURI());
 
             Resource homepage = m.createResource(user.getString("html_url"))
                     .addProperty(RDF.type, FOAF.PersonalProfileDocument);
 
-            Resource owner = m.createResource(m.getNsPrefixURI("semdesc") + id.toString())
+            Resource owner = m.createResource(m.getNsPrefixURI("semdesc-user") + id.toString())
                     .addProperty(RDF.type, m.createResource(m.getNsPrefixURI("prov") + "Agent"))
                     .addProperty(RDF.type, m.createResource(m.getNsPrefixURI("prov") + "Person"))
                     .addProperty(RDF.type, m.createResource(m.getNsPrefixURI("foaf") + "Person"))
