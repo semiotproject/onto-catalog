@@ -35,5 +35,6 @@ ADD backend/target/ROOT.war /root/wildfly-$WLDFL_VER/standalone/deployments/
 EXPOSE 8080
 
 WORKDIR /root/wot-semdesc-helper/
+ADD run.sh
 
 CMD sh run.sh
