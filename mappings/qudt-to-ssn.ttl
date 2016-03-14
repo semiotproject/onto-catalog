@@ -1,6 +1,0 @@
-@prefix ssn: <http://purl.oclc.org/NET/ssnx/ssn#> .
-@prefix qudt: <http://qudt.org/schema/qudt#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-
-qudt:QuantityKind rdfs:subClassOf ssn:Property .
-

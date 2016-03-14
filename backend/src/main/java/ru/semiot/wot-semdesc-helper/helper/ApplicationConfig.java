@@ -25,6 +25,7 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(ru.semiot.helper.RestAPI.class);
+        resources.add(ru.semiot.ldinterface.LDIApi.class);
     }
     
 }

@@ -3,13 +3,10 @@ frontend/dist
 **/target
 **/nbactions.xml
 **/nb-configuration.xml
-backend/proxy-service/src/main/webapp
-!backend/proxy-service/src/main/webapp/WEB-INF
+proxy-service/src/main/webapp
+!proxy-service/src/main/webapp/WEB-INF
 **/fuseki-db
 **/run
-backend/frontend/dist
-backend/frontend/node_modules
 .idea
 proxy-service/.idea
 proxy-service/proxy-service.iml
-backend/proxy-service/proxy-service.iml

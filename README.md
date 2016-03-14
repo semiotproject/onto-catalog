@@ -12,3 +12,29 @@ In SemIoT platform we use [SSN](https://www.w3.org/2005/Incubator/ssn/ssnx/ssn) 
 WoT SemDesc Helper allows to create, first, a device model description that contains information about manufacturer and available sensors, and second - a device instance description, that refers to it's model as a prototype and generate device description and sensor observations templates with user-defined (in form of common programming language string substitution format) placeholders such as observation values and device IDs.
 
 While device instance templates are used to store inside of device drivers, device models are stored centrally in SPARQL endpoint (with exposed Linked Data Interface), so first can be easely dereferenced to second during reasoning. 
+
+## Installation
+
+```
+sudo docker pull semiot/wot-semdesc-helper-backend
+```
+
+## Launch
+
+```
+sudo docker run -itd -p 80:8080 -v /semiot/wot-semdesc-helper/fuseki/:/etc/fuseki/databases/fuseki-db/ -v /semiot/wot-semdesc-helper/config/:/wot_semdesc_helper/backend/ --name semdesc semiot/wot-semdesc-helper-backend
+```
+
+If you want to change default configuration, you must create config.properties at /semdesc/config before you start docker.
+
+config.properties contains:
+
+	fuseki.dataset.url
+    fuseki.update.url
+	fuseki.username
+    fuseki.password
+    github.key
+    github.secret
+    github.callback
+	
+If any options not contained in config.properties, will be used default setting
