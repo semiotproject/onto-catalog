@@ -1,4 +1,4 @@
-package ru.semiot.database;
+package ru.semiot.semdesc.database;
 
 import java.io.Serializable;
 import javax.persistence.Basic;

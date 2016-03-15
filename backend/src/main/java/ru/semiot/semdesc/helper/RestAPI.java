@@ -1,7 +1,6 @@
-package ru.semiot.helper;
+package ru.semiot.semdesc.helper;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -47,8 +46,8 @@ import org.scribe.model.Verifier;
 import org.scribe.oauth.OAuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.semiot.database.DataBase;
-import static ru.semiot.helper.ServiceConfig.config;
+import ru.semiot.semdesc.database.DataBase;
+import static ru.semiot.semdesc.helper.ServiceConfig.config;
 
 /**
  * REST Web Service
@@ -72,7 +71,7 @@ public class RestAPI {
 
     @PostConstruct
     private void _init() {
-        logger.info("Initialize Web-service");
+        logger.debug("Initialize Web-service");
         if (config.fusekiUsername() != null && !config.fusekiUsername().isEmpty()
                 && config.fusekiPassword() != null && !config.fusekiPassword().isEmpty()) {
             authenticator = new SimpleAuthenticator(config.fusekiUsername(), config.fusekiPassword().toCharArray());
@@ -93,8 +92,7 @@ public class RestAPI {
     @DELETE
     @Path("model/{class_uri:.*}")
     public Response removeClass(@CookieParam("hash") long hash, @PathParam("class_uri") String uri) {
-        logger.info("Remove method");
-        logger.debug("URI to remove is " + uri);
+        logger.info("Try to remove {}", uri);
         String token = db.getToken(hash);
         if (token == null || getUser(token) == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -127,7 +125,7 @@ public class RestAPI {
     @Path("model/")
     @Consumes("text/turtle")
     public Response createClass(@CookieParam("hash") long hash, String object) {
-        logger.info("Create method");
+        logger.debug("Create class method");
         String token = db.getToken(hash);
         JSONObject user = null;
         if (token == null || (user = getUser(token)) == null) {
@@ -140,7 +138,7 @@ public class RestAPI {
             Model m = ModelFactory.createDefaultModel();
             InputStream stream = new ByteArrayInputStream(object.getBytes(StandardCharsets.UTF_8));
             m.read(stream, null, "TURTLE");
-            logger.info("Model done");
+            logger.debug("Model done");
             StmtIterator iter = m.listStatements(null, RDFS.subClassOf, m.getResource(m.getNsPrefixURI("ssn")+"System"));
             String graph_uri = iter.next().getSubject().getURI();            
             if (_accessor.containsModel(graph_uri)) {
@@ -174,6 +172,7 @@ public class RestAPI {
                     .addProperty(m.createProperty(m.getNsPrefixURI("prov") + "wasAttributedTo"), owner);
 
             _accessor.add(graph_uri, m);
+            logger.info("Model {} created!", graph_uri);
             return Response.ok().build();
         } catch (Exception ex) {
             logger.error("Unexpected exception with message " + ex.getMessage());
@@ -185,8 +184,7 @@ public class RestAPI {
     @Path("model/{class_uri:.*}")
     @Consumes("text/turtle")
     public Response editClass(@CookieParam("hash") long hash, @PathParam("class_uri") String uri, String object) {
-        logger.info("Edit method");
-        logger.debug("URI to edit is " + uri);
+        logger.info("Try to edit model {}", uri);
         Response resp = removeClass(hash, uri);
         if (resp.getStatus() != Response.Status.OK.getStatusCode()) {
             return resp;
@@ -211,7 +209,7 @@ public class RestAPI {
     @GET
     @Path("/login/code/")
     public Response login(@QueryParam("code") String code) {
-        logger.info("Login method");
+        logger.debug("Login method");
         Verifier v = new Verifier(code);
         Token access = service.getAccessToken(null, v);
         JSONObject json = getUser(access.getToken());
@@ -227,7 +225,7 @@ public class RestAPI {
     @Path("/login/user")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserData(@CookieParam("hash") long hash) {
-        logger.info("UserData method");
+        logger.debug("UserData method");
         String token = db.getToken(hash);
         if (token == null) {
             return Response.status(Response.Status.FORBIDDEN).build();
@@ -255,7 +253,7 @@ public class RestAPI {
     @Path("/logout")
     @Produces(MediaType.APPLICATION_JSON)
     public Response logout(@CookieParam("hash") long hash) throws URISyntaxException {
-        logger.info("Logout method");
+        logger.debug("Logout method");
         String token = db.getToken(hash);
         if (token != null) {
             db.remove(hash);

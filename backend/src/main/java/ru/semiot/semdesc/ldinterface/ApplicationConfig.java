@@ -1,4 +1,4 @@
-package ru.semiot.ldinterface;
+package ru.semiot.semdesc.ldinterface;
 
 import java.util.Set;
 import javax.ws.rs.core.Application;
@@ -23,8 +23,9 @@ public class ApplicationConfig extends Application {
      * all resources defined in the project.
      * If required, comment out calling this method in getClasses().
      */
-    private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(LDIApi.class);
+    private void addRestResourceClasses(Set<Class<?>> resources) {        
+        resources.add(ru.semiot.semdesc.helper.RestAPI.class);
+        resources.add(ru.semiot.semdesc.ldinterface.LDIApi.class);
     }
 
 }

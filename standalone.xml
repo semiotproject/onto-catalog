@@ -338,7 +338,7 @@
                     <filter-ref name="x-powered-by-header"/>
                 </host>
             </server>
-            <servlet-container name="default">
+            <servlet-container name="default" allow-non-standard-wrappers="true">
                 <jsp-config/>
                 <websockets/>
             </servlet-container>            

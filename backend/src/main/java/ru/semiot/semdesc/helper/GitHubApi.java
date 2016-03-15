@@ -1,4 +1,4 @@
-package ru.semiot.helper;
+package ru.semiot.semdesc.helper;
 
 import org.scribe.builder.api.DefaultApi20;
 import org.scribe.model.OAuthConfig;

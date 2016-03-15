@@ -1,31 +1,24 @@
-package ru.semiot.ldinterface;
+package ru.semiot.semdesc.ldinterface;
 
 import java.io.ByteArrayOutputStream;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.crypto.Data;
-
 import org.apache.jena.atlas.web.auth.SimpleAuthenticator;
 import org.apache.jena.query.DatasetAccessor;
 import org.apache.jena.query.DatasetAccessorFactory;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.StmtIterator;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
-import ru.semiot.helper.RestAPI;
-import static ru.semiot.helper.ServiceConfig.config;
+import static ru.semiot.semdesc.helper.ServiceConfig.config;
 
 /**
  * Linked Data Interface Web Service
@@ -38,6 +31,12 @@ public class LDIApi {
 
     private static final org.slf4j.Logger logger = LoggerFactory
             .getLogger(LDIApi.class);
+
+    @Context
+    private HttpServletRequest request;
+
+    @Context
+    private HttpServletResponse response;
 
     // TODO: get this from request params
     private String constructClassURI(String uuid) {
@@ -70,16 +69,19 @@ public class LDIApi {
 
     private Response getClass(String uuid, String format) {
         try {
+
             String classURI = constructClassURI(uuid);
-            logger.info("finding class with URI = ", classURI);
+            logger.info("Try to find class with URI = {}", classURI);
 
             return Response.ok(
                     serializeClassToFormat(
                             getClassForURI(classURI), format
                     )
             ).build();
-        } catch (Exception ex) {
-            logger.error("failed to load class with UUID = ", uuid, "; exception: ", ex.getMessage(), "; stacktrace: ", ex.getStackTrace());
+        }
+        catch (Exception ex) {
+            logger.warn("failed to load class with UUID = {}; exception: {}", uuid, ex.getMessage());
+            logger.debug(ex.getMessage(), ex);
             return Response.serverError().entity(ex.getMessage()).build();
         }
     }
@@ -89,6 +91,20 @@ public class LDIApi {
     @Produces("text/turtle")
     public Response getClassAsTurtle(@PathParam("class_uuid") String uuid) {
         return getClass(uuid, "TURTLE");
+    }
+
+    @GET
+    @Path("{class_uuid:.*}")
+    @Produces(MediaType.TEXT_HTML)
+    public void getClassAsPage(@PathParam("class_uuid") String uuid) throws IOException {
+        try {
+            request.getRequestDispatcher("/").forward(request, response);
+        }
+        catch (IOException | ServletException ex) {
+            logger.warn("failed to load class with UUID = {}; exception: {}", uuid, ex.getMessage());
+            logger.debug(ex.getMessage(), ex);
+            response.sendError(500);
+        }
     }
 
     @GET

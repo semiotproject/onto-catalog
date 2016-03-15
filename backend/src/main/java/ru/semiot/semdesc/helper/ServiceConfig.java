@@ -1,4 +1,4 @@
-package ru.semiot.helper;
+package ru.semiot.semdesc.helper;
 
 import org.aeonbits.owner.Config;
 import org.aeonbits.owner.Config.HotReload;
