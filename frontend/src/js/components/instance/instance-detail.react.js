@@ -65,13 +65,14 @@ export default class InstanceView extends React.Component {
         console.log(result);
         return (
             <div className="col-md-6" style={{ float: 'none', margin: '0 auto' }}>
+                <h3>Fill this form according to <a href="https://github.com/semiotproject/semiot-platform/wiki/How-to-use-WoT-SemDesc-Helper-to-generate-device-descriptions">guide</a></h3>
                 <form className="form-horizontal">
                     {
                         Object.keys(instance.placeholders).map((p) => {
                             return (
                                 <div key={p} className="form-group">
                                     <label className="col-sm-1 control-label">{p}: </label>
-                                    <div className="col-sm-6">
+                                    <div className="col-sm-10">
                                         <input type="text" className="form-control" value={instance.placeholders[p]} onChange={this.handleChange(p)}/>
                                     </div>
                                 </div>
@@ -80,23 +81,22 @@ export default class InstanceView extends React.Component {
                     }
                 </form>
                 <hr/>
-                <div className="form-group">
+                <h3>Result</h3>
+                <div className="form-group" style={{ textAlign: "center" }}>
                     <label className="control-label">
                         <span>Device description </span>
                         <i className="fa fa-download" onClick={this.download("description", result.device)}></i>
                     </label>
-                   <pre>{result.device}</pre>
                 </div>
                 {
                     result.observations.length > 0 &&
                         result.observations.map((s, i) => {
                             return (
-                                <div className="form-group" key={i}>
+                                <div className="form-group" key={i} style={{ textAlign: "center" }}>
                                     <label className="control-label">
                                         <span>{capitalizeFirstLetter(s.type)} description </span>
                                         <i className="fa fa-download" onClick={this.download(`${s.type}-observation`, s)}></i>
                                     </label>
-                                   <pre>{s.text}</pre>
                                 </div>
                             );
                         })
