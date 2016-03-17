@@ -25,16 +25,16 @@ sudo docker pull semiot/wot-semdesc-helper-backend
 sudo docker run -itd -p 80:8080 -v /semiot/wot-semdesc-helper/fuseki/:/etc/fuseki/databases/fuseki-db/ -v /semiot/wot-semdesc-helper/config/:/wot_semdesc_helper/backend/ --name semdesc semiot/wot-semdesc-helper-backend
 ```
 
-If you want to change default configuration, you must create config.properties at /semdesc/config before you start docker.
+If you want to change default configuration, you must create config.properties at /semdesc/config before starting Docker container.
 
-config.properties contains:
+`config.properties` contains:
 
-	fuseki.dataset.url
+    fuseki.dataset.url
     fuseki.update.url
-	fuseki.username
+    fuseki.username
     fuseki.password
     github.key
     github.secret
     github.callback
 	
-If any options not contained in config.properties, will be used default setting
+If any option is not presented in `config.properties`, default setting will be used. 
