@@ -18,6 +18,11 @@ module.exports = function (grunt) {
     // legacy tasks
     require('load-grunt-tasks')(grunt);
 
+    var browserifyTransforms = ['babelify'];
+    if (argv.prod) {
+        browserifyTransforms.push('uglifyify');
+    }
+
     // grunt options
     grunt.initConfig({
         pkg: grunt.file.readJSON("package.json"),
@@ -43,8 +48,8 @@ module.exports = function (grunt) {
                     browserifyOptions: {
                         debug: argv.dev || false
                     },
-                    transform: ['babelify'],
-                    watch: true
+                    transform: browserifyTransforms,
+                    watch: argv.dev || false
                 }
             }
         },
@@ -129,6 +134,6 @@ module.exports = function (grunt) {
     grunt.registerTask('dev', buildTasks.concat(watchTasks))
     // grunt.registerTask('prod', buildTasks.concat(prodTasks))
 
-    grunt.registerTask("default", ["dev"]);
+    grunt.registerTask("default", ["build"]);
 };
 
