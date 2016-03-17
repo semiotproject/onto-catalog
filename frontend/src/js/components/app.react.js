@@ -19,6 +19,9 @@ export default class App extends Component {
                 <div id="app-wrapper">
                     {this.props.children}
                 </div>
+                <footer>
+                    &copy; <a href="http://semiot.ru">SemIoT Project</a> 2016
+                </footer>
             </div>
         );
     }

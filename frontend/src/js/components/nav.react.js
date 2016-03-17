@@ -46,9 +46,6 @@ export default class Navigation extends React.Component {
         }
         return (
             <nav className="navbar navbar-inverse">
-                <ul>
-                    {items}
-                </ul>
                 <UserBlock></UserBlock>
             </nav>
         );
