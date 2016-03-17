@@ -20,7 +20,7 @@ module.exports = function (grunt) {
 
     var browserifyTransforms = ['babelify'];
     if (argv.prod) {
-        browserifyTransforms.push('uglifyify');
+        // browserifyTransforms.push('uglifyify');
     }
 
     // grunt options
