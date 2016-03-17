@@ -17,9 +17,9 @@ export function getModel(model) {
 
 export function getSensor(systemURI, sensor) {
     let str = `
-        <${systemURI}> ssn:hasSubSystem semdesc:${sensor.uri}.
+        <${systemURI}> ssn:hasSubSystem ${sensor.uri}.
 
-        semdesc:${sensor.uri} a ssn:SensingDevice ;
+        ${sensor.uri} a ssn:SensingDevice ;
             rdfs:label "${sensor.label}" ;
             ssn:observes <${sensor.featureOfInterest}> ;
             ssn:hasMeasurementCapability ${MEASUREMENT_CAPABILITY_URI}-${sensor.uri} .

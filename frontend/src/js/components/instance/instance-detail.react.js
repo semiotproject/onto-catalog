@@ -65,7 +65,7 @@ export default class InstanceView extends React.Component {
         console.log(result);
         return (
             <div className="col-md-6" style={{ float: 'none', margin: '0 auto' }}>
-                <h3>Fill this form according to <a href="https://github.com/semiotproject/semiot-platform/wiki/How-to-use-WoT-SemDesc-Helper-to-generate-device-descriptions">guide</a></h3>
+                <h3>Fill this form according to the <a href="https://github.com/semiotproject/semiot-platform/wiki/How-to-use-WoT-SemDesc-Helper-to-generate-device-descriptions">guide</a></h3>
                 <form className="form-horizontal">
                     {
                         Object.keys(instance.placeholders).map((p) => {
@@ -84,7 +84,7 @@ export default class InstanceView extends React.Component {
                 <h3>Result</h3>
                 <div className="form-group" style={{ textAlign: "center" }}>
                     <label className="control-label">
-                        <span>Device description </span>
+                        <span>Device description template </span>
                         <i className="fa fa-download" onClick={this.download("description", result.device)}></i>
                     </label>
                 </div>
@@ -94,7 +94,7 @@ export default class InstanceView extends React.Component {
                             return (
                                 <div className="form-group" key={i} style={{ textAlign: "center" }}>
                                     <label className="control-label">
-                                        <span>{capitalizeFirstLetter(s.type)} description </span>
+                                        <span>{capitalizeFirstLetter(s.type)} observation template </span>
                                         <i className="fa fa-download" onClick={this.download(`${s.type}-observation`, s)}></i>
                                     </label>
                                 </div>
@@ -128,7 +128,7 @@ export default class InstanceView extends React.Component {
                         <p>Fill the placeholders to generate your own template</p>
                     </div>
                 </div>
-                <div className="app-container">
+                <div className="app-container instance-container">
                     {this.renderView()}
                 </div>
             </div>

@@ -47,8 +47,8 @@ export default class ModelList extends React.Component {
             <div className="app-wrapper">
                 <div className="app-header">
                     <div>
-                        <h3>Model View</h3>
-                        <p>Describe generic device model</p>
+                        <h3>Model List</h3>
+                        <p>Repository of generic device models</p>
                     </div>
                 </div>
                 <div className="app-container container-fluid model-list" style={{

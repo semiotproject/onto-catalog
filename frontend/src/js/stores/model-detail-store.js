@@ -161,7 +161,7 @@ class ModelDetailStore extends EventEmitter {
         return this._model;
     }
     addSensor() {
-        const newSensorURI = uuid.v4();
+        const newSensorURI = CONFIG.SEMDESC_PREFIX + uuid.v4();
 
         this._model.sensors.push({
             uri: newSensorURI,
