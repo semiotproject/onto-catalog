@@ -34,6 +34,7 @@ export default class InstanceView extends React.Component {
         };
         this.download = (name, text) => {
             return () => {
+                debugger;
                 const blob = new Blob([text], {type: "text/plain;charset=utf-8"});
                 const fileName = `${name.toLowerCase().replace(' ', '_')}.ttl`;
                 saveAs(blob, fileName);
@@ -95,7 +96,7 @@ export default class InstanceView extends React.Component {
                                 <div className="form-group" key={i} style={{ textAlign: "center" }}>
                                     <label className="control-label">
                                         <span>{capitalizeFirstLetter(s.type)} observation template </span>
-                                        <i className="fa fa-download" onClick={this.download(`${s.type}-observation`, s)}></i>
+                                        <i className="fa fa-download" onClick={this.download(`${s.type}-observation`, s.text)}></i>
                                     </label>
                                 </div>
                             );
